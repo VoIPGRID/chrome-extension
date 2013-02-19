@@ -8,7 +8,7 @@ var doLogin = function(user, pass, errorcallback) {
   loadpaneldata(errorcallback);
 };
 
-var displayloginform = function() {
+var loggedOut = function() {
   storage.username = '';
   storage.password = '';
   // client_id = '';
@@ -108,6 +108,7 @@ function loadpaneldata(errorcallback) {
       });
       request.fail(function(jqXHR, textStatus) {
         if (jqXHR.status == 401) {
+          loggedOut();
           if (errorcallback)
             errorcallback(jqXHR)
         }

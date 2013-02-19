@@ -7,15 +7,14 @@ $(function() {
     $('#head').html(html);
   };
 
-  var displayloginform = function() {
-    background.displayloginform();
+  var resetloginform = function() {
     $('#username').val('');
     $('#password').val('');
   }
 
   var errorcallback = function(response) {
     updatehead('Je gebruikersnaam en/of wachtwoord is onjuist.'); // 'Your username and/or password is incorrect.'
-    displayloginform();
+    resetloginform();
   }
 
   // Handler for the login button
