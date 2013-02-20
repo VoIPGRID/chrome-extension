@@ -25,6 +25,14 @@ var loggedOut = function() {
 const userdestinationresource = "userdestination";
 var platform_url = "https://client.voys.nl/";
 
+var selected_fixed = null;
+var selected_phone = null;
+var selecteduserdestination_id = '';
+
+var client_id = '';
+
+var user_id = '';
+
 /* constructs select input of userdestinations and sets up queue list with a list of callgroups */
 function loadpaneldata(errorcallback) {
   var username = storage.username;
@@ -46,7 +54,6 @@ function loadpaneldata(errorcallback) {
     });
     request.done(function(response) {
         var html = '';
-        alert(response)
 
         var userdestinations = response.objects;
         if (userdestinations == null || userdestinations.length == 0) {
@@ -55,53 +62,54 @@ function loadpaneldata(errorcallback) {
             errorcallback(jqXHR)
           }
         } else {
+          var ud = userdestinations[0];
             // construct select input of userdestinations
-            client_id = userdestinations[0].client;
-            user_id = userdestinations[0].user;
-            selecteduserdestination_id = userdestinations[0].selecteduserdestination.id;
-            selected_fixed = userdestinations[0].selecteduserdestination.fixeddestination;
-            selected_phone = userdestinations[0].selecteduserdestination.phoneaccount;
+            client_id = ud.client;
+            user_id = ud.user;
+            selecteduserdestination_id = ud.selecteduserdestination.id;
+            selected_fixed = ud.selecteduserdestination.fixeddestination;
+            selected_phone = ud.selecteduserdestination.phoneaccount;
             /*if(selected_fixed == null && selected_phone == null) {
                 // set 'no' as selected radio input and disable statusupdate select input
                 mainpanel.port.emit('noselecteduserdestination');
-            }
-            if (userdestinations.fixeddestinations.length == 0 && userdestinations.phoneaccounts.length == 0) {
+            }*/
+            if (ud.fixeddestinations.length == 0 && ud.phoneaccounts.length == 0) {
                 html = '<option>Je hebt momenteel geen bestemmingen.</option>'; // 'You have no destinations at the moment.'
                 mainpanel.port.emit('nouserdestinations');
             } else {
-                for (var i in userdestinations['fixeddestinations']) {
-                    f = userdestinations['fixeddestinations'][i];
+                for (var i in ud.fixeddestinations) {
+                    f =ud.fixeddestinations[i];
                     var selected = '';
-                    if (f['id'] == selected_fixed) {
+                    if (f.id == selected_fixed) {
                         selected = ' selected="selected"';
                     }
                     html += '<option id="fixed-' + f['id'] + '" value="fixed-' + f['id'] + '"' + selected + 
                             '>+' + f['phonenumber'] + '/' + f['description'] +  '</option>';
                 }
-                for (var i in userdestinations['phoneaccounts']) {
-                    p = userdestinations['phoneaccounts'][i];
+                for (var i in ud.phoneaccounts) {
+                    p = ud.phoneaccounts[i];
                     var selected = '';
-                    if (p['id'] == selected_phone) {
+                    if (p.id == selected_phone) {
                         selected = ' selected="selected"';
                     }
                     html += '<option id="phone-' + p['id'] + '" value="phone-' + p['id'] + '"' + selected + 
                             '>' + p['internal_number'] + '/' + p['description'] +  '</option>';
                 }
                 // make sure the radio inputs are enabled
-                mainpanel.port.emit('enableuserdestinations');
+                //mainpanel.port.emit('enableuserdestinations');
             }
             if (selected_fixed == null && selected_phone == null) {
-                toolbarbutton.setIcon({url: data.url('assets/img/call-red.png')});
+              chrome.browserAction.setIcon({path: 'assets/img/call-red.png'})
             } else {
-                toolbarbutton.setIcon({url: data.url('assets/img/call-green.png')});
-            }*/
+              chrome.browserAction.setIcon({path: 'assets/img/call-green.png'})
+            }
             //mainpanel.port.emit('updateform', '');
             //mainpanel.port.emit('updatehead', username);
             //mainpanel.port.emit('updatestatus', html);
             // the user destinations have been loaded succesfully. we may fetch the queue list now.
             //loadqueuedata(base64auth);
             // Show the new popup
-            chrome.browserAction.setIcon({path: 'assets/img/call-green.png'})
+            chrome.browserAction.setPopup({popup: 'panel.html'});
         }
       });
       request.fail(function(jqXHR, textStatus) {
@@ -115,4 +123,14 @@ function loadpaneldata(errorcallback) {
   }
 }
 
+// Exported values
 window.doLogin = doLogin;
+
+window.selected_fixed = selected_fixed;
+window.selected_phone = selected_phone;
+window.selecteduserdestination_id = selecteduserdestination_id;
+
+window.client_id = client_id;
+
+window.user_id = user_id;
+
