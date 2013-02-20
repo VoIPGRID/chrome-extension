@@ -45,72 +45,71 @@ function loadpaneldata(errorcallback) {
       }
     });
     request.done(function(response) {
-      console.log(response)
-      alert("res " + response)
-      if (response.status == 200) {
-          var html = '';
-          alert("load " + response)
+        var html = '';
+        alert(response)
 
-          var userdestinations = eval(response.json['objects'][0]);
-          if (userdestinations == null || userdestinations.length == 0) {
-              mainpanel.port.emit('updatehead', 'Je gebruikersnaam en/of wachtwoord is onjuist.'); // 'Your username and/or password is incorrect.'
-              displayloginform();
-          } else {
-              // construct select input of userdestinations
-              client_id = userdestinations['client'];
-              user_id = userdestinations['user'];
-              selecteduserdestination_id = userdestinations['selecteduserdestination']['id'];
-              selected_fixed = userdestinations['selecteduserdestination']['fixeddestination'];
-              selected_phone = userdestinations['selecteduserdestination']['phoneaccount'];
-              if(selected_fixed == null && selected_phone == null) {
-                  // set 'no' as selected radio input and disable statusupdate select input
-                  mainpanel.port.emit('noselecteduserdestination');
-              }
-              if (userdestinations['fixeddestinations'].length == 0 && userdestinations['phoneaccounts'].length == 0) {
-                  html = '<option>Je hebt momenteel geen bestemmingen.</option>'; // 'You have no destinations at the moment.'
-                  mainpanel.port.emit('nouserdestinations');
-              }
-              else {
-                  for (var i in userdestinations['fixeddestinations']) {
-                      f = userdestinations['fixeddestinations'][i];
-                      var selected = '';
-                      if (f['id'] == selected_fixed) {
-                          selected = ' selected="selected"';
-                      }
-                      html += '<option id="fixed-' + f['id'] + '" value="fixed-' + f['id'] + '"' + selected + 
-                              '>+' + f['phonenumber'] + '/' + f['description'] +  '</option>';
-                  }
-                  for (var i in userdestinations['phoneaccounts']) {
-                      p = userdestinations['phoneaccounts'][i];
-                      var selected = '';
-                      if (p['id'] == selected_phone) {
-                          selected = ' selected="selected"';
-                      }
-                      html += '<option id="phone-' + p['id'] + '" value="phone-' + p['id'] + '"' + selected + 
-                              '>' + p['internal_number'] + '/' + p['description'] +  '</option>';
-                  }
-                  // make sure the radio inputs are enabled
-                  mainpanel.port.emit('enableuserdestinations');
-              }
-              if (selected_fixed == null && selected_phone == null) {
-                  toolbarbutton.setIcon({url: data.url('assets/img/call-red.png')});
-              }
-              else {
-                  toolbarbutton.setIcon({url: data.url('assets/img/call-green.png')});
-              }
-              mainpanel.port.emit('updateform', '');
-              mainpanel.port.emit('updatehead', username);
-              mainpanel.port.emit('updatestatus', html);
-              // the user destinations have been loaded succesfully. we may fetch the queue list now.
-              loadqueuedata(base64auth);
+        var userdestinations = response.objects;
+        if (userdestinations == null || userdestinations.length == 0) {
+          loggedOut();
+          if (errorcallback) {
+            errorcallback(jqXHR)
           }
+        } else {
+            // construct select input of userdestinations
+            client_id = userdestinations[0].client;
+            user_id = userdestinations[0].user;
+            selecteduserdestination_id = userdestinations[0].selecteduserdestination.id;
+            selected_fixed = userdestinations[0].selecteduserdestination.fixeddestination;
+            selected_phone = userdestinations[0].selecteduserdestination.phoneaccount;
+            /*if(selected_fixed == null && selected_phone == null) {
+                // set 'no' as selected radio input and disable statusupdate select input
+                mainpanel.port.emit('noselecteduserdestination');
+            }
+            if (userdestinations.fixeddestinations.length == 0 && userdestinations.phoneaccounts.length == 0) {
+                html = '<option>Je hebt momenteel geen bestemmingen.</option>'; // 'You have no destinations at the moment.'
+                mainpanel.port.emit('nouserdestinations');
+            } else {
+                for (var i in userdestinations['fixeddestinations']) {
+                    f = userdestinations['fixeddestinations'][i];
+                    var selected = '';
+                    if (f['id'] == selected_fixed) {
+                        selected = ' selected="selected"';
+                    }
+                    html += '<option id="fixed-' + f['id'] + '" value="fixed-' + f['id'] + '"' + selected + 
+                            '>+' + f['phonenumber'] + '/' + f['description'] +  '</option>';
+                }
+                for (var i in userdestinations['phoneaccounts']) {
+                    p = userdestinations['phoneaccounts'][i];
+                    var selected = '';
+                    if (p['id'] == selected_phone) {
+                        selected = ' selected="selected"';
+                    }
+                    html += '<option id="phone-' + p['id'] + '" value="phone-' + p['id'] + '"' + selected + 
+                            '>' + p['internal_number'] + '/' + p['description'] +  '</option>';
+                }
+                // make sure the radio inputs are enabled
+                mainpanel.port.emit('enableuserdestinations');
+            }
+            if (selected_fixed == null && selected_phone == null) {
+                toolbarbutton.setIcon({url: data.url('assets/img/call-red.png')});
+            } else {
+                toolbarbutton.setIcon({url: data.url('assets/img/call-green.png')});
+            }*/
+            //mainpanel.port.emit('updateform', '');
+            //mainpanel.port.emit('updatehead', username);
+            //mainpanel.port.emit('updatestatus', html);
+            // the user destinations have been loaded succesfully. we may fetch the queue list now.
+            //loadqueuedata(base64auth);
+            // Show the new popup
+            chrome.browserAction.setIcon({path: 'assets/img/call-green.png'})
         }
       });
       request.fail(function(jqXHR, textStatus) {
         if (jqXHR.status == 401) {
           loggedOut();
-          if (errorcallback)
+          if (errorcallback) {
             errorcallback(jqXHR)
+          }
         }
       });
   }
