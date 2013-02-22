@@ -17,9 +17,16 @@ $(function() {
     resetloginform();
   }
 
+  var donecallback = function() {
+    $("#account").hide();
+    $("#body").show();
+  }
+
+  $("#body").hide();
+
   // Handler for the login button
   $("#login").on("click", function() {
-    background.doLogin($('#username').val(), $('#password').val(), errorcallback);
+    background.doLogin($('#username').val(), $('#password').val(), donecallback, errorcallback);
   });
 
 });

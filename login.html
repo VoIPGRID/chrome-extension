@@ -9,22 +9,72 @@
       <script src="assets/js/login.js"></script>
   </head>
 
-  <body>
+<body>
     <div class="account">
-      <fieldset>
-        <table>
-          <tr>
-            <td>e-mailadres</td>
-            <td><input type='text' id='username'/></td>
-          </tr>
-          <tr>
-            <td>wachtwoord</td>
-            <td><input type='password' id='password'/></td>
-          </tr>
-        </table>
-      </fieldset><br/>
-      <ul class='menu'><li data-link='login'><i class='icon-signin' id='login'></i>Inloggen</li></ul>
-      <i class="icon-user"></i> <span id="head">Uitgelogd</span> <!-- 'Logged out' -->
-    <div>
-  </body>
-</html>
+        <fieldset>
+          <table>
+            <tr>
+              <td>e-mailadres</td>
+              <td><input type='text' id='username'/></td>
+            </tr>
+            <tr>
+              <td>wachtwoord</td>
+              <td><input type='password' id='password'/></td>
+            </tr>
+          </table>
+        </fieldset><br/>
+        <i class="icon-user"></i> <span id="head">Uitgelogd</span> <!-- 'Logged out' -->
+        <i class="icon-remove-sign" id="close" style="float:right;cursor:pointer;"></i>
+    </div>
+
+    <div id="body">
+        <ul class="menu">
+            <li data-link="help">
+                <i class="icon-question-sign" id="help"></i>
+                Help
+            </li>
+            <li data-link="settings">
+                <i class="icon-cog" id="settings"></i>
+                Instellingen
+            </li>
+            <li data-link="logout">
+                <i class="icon-signout" id="logout"></i>
+                Uitloggen
+            </li>
+        </ul>
+    
+        <div class="widget availability" data-opened="false">
+            <div class="widget-header">
+                <h3><i class="icon-phone-sign"></i> Bereikbaarheid</h3> <!-- 'Availability' -->
+            </div>
+            <div class="widget-content">
+                <form>
+                    <strong>Ben je bereikbaar?</strong> <!-- 'Are you available?' -->
+                    <label>
+                        <input type="radio" name="availability" id="yes" value="yes" checked="checked" /> Ja 
+                    </label>
+                    <label>
+                        <input type="radio" name="availability" id="no" value="no" /> Nee 
+                    </label>
+                    <select id="statusupdate">
+                        <option>Je hebt momenteel geen bestemmingen.</option> <!-- 'You have no destinations at the moment.' -->
+                    </select>
+                </form>
+            </div>
+        </div>
+    
+        <div class="widget queues" data-opened="false">
+            <div class="widget-header">
+                <h3><i class="icon-time"></i> Wachtrijen</h3> <!-- 'Queues' -->
+            </div>
+            <div class="widget-content" id="queue">
+                <ul>
+                </ul>
+            </div>        
+        </div>
+    
+    </div>
+    <!--<footer>
+        versie 1.0
+    </footer>-->
+</body></html>

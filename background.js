@@ -34,7 +34,7 @@ var client_id = '';
 var user_id = '';
 
 /* constructs select input of userdestinations and sets up queue list with a list of callgroups */
-function loadpaneldata(errorcallback) {
+function loadpaneldata(donecallback, errorcallback) {
   var username = storage.username;
   var password = storage.password;
 
@@ -109,7 +109,9 @@ function loadpaneldata(errorcallback) {
             // the user destinations have been loaded succesfully. we may fetch the queue list now.
             //loadqueuedata(base64auth);
             // Show the new popup
-            chrome.browserAction.setPopup({popup: 'panel.html'});
+            if (donecallback) {
+              donecallback(jqXHR)
+            }
         }
       });
       request.fail(function(jqXHR, textStatus) {
