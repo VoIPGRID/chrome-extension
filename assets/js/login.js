@@ -42,4 +42,8 @@ $(function() {
     background.doLogin($('#username').val(), $('#password').val(), donecallback, errorcallback);
   });
 
+  $("#close").on("click", function() {
+    window.close();
+  });
+
 });
