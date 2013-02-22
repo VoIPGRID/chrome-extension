@@ -3,6 +3,31 @@
 $(function() {
   var background = chrome.extension.getBackgroundPage();
 
+  // close all widgets with data-opened="false"
+  $('.widget[data-opened="false"] .widget-content').hide();
+
+  // a widget header click will minimize/maximize the widget's panel
+  $('.widget .widget-header').on('click', function() {
+      // check if it's closed or opened
+      if($(this).parent().data('opened') === true) {
+          $(this).parent()
+                  .data('opened', false)
+                  .attr('data-opened', 'false')
+                  .find('.widget-content').hide(200);
+      }
+      else {
+          // hide the scrollbar while resizing
+          $('html').addClass('scrollbarhide');
+          $(this).parent()
+                  .data('opened', true)            
+                  .attr('data-opened', 'true')
+                  .find('.widget-content').show(200, function() {
+                      // get back the scrollbar after resizing
+                      $('body').removeClass('scrollbarhide');
+                  });
+      }
+  });
+
   var updatehead = function(html) {
     $('#head').html(html);
   };
