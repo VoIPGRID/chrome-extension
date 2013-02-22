@@ -20,6 +20,9 @@ $(function() {
   var donecallback = function() {
     $(".account").hide();
     $("#body").show();
+    // TBD find a good size
+    $('body').css('height', '400');
+    $('body').css('width', '400');
   };
 
   $("#body").hide();
