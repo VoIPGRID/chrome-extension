@@ -28,6 +28,11 @@ $(function() {
     $("#help").on("click", function() {
       background.openHelp();
     })
+
+    // Setup settings button
+    $("#settings").on("click", function() {
+      background.openSettings();
+    })
   };
 
   $("#body").hide();

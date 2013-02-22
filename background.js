@@ -2,6 +2,17 @@
 
 var storage = localStorage;
 
+const userdestinationresource = "userdestination";
+var platform_url = "https://client.voys.nl/";
+
+var selected_fixed = null;
+var selected_phone = null;
+var selecteduserdestination_id = '';
+
+var client_id = '';
+
+var user_id = '';
+
 var doLogin = function(user, pass, errorcallback) {
   storage.username = user;
   storage.password = pass;
@@ -10,6 +21,11 @@ var doLogin = function(user, pass, errorcallback) {
 
 var openHelp = function() {
   chrome.tabs.create({url: 'http://wiki.voipgrid.nl/index.php/Firefox_plugin'});
+}
+
+var openSettings = function() {
+  var url = platform_url + 'client/' + client_id + '/user/' + user_id + '/change/#tabs-3';
+  chrome.tabs.create({url: url});
 }
 
 var loggedOut = function() {
@@ -24,18 +40,6 @@ var loggedOut = function() {
   // timer.clearInterval(queue_timer);
   // toolbarbutton.setIcon({url: data.url('assets/img/call-gray.png')});
 }
-
-
-const userdestinationresource = "userdestination";
-var platform_url = "https://client.voys.nl/";
-
-var selected_fixed = null;
-var selected_phone = null;
-var selecteduserdestination_id = '';
-
-var client_id = '';
-
-var user_id = '';
 
 /* constructs select input of userdestinations and sets up queue list with a list of callgroups */
 function loadpaneldata(donecallback, errorcallback) {
@@ -132,6 +136,7 @@ function loadpaneldata(donecallback, errorcallback) {
 // Exported values
 window.doLogin = doLogin;
 window.openHelp = openHelp;
+window.openSettings = openSettings;
 
 window.selected_fixed = selected_fixed;
 window.selected_phone = selected_phone;
