@@ -21,8 +21,13 @@ $(function() {
     $(".account").hide();
     $("#body").show();
     // TBD find a good size
-    $('body').css('height', '400');
-    $('body').css('width', '400');
+    $('body').css('height', '200');
+    $('body').css('width', '360');
+
+    // Setup help button
+    $("#help").on("click", function() {
+      background.openHelp();
+    })
   };
 
   $("#body").hide();

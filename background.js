@@ -8,6 +8,10 @@ var doLogin = function(user, pass, errorcallback) {
   loadpaneldata(errorcallback);
 };
 
+var openHelp = function() {
+  chrome.tabs.create({url: 'http://wiki.voipgrid.nl/index.php/Firefox_plugin'});
+}
+
 var loggedOut = function() {
   storage.username = '';
   storage.password = '';
@@ -127,6 +131,7 @@ function loadpaneldata(donecallback, errorcallback) {
 
 // Exported values
 window.doLogin = doLogin;
+window.openHelp = openHelp;
 
 window.selected_fixed = selected_fixed;
 window.selected_phone = selected_phone;
