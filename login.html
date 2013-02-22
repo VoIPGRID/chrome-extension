@@ -11,19 +11,21 @@
 
 <body>
     <div class="account">
-        <fieldset>
-          <table>
-            <tr>
-              <td>e-mailadres</td>
-              <td><input type='text' id='username'/></td>
-            </tr>
-            <tr>
-              <td>wachtwoord</td>
-              <td><input type='password' id='password'/></td>
-            </tr>
-          </table>
-        </fieldset><br/>
-        <ul class='menu'><li data-link='login'><i class='icon-signin' id='login'></i>Inloggen</li></ul>
+        <form id="loginform">
+          <fieldset>
+            <table>
+              <tr>
+                <td>e-mailadres</td>
+                <td><input type='text' id='username'/></td>
+              </tr>
+              <tr>
+                <td>wachtwoord</td>
+                <td><input type='password' id='password'/></td>
+              </tr>
+            </table>
+          </fieldset><br/>
+          <ul class='menu'><li data-link='login'><i class='icon-signin' id='login'></i>Inloggen</li></ul>
+        </form>
         <i class="icon-user"></i> <span id="head">Uitgelogd</span> <!-- 'Logged out' -->
         <i class="icon-remove-sign" id="close" style="float:right;cursor:pointer;"></i>
     </div>

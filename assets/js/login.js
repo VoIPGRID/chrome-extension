@@ -17,8 +17,8 @@ $(function() {
     resetloginform();
   };
 
-  var donecallback = function() {
-    $(".account").hide();
+  var donecallback = function(username) {
+    $("#loginform").hide();
     $("#body").show();
     // TBD find a good size
     $('body').css('height', '200');
@@ -33,6 +33,8 @@ $(function() {
     $("#settings").on("click", function() {
       background.openSettings();
     })
+
+    updatehead(username);
   };
 
   $("#body").hide();
