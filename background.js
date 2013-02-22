@@ -110,7 +110,7 @@ function loadpaneldata(donecallback, errorcallback) {
             //loadqueuedata(base64auth);
             // Show the new popup
             if (donecallback) {
-              donecallback(jqXHR)
+              donecallback();
             }
         }
       });

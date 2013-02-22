@@ -10,17 +10,17 @@ $(function() {
   var resetloginform = function() {
     $('#username').val('');
     $('#password').val('');
-  }
+  };
 
   var errorcallback = function(response) {
     updatehead('Je gebruikersnaam en/of wachtwoord is onjuist.'); // 'Your username and/or password is incorrect.'
     resetloginform();
-  }
+  };
 
   var donecallback = function() {
-    $("#account").hide();
+    $(".account").hide();
     $("#body").show();
-  }
+  };
 
   $("#body").hide();
 
