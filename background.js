@@ -28,9 +28,9 @@ var openSettings = function() {
   chrome.tabs.create({url: url});
 };
 
-var loggedOut = function() {
-  storage.username = '';
-  storage.password = '';
+var loggedOut = function(panel) {
+  delete storage.username;
+  delete storage.password;
   // client_id = '';
   // user_id = '';
   // selecteduserdestination_id = '';
@@ -39,6 +39,9 @@ var loggedOut = function() {
   // mainpanel.port.emit('resizeonshow');
   // timer.clearInterval(queue_timer);
   // toolbarbutton.setIcon({url: data.url('assets/img/call-gray.png')});
+  if (panel.errorcallback) {
+    panel.errorcallback()
+  }
 }
 
 /* constructs select input of userdestinations and sets up queue list with a list of callgroups */
@@ -65,10 +68,7 @@ function loadpaneldata(panel) {
 
         var userdestinations = response.objects;
         if (userdestinations == null || userdestinations.length == 0) {
-          loggedOut();
-          if (panel.errorcallback) {
-            panel.errorcallback(jqXHR)
-          }
+          loggedOut(panel);
         } else {
           var ud = userdestinations[0];
             // construct select input of userdestinations
@@ -120,25 +120,23 @@ function loadpaneldata(panel) {
             panel.updatestatus(html);
             // Show the new popup
             if (panel.donecallback) {
-              panel.donecallback(username);
+              panel.donecallback();
             }
         }
       });
       request.fail(function(jqXHR, textStatus) {
         if (jqXHR.status == 401) {
-          loggedOut();
-          if (errorcallback) {
-            errorcallback(jqXHR)
-          }
+          loggedOut(panel);
         }
       });
   } else {
-    panel.donecallback();
+    panel.showLogin();
   }
 }
 
 // Exported values
 window.doLogin = doLogin;
+window.loggedOut = loggedOut;
 window.openHelp = openHelp;
 window.openSettings = openSettings;
 window.loadpaneldata = loadpaneldata;

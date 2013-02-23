@@ -46,7 +46,7 @@ $(function() {
     $('#yes').removeAttr('disabled');
   };
 
-  var errorcallback = function(response) {
+  var errorcallback = function() {
     updatehead('Je gebruikersnaam en/of wachtwoord is onjuist.'); // 'Your username and/or password is incorrect.'
     resetloginform();
   };
@@ -57,7 +57,15 @@ $(function() {
     $('#yes').attr('disabled', 'disabled');
   };
 
-  var donecallback = function(username) {
+  var panel = {
+    nouserdestinations: nouserdestinations,
+    errorcallback: errorcallback,
+    updatehead: updatehead,
+    updatestatus: updatestatus,
+    enableuserdestinations: enableuserdestinations,
+  }
+
+  var donecallback = function() {
     $("#loginform").hide();
     $("#body").show();
     // TBD find a good size
@@ -73,27 +81,33 @@ $(function() {
     $("#settings").on("click", function() {
       background.openSettings();
     })
+
+    // Setup logout button
+    $("#logout").on("click", function() {
+      background.loggedOut(panel);
+    })
   };
 
-  $("#body").hide();
-  $("#loginform").hide();
+  panel.donecallback = donecallback;
 
-  var panel = {
-    nouserdestinations: nouserdestinations,
-    donecallback: donecallback,
-    errorcallback: errorcallback,
-    updatehead: updatehead,
-    updatestatus: updatestatus,
-    enableuserdestinations: enableuserdestinations
+  var showLogin = function() {
+    $("#loginform").show();
+    $("#body").hide();
+
+    // Handler for the login button
+    $("#login").on("click", function() {
+      background.doLogin($('#username').val(), $('#password').val(), panel);
+    });
   }
-  // Handler for the login button
-  $("#login").on("click", function() {
-    background.doLogin($('#username').val(), $('#password').val(), panel);
-  });
+
+  panel.showLogin = showLogin;
 
   $("#close").on("click", function() {
     window.close();
   });
+
+  $("#body").hide();
+  $("#loginform").hide();
 
   background.loadpaneldata(panel);
 });
