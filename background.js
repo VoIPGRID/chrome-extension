@@ -16,6 +16,8 @@ var client_id = '';
 
 var user_id = '';
 
+var queue_timer = '';
+
 var doLogin = function(user, pass, panel) {
   storage.username = user;
   storage.password = pass;
@@ -37,7 +39,7 @@ var loggedOut = function(panel) {
   client_id = '';
   user_id = '';
   selecteduserdestination_id = '';
-  // timer.clearInterval(queue_timer);
+  clearInterval(queue_timer);
   chrome.browserAction.setIcon({path: 'assets/img/call-gray.png'})
   if (panel.errorcallback) {
     panel.errorcallback()
@@ -173,7 +175,9 @@ function getqueuesizes(panel) {
               }
               chrome.browserAction.setIcon({path: filename})
            }
-           panel.updatequeuesize(queue_size, response.id);
+           if (panel) {
+             panel.updatequeuesize(queue_size, response.id);
+           }
         });
       }
     }
@@ -222,7 +226,7 @@ function loadqueuedata(panel, base64auth) {
           }
           panel.updatelist(html);
           getqueuesizes(panel);
-          //queue_timer = timer.setInterval(getqueuesizes, 5000);
+          queue_timer = setInterval(getqueuesizes, 5000);
     });
     request.fail(function(jqXHR, textStatus) {
       if (jqXHR.status == 401) {
