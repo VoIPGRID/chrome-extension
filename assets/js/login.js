@@ -76,17 +76,18 @@ $(function() {
   };
 
   $("#body").hide();
+  $("#loginform").hide();
 
+  var panel = {
+    nouserdestinations: nouserdestinations,
+    donecallback: donecallback,
+    errorcallback: errorcallback,
+    updatehead: updatehead,
+    updatestatus: updatestatus,
+    enableuserdestinations: enableuserdestinations
+  }
   // Handler for the login button
   $("#login").on("click", function() {
-    var panel = {
-      nouserdestinations: nouserdestinations,
-      donecallback: donecallback,
-      errorcallback: errorcallback,
-      updatehead: updatehead,
-      updatestatus: updatestatus,
-      enableuserdestinations: enableuserdestinations
-    }
     background.doLogin($('#username').val(), $('#password').val(), panel);
   });
 
@@ -94,4 +95,5 @@ $(function() {
     window.close();
   });
 
+  background.loadpaneldata(panel);
 });

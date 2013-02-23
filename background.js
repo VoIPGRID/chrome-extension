@@ -113,11 +113,6 @@ function loadpaneldata(panel) {
             } else {
               chrome.browserAction.setIcon({path: 'assets/img/call-green.png'})
             }
-            //mainpanel.port.emit('updateform', '');
-            //mainpanel.port.emit('updatehead', username);
-            //mainpanel.port.emit('updatestatus', html);
-            console.log("Update head")
-            console.log(html)
             panel.updatehead(html);
             // the user destinations have been loaded succesfully. we may fetch the queue list now.
             //loadqueuedata(base64auth);
@@ -137,6 +132,8 @@ function loadpaneldata(panel) {
           }
         }
       });
+  } else {
+    panel.donecallback();
   }
 }
 
@@ -144,6 +141,7 @@ function loadpaneldata(panel) {
 window.doLogin = doLogin;
 window.openHelp = openHelp;
 window.openSettings = openSettings;
+window.loadpaneldata = loadpaneldata;
 
 window.selected_fixed = selected_fixed;
 window.selected_phone = selected_phone;
