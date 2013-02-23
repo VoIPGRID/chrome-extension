@@ -57,11 +57,16 @@ $(function() {
     $('#yes').attr('disabled', 'disabled');
   };
 
+  var updatelist = function(html) {
+    $('#queue').html(html);
+  };
+
   var panel = {
     nouserdestinations: nouserdestinations,
     errorcallback: errorcallback,
     updatehead: updatehead,
     updatestatus: updatestatus,
+    updatelist: updatelist,
     enableuserdestinations: enableuserdestinations,
   }
 

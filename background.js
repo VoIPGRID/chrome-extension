@@ -3,6 +3,8 @@
 var storage = localStorage;
 
 const userdestinationresource = "userdestination";
+const queueresource = 'queuecallgroup';
+
 var platform_url = "https://client.voys.nl/";
 
 var selected_fixed = null;
@@ -34,9 +36,6 @@ var loggedOut = function(panel) {
   client_id = '';
   user_id = '';
   selecteduserdestination_id = '';
-  // mainpanel.port.emit('updateform', loginform);
-  // mainpanel.port.emit('updatelist', '');
-  // mainpanel.port.emit('resizeonshow');
   // timer.clearInterval(queue_timer);
   chrome.browserAction.setIcon({path: 'assets/img/call-gray.png'})
   if (panel.errorcallback) {
@@ -117,7 +116,7 @@ function loadpaneldata(panel) {
             }
             panel.updatehead(html);
             // the user destinations have been loaded succesfully. we may fetch the queue list now.
-            //loadqueuedata(base64auth);
+            loadqueuedata(panel, base64auth);
             panel.updatehead(username);
             panel.updatestatus(html);
             // Show the new popup
@@ -134,6 +133,55 @@ function loadpaneldata(panel) {
   } else {
     panel.showLogin();
   }
+}
+
+/* fetches queue info and loads them into the list on the main panel */
+function loadqueuedata(panel, base64auth) {
+    var request = $.ajax({
+      url: platform_url + 'api/' + queueresource + '/',
+      dataType: 'json',
+      settings: {
+        accepts: 'application/json',
+        contentType: 'application/json'
+      },
+      headers: {
+        Authorization: base64auth
+      }
+    });
+
+    request.done(function(response) {
+          var html = '';
+          var queues = response.objects;
+          // no queues, no list
+          if (queues.length == 0) {
+              html = '<ul><li>Je hebt momenteel geen wachtrijen.</li></ul>'; // 'You have no queues at the moment.'
+          }
+          // build html list for queue info
+          else {
+              callgroup_ids = new Array();
+              html = '<ul>'
+              for (var i in queues) {
+                  q = queues[i];
+                  var selected = '';
+                  if (q.id == storage.primary) {
+                      selected = ' class="selected"';
+                  }
+                  html += '<li title="' + q['id'] + '"' + selected + '><span class="indicator" id="size' + 
+                          q['id'] + '" title="' + q['id'] + '">?</span> ' + q['description'] + 
+                          ' <span class="code">(' + q['internal_number'] + ')</span></li>';
+                  callgroup_ids.push(q.id);
+              }
+              html += '<ul>'
+          }
+          panel.updatelist(html);
+          //getqueuesizes();
+          //queue_timer = timer.setInterval(getqueuesizes, 5000);
+    });
+    request.fail(function(jqXHR, textStatus) {
+      if (jqXHR.status == 401) {
+        loggedOut(panel);
+      }
+    });
 }
 
 // Exported values
