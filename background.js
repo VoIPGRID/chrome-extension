@@ -31,16 +31,18 @@ var openSettings = function() {
 var loggedOut = function(panel) {
   delete storage.username;
   delete storage.password;
-  // client_id = '';
-  // user_id = '';
-  // selecteduserdestination_id = '';
+  client_id = '';
+  user_id = '';
+  selecteduserdestination_id = '';
   // mainpanel.port.emit('updateform', loginform);
   // mainpanel.port.emit('updatelist', '');
   // mainpanel.port.emit('resizeonshow');
   // timer.clearInterval(queue_timer);
-  // toolbarbutton.setIcon({url: data.url('assets/img/call-gray.png')});
+  chrome.browserAction.setIcon({path: 'assets/img/call-gray.png'})
   if (panel.errorcallback) {
     panel.errorcallback()
+    panel.showLogin()
+    panel.updatehead('Uitgelogd');
   }
 }
 
