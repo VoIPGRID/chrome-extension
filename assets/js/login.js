@@ -42,6 +42,12 @@ $(function() {
     resetloginform();
   };
 
+  var nouserdestinations = function() {
+    $('#no').attr('checked', true);
+    $('#no').attr('disabled', 'disabled');
+    $('#yes').attr('disabled', 'disabled');
+  };
+
   var donecallback = function(username) {
     $("#loginform").hide();
     $("#body").show();
@@ -66,7 +72,12 @@ $(function() {
 
   // Handler for the login button
   $("#login").on("click", function() {
-    background.doLogin($('#username').val(), $('#password').val(), donecallback, errorcallback);
+    var panel = {
+      nouserdestinations: nouserdestinations,
+      donecallback: donecallback,
+      errorcallback: errorcallback
+    }
+    background.doLogin($('#username').val(), $('#password').val(), panel);
   });
 
   $("#close").on("click", function() {

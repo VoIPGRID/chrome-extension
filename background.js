@@ -13,20 +13,20 @@ var client_id = '';
 
 var user_id = '';
 
-var doLogin = function(user, pass, errorcallback) {
+var doLogin = function(user, pass, panel) {
   storage.username = user;
   storage.password = pass;
-  loadpaneldata(errorcallback);
+  loadpaneldata(panel);
 };
 
 var openHelp = function() {
   chrome.tabs.create({url: 'http://wiki.voipgrid.nl/index.php/Firefox_plugin'});
-}
+};
 
 var openSettings = function() {
   var url = platform_url + 'client/' + client_id + '/user/' + user_id + '/change/#tabs-3';
   chrome.tabs.create({url: url});
-}
+};
 
 var loggedOut = function() {
   storage.username = '';
@@ -42,7 +42,7 @@ var loggedOut = function() {
 }
 
 /* constructs select input of userdestinations and sets up queue list with a list of callgroups */
-function loadpaneldata(donecallback, errorcallback) {
+function loadpaneldata(panel) {
   var username = storage.username;
   var password = storage.password;
 
@@ -66,8 +66,8 @@ function loadpaneldata(donecallback, errorcallback) {
         var userdestinations = response.objects;
         if (userdestinations == null || userdestinations.length == 0) {
           loggedOut();
-          if (errorcallback) {
-            errorcallback(jqXHR)
+          if (panel.errorcallback) {
+            panel.errorcallback(jqXHR)
           }
         } else {
           var ud = userdestinations[0];
@@ -77,10 +77,12 @@ function loadpaneldata(donecallback, errorcallback) {
             selecteduserdestination_id = ud.selecteduserdestination.id;
             selected_fixed = ud.selecteduserdestination.fixeddestination;
             selected_phone = ud.selecteduserdestination.phoneaccount;
-            /*if(selected_fixed == null && selected_phone == null) {
+            if(selected_fixed == null && selected_phone == null) {
                 // set 'no' as selected radio input and disable statusupdate select input
-                mainpanel.port.emit('noselecteduserdestination');
-            }*/
+                if (panel.nouserdestinations) {
+                  panel.nouserdestinations();
+                }
+            }
             if (ud.fixeddestinations.length == 0 && ud.phoneaccounts.length == 0) {
                 html = '<option>Je hebt momenteel geen bestemmingen.</option>'; // 'You have no destinations at the moment.'
                 mainpanel.port.emit('nouserdestinations');
@@ -117,8 +119,8 @@ function loadpaneldata(donecallback, errorcallback) {
             // the user destinations have been loaded succesfully. we may fetch the queue list now.
             //loadqueuedata(base64auth);
             // Show the new popup
-            if (donecallback) {
-              donecallback(username);
+            if (panel.donecallback) {
+              panel.donecallback(username);
             }
         }
       });
