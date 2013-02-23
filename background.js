@@ -106,7 +106,7 @@ function loadpaneldata(panel) {
                             '>' + p['internal_number'] + '/' + p['description'] +  '</option>';
                 }
                 // make sure the radio inputs are enabled
-                //mainpanel.port.emit('enableuserdestinations');
+                panel.enableuserdestinations();
             }
             if (selected_fixed == null && selected_phone == null) {
               chrome.browserAction.setIcon({path: 'assets/img/call-red.png'})

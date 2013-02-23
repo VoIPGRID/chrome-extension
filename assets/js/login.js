@@ -41,6 +41,11 @@ $(function() {
     $('#password').val('');
   };
 
+  var enableuserdestinations = function() {
+    $('#no').removeAttr('disabled');
+    $('#yes').removeAttr('disabled');
+  };
+
   var errorcallback = function(response) {
     updatehead('Je gebruikersnaam en/of wachtwoord is onjuist.'); // 'Your username and/or password is incorrect.'
     resetloginform();
@@ -79,7 +84,8 @@ $(function() {
       donecallback: donecallback,
       errorcallback: errorcallback,
       updatehead: updatehead,
-      updatestatus: updatestatus
+      updatestatus: updatestatus,
+      enableuserdestinations: enableuserdestinations
     }
     background.doLogin($('#username').val(), $('#password').val(), panel);
   });
