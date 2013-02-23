@@ -28,6 +28,7 @@ $(function() {
       }
   });
 
+  // update the heading which displays user info
   var updatehead = function(html) {
     $('#head').html(html);
   };
@@ -57,8 +58,14 @@ $(function() {
     $('#yes').attr('disabled', 'disabled');
   };
 
+  // update the list of queue callgroups
   var updatelist = function(html) {
     $('#queue').html(html);
+  };
+
+  // update the queue sizes in the list of queue callgroups
+  var updatequeuesize = function(size, id) {
+    $('#size' + id).html(size);
   };
 
   var panel = {
@@ -67,6 +74,7 @@ $(function() {
     updatehead: updatehead,
     updatestatus: updatestatus,
     updatelist: updatelist,
+    updatequeuesize: updatequeuesize,
     enableuserdestinations: enableuserdestinations,
   }
 

@@ -11,6 +11,7 @@ var selected_fixed = null;
 var selected_phone = null;
 var selecteduserdestination_id = '';
 
+var callgroup_ids = new Array();
 var client_id = '';
 
 var user_id = '';
@@ -135,6 +136,52 @@ function loadpaneldata(panel) {
   }
 }
 
+/* fills the queue list with queue sizes */
+function getqueuesizes(panel) {
+    var username = storage.username;
+    var password = storage.password;
+    if (username && password) {
+      var base64auth = 'Basic ' + btoa(username + ':' + password);
+      for (var i in callgroup_ids) {
+        var request = $.ajax({
+          url: platform_url + 'api/' + queueresource + '/' + callgroup_ids[i] + '/',
+          dataType: 'json',
+          settings: {
+            accepts: 'application/json',
+            contentType: 'application/json'
+          },
+          headers: {
+            Authorization: base64auth
+          }
+        });
+
+        // do a request for each callgroup
+        request.done(function(response) {
+          // update list item for this specific callgroup
+          var queue_size = response.queue_size;
+          var number = parseInt(queue_size);
+          if (isNaN(number)) {
+              queue_size = '?'; // queue size is not available
+          }
+          if (response.id == storage.primary) {
+              var filename = 'assets/img/queue10.png';
+              if (isNaN(number)) {
+                  filename = 'assets/img/queue.png';
+              }
+              else if (number < 10) {
+                  filename = 'assets/img/queue' + number + '.png';
+              }
+              chrome.browserAction.setIcon({path: filename})
+           }
+           panel.updatequeuesize(queue_size, response.id);
+        });
+      }
+    }
+    else {
+      chrome.browserAction.setIcon({path: 'assets/img/call-gray.png'})
+    }
+}
+
 /* fetches queue info and loads them into the list on the main panel */
 function loadqueuedata(panel, base64auth) {
     var request = $.ajax({
@@ -174,7 +221,7 @@ function loadqueuedata(panel, base64auth) {
               html += '<ul>'
           }
           panel.updatelist(html);
-          //getqueuesizes();
+          getqueuesizes(panel);
           //queue_timer = timer.setInterval(getqueuesizes, 5000);
     });
     request.fail(function(jqXHR, textStatus) {
