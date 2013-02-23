@@ -32,6 +32,10 @@ $(function() {
     $('#head').html(html);
   };
 
+  var updatestatus = function(html) {
+    $('#statusupdate').html(html);
+  };
+
   var resetloginform = function() {
     $('#username').val('');
     $('#password').val('');
@@ -64,8 +68,6 @@ $(function() {
     $("#settings").on("click", function() {
       background.openSettings();
     })
-
-    updatehead(username);
   };
 
   $("#body").hide();
@@ -75,7 +77,9 @@ $(function() {
     var panel = {
       nouserdestinations: nouserdestinations,
       donecallback: donecallback,
-      errorcallback: errorcallback
+      errorcallback: errorcallback,
+      updatehead: updatehead,
+      updatestatus: updatestatus
     }
     background.doLogin($('#username').val(), $('#password').val(), panel);
   });

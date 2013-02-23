@@ -85,7 +85,7 @@ function loadpaneldata(panel) {
             }
             if (ud.fixeddestinations.length == 0 && ud.phoneaccounts.length == 0) {
                 html = '<option>Je hebt momenteel geen bestemmingen.</option>'; // 'You have no destinations at the moment.'
-                mainpanel.port.emit('nouserdestinations');
+                panel.nouserdestinations();
             } else {
                 for (var i in ud.fixeddestinations) {
                     f =ud.fixeddestinations[i];
@@ -116,8 +116,13 @@ function loadpaneldata(panel) {
             //mainpanel.port.emit('updateform', '');
             //mainpanel.port.emit('updatehead', username);
             //mainpanel.port.emit('updatestatus', html);
+            console.log("Update head")
+            console.log(html)
+            panel.updatehead(html);
             // the user destinations have been loaded succesfully. we may fetch the queue list now.
             //loadqueuedata(base64auth);
+            panel.updatehead(username);
+            panel.updatestatus(html);
             // Show the new popup
             if (panel.donecallback) {
               panel.donecallback(username);
