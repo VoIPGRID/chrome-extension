@@ -105,6 +105,11 @@ $(function() {
       }
   });
 
+  $('#statusupdate').change(function() {
+      background.selectuserdestination($('#statusupdate option:selected').val());
+  });
+
+
   var donecallback = function() {
     $("#loginform").hide();
     $("#body").show();

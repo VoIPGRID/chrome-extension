@@ -254,16 +254,20 @@ var setprimary = function(panel, id) {
 var setuserdestination = function(value) {
   // on selecting the 'no' radio button, set the selected userdestination to None.
   if(value == null) {
-      selectuserdestination(null, null);
+      selectuserdestination_internal(null, null);
   }
   // on selecting 'yes', set the userdestination to the value of the userdestination select input.
   else {
-      selectuserdestination(value.split('-')[0], value.split('-')[1]);
+      selectuserdestination_internal(value.split('-')[0], value.split('-')[1]);
   }
 };
 
+var selectuserdestination = function(value) {
+  selectuserdestination_internal(value.split('-')[0], value.split('-')[1]);
+};
+
 /* sets the selected userdestination to the provided type and id */
-var  selectuserdestination = function(type, id) {
+var  selectuserdestination_internal = function(type, id) {
     var username = storage.username;
     var password = storage.password;
     if (username && password) {
@@ -307,6 +311,7 @@ window.openSettings = openSettings;
 window.loadpaneldata = loadpaneldata;
 window.setprimary = setprimary;
 window.setuserdestination = setuserdestination;
+window.selectuserdestination = selectuserdestination;
 
 window.selected_fixed = selected_fixed;
 window.selected_phone = selected_phone;
