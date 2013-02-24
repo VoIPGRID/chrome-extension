@@ -93,6 +93,18 @@ $(function() {
       }
   }); 
 
+  // handle statusupdate inputs
+  $('input[name=availability]').change(function() {
+      if($(this).val() == 'yes') {
+          $('#statusupdate').removeAttr('disabled');
+          background.setuserdestination($('#statusupdate option:selected').val());
+      }
+      else {
+          $('#statusupdate').attr('disabled', 'disabled');
+          background.setuserdestination(null);
+      }
+  });
+
   var donecallback = function() {
     $("#loginform").hide();
     $("#body").show();

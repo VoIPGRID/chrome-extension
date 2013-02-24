@@ -4,6 +4,8 @@ var storage = localStorage;
 
 const userdestinationresource = "userdestination";
 const queueresource = 'queuecallgroup';
+const selecteduserdestinationresource = 'selecteduserdestination';
+const userdestinationresource = 'userdestination';
 
 var platform_url = "https://client.voys.nl/";
 
@@ -239,7 +241,7 @@ var setprimary = function(panel, id) {
   storage.primary = id;
   getqueuesizes(panel);
   clearInterval(queue_timer);
-  queue_timer = timer.setInterval(getqueuesizes, 5000);
+  queue_timer = setInterval(getqueuesizes, 5000);
   if (id == '') {
     if (selected_fixed == null && selected_phone == null) {
       chrome.browserAction.setIcon({path: 'assets/img/call-red.png'})
@@ -249,6 +251,54 @@ var setprimary = function(panel, id) {
   }
 };
 
+var setuserdestination = function(value) {
+  // on selecting the 'no' radio button, set the selected userdestination to None.
+  if(value == null) {
+      selectuserdestination(null, null);
+  }
+  // on selecting 'yes', set the userdestination to the value of the userdestination select input.
+  else {
+      selectuserdestination(value.split('-')[0], value.split('-')[1]);
+  }
+};
+
+/* sets the selected userdestination to the provided type and id */
+var  selectuserdestination = function(type, id) {
+    var username = storage.username;
+    var password = storage.password;
+    if (username && password) {
+        var base64auth = 'Basic ' + btoa(username + ':' + password);
+        selected_fixed = null;
+        selected_phone = null;
+        if (type == 'fixed') {
+            selected_fixed = id;
+        } else if(type == 'phone') {
+            selected_phone = id;
+        }
+         var request = $.ajax({
+          url: platform_url + 'api/' + selecteduserdestinationresource + '/' + selecteduserdestination_id + '/',  
+          dataType: 'json',
+          data: '{\"fixeddestination\": ' + selected_fixed + ', \"phoneaccount\": ' + selected_phone + '}',
+          settings: {
+            accepts: 'application/json',
+            contentType: 'application/json'
+          },
+          headers: {
+            Authorization: base64auth
+          },
+          type: 'PUT'
+        });
+        clearInterval(queue_timer);
+        queue_timer = setInterval(getqueuesizes, 5000);
+        if (id == null) {
+          chrome.browserAction.setIcon({path: 'assets/img/call-red.png'})
+        }
+        else {
+          chrome.browserAction.setIcon({path: 'assets/img/call-green.png'})
+        }
+    }
+};
+
 // Exported values
 window.doLogin = doLogin;
 window.loggedOut = loggedOut;
@@ -256,6 +306,7 @@ window.openHelp = openHelp;
 window.openSettings = openSettings;
 window.loadpaneldata = loadpaneldata;
 window.setprimary = setprimary;
+window.setuserdestination = setuserdestination;
 
 window.selected_fixed = selected_fixed;
 window.selected_phone = selected_phone;
