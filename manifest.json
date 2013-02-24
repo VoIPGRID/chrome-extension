@@ -16,6 +16,8 @@
         "default_popup": "login.html"
     },
     "permissions": [
-        "https://client.voys.nl/"
-    ]
+      "https://client.voys.nl/",
+      "storage"
+    ],
+    "options_page": "options.html"
 }

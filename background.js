@@ -7,7 +7,14 @@ const queueresource = 'queuecallgroup';
 const selecteduserdestinationresource = 'selecteduserdestination';
 const userdestinationresource = 'userdestination';
 
-var platform_url = "https://client.voys.nl/";
+const base_platform_url = "https://client.voys.nl/";
+
+// set the url if missing
+if (!storage.url) {
+  storage.url = base_platform_url;
+}
+
+var platform_url = storage.url;
 
 var selected_fixed = null;
 var selected_phone = null;
@@ -44,7 +51,7 @@ var loggedOut = function(panel) {
   selecteduserdestination_id = '';
   clearInterval(queue_timer);
   chrome.browserAction.setIcon({path: 'assets/img/call-gray.png'})
-  if (panel.errorcallback) {
+  if (panel && panel.errorcallback) {
     panel.errorcallback()
     panel.showLogin()
     panel.updatehead('Uitgelogd');
@@ -303,13 +310,25 @@ var  selectuserdestination_internal = function(type, id) {
     }
 };
 
-// Set the icon if we are logged
-if (storage.logged) {
-  chrome.browserAction.setIcon({path: 'assets/img/call-green.png'})
-}
-else {
-  chrome.browserAction.setIcon({path: 'assets/img/call-gray.png'})
-}
+var setIcon = function() {
+  // Set the icon if we are logged
+  if (storage.logged) {
+    chrome.browserAction.setIcon({path: 'assets/img/call-green.png'})
+  }
+  else {
+    chrome.browserAction.setIcon({path: 'assets/img/call-gray.png'})
+  }
+};
+
+// bind changes to the local storage
+$(window).bind('storage', function (e) {
+  // logout
+  if (e.originalEvent.key = "url") {
+    platform_url = e.originalEvent.newValue;
+    loggedOut();
+    setIcon();
+  }
+});
 
 // Exported values
 window.doLogin = doLogin;
