@@ -37,19 +37,9 @@ $(function() {
     $('#statusupdate').html(html);
   };
 
-  var resetloginform = function() {
-    $('#username').val('');
-    $('#password').val('');
-  };
-
-  var enableuserdestinations = function() {
-    $('#no').removeAttr('disabled');
-    $('#yes').removeAttr('disabled');
-  };
-
-  var errorcallback = function() {
-    updatehead('Je gebruikersnaam en/of wachtwoord is onjuist.'); // 'Your username and/or password is incorrect.'
-    resetloginform();
+  // update the queue sizes in the list of queue callgroups
+  var updatequeuesize = function(size, id) {
+    $('#size' + id).html(size);
   };
 
   var nouserdestinations = function() {
@@ -58,18 +48,35 @@ $(function() {
     $('#yes').attr('disabled', 'disabled');
   };
 
+  var enableuserdestinations = function() {
+    $('#no').removeAttr('disabled');
+    $('#yes').removeAttr('disabled');
+  };
+
+  // set 'no' as selected radio input and disable statusupdate select input
+  var noselecteduserdestination = function() {
+      $('#no').attr('checked', true);
+      $('#statusupdate').attr('disabled', 'disabled');
+  };
+
+  var resetloginform = function() {
+    $('#username').val('');
+    $('#password').val('');
+  };
+
+  var errorcallback = function() {
+    updatehead('Je gebruikersnaam en/of wachtwoord is onjuist.'); // 'Your username and/or password is incorrect.'
+    resetloginform();
+  };
+
   // update the list of queue callgroups
   var updatelist = function(html) {
     $('#queue').html(html);
   };
 
-  // update the queue sizes in the list of queue callgroups
-  var updatequeuesize = function(size, id) {
-    $('#size' + id).html(size);
-  };
-
   var panel = {
     nouserdestinations: nouserdestinations,
+    noselecteduserdestination: noselecteduserdestination,
     errorcallback: errorcallback,
     updatehead: updatehead,
     updatestatus: updatestatus,

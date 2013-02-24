@@ -85,9 +85,7 @@ function loadpaneldata(panel) {
             selected_phone = ud.selecteduserdestination.phoneaccount;
             if(selected_fixed == null && selected_phone == null) {
                 // set 'no' as selected radio input and disable statusupdate select input
-                if (panel.nouserdestinations) {
-                  panel.nouserdestinations();
-                }
+                panel.noselecteduserdestination();
             }
             if (ud.fixeddestinations.length == 0 && ud.phoneaccounts.length == 0) {
                 html = '<option>Je hebt momenteel geen bestemmingen.</option>'; // 'You have no destinations at the moment.'
