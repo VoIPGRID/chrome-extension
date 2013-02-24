@@ -78,6 +78,21 @@ $(function() {
     enableuserdestinations: enableuserdestinations,
   }
 
+  // widget select a li
+  $('.widget.queues').on('click', 'li', function() {
+      if($(this).attr('title') != undefined) {
+          $(this).siblings().removeClass('selected');
+          if($(this).attr('class') == 'selected') {
+              $(this).removeClass('selected');
+              background.setprimary(panel, '');
+          }
+          else {
+              $(this).addClass('selected');
+              background.setprimary(panel, $(this).attr('title'));
+          }
+      }
+  }); 
+
   var donecallback = function() {
     $("#loginform").hide();
     $("#body").show();

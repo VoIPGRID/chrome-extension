@@ -184,7 +184,7 @@ function getqueuesizes(panel) {
     else {
       chrome.browserAction.setIcon({path: 'assets/img/call-gray.png'})
     }
-}
+};
 
 /* fetches queue info and loads them into the list on the main panel */
 function loadqueuedata(panel, base64auth) {
@@ -235,12 +235,27 @@ function loadqueuedata(panel, base64auth) {
     });
 }
 
+var setprimary = function(panel, id) {
+  storage.primary = id;
+  getqueuesizes(panel);
+  clearInterval(queue_timer);
+  queue_timer = timer.setInterval(getqueuesizes, 5000);
+  if (id == '') {
+    if (selected_fixed == null && selected_phone == null) {
+      chrome.browserAction.setIcon({path: 'assets/img/call-red.png'})
+    } else {
+      chrome.browserAction.setIcon({path: 'assets/img/call-green.png'})
+    }
+  }
+};
+
 // Exported values
 window.doLogin = doLogin;
 window.loggedOut = loggedOut;
 window.openHelp = openHelp;
 window.openSettings = openSettings;
 window.loadpaneldata = loadpaneldata;
+window.setprimary = setprimary;
 
 window.selected_fixed = selected_fixed;
 window.selected_phone = selected_phone;
