@@ -158,8 +158,11 @@ $(function() {
     window.close();
   });
 
-  $("#body").hide();
-  $("#loginform").hide();
+  if (background.logged) {
+    $("#loginform").hide();
+  } else {
+    $("#body").hide();
+  }
 
   background.loadpaneldata(panel);
 });

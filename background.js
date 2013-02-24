@@ -38,6 +38,7 @@ var openSettings = function() {
 var loggedOut = function(panel) {
   delete storage.username;
   delete storage.password;
+  delete storage.logged;
   client_id = '';
   user_id = '';
   selecteduserdestination_id = '';
@@ -71,6 +72,7 @@ function loadpaneldata(panel) {
     });
     request.done(function(response) {
         var html = '';
+        storage.logged = true;
 
         var userdestinations = response.objects;
         if (userdestinations == null || userdestinations.length == 0) {
@@ -301,6 +303,14 @@ var  selectuserdestination_internal = function(type, id) {
     }
 };
 
+// Set the icon if we are logged
+if (storage.logged) {
+  chrome.browserAction.setIcon({path: 'assets/img/call-green.png'})
+}
+else {
+  chrome.browserAction.setIcon({path: 'assets/img/call-gray.png'})
+}
+
 // Exported values
 window.doLogin = doLogin;
 window.loggedOut = loggedOut;
@@ -316,6 +326,6 @@ window.selected_phone = selected_phone;
 window.selecteduserdestination_id = selecteduserdestination_id;
 
 window.client_id = client_id;
-
 window.user_id = user_id;
 
+window.logged = storage.logged;
