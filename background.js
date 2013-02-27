@@ -338,7 +338,7 @@ var clicktodial = function(b_number) {
     dialed_number = b_number;
     var username = storage.username;
     var password = storage.password;
-    if (false && username && password) {
+    if (username && password) {
         var base64auth = 'Basic ' + btoa(username + ':' + password);
         var content = '{\"b_number\": \"' + b_number.replace(/[^0-9+]/g, '') + '\"}';
         var request = $.ajax({
@@ -355,7 +355,7 @@ var clicktodial = function(b_number) {
           type: 'POST'
         });
         request.done( function (response) {
-            if (response.json != null && response.json['callid'] != null) {
+            if (false && response.callid != null) {
                 // display the clicktodialpanel only if we have a callid
                 callid = response.json['callid'];
                 status_timer = timer.setInterval(updatestatus, 500);
@@ -376,12 +376,13 @@ var clicktodial = function(b_number) {
                 clicktodialpanel.port.emit('updatenumber', b_number);
                 clicktodialpanel.show();
             }
-            else {
-                require('notifications').notify({
-                    text: 'Het is niet gelukt om het gesprek op te zetten.', // 'The call could not be set up.'
-                    iconURL: data.url('clicktodial.gif')
-                });
-            }
+        });
+        request.error(function() {
+              var notification = webkitNotifications.createNotification(
+                'assets/img/clicktodial.png',
+                'VoIPGrid!',
+                'Het is niet gelukt om het gesprek op te zetten.');
+              notification.show();
         });
     }
     else {
