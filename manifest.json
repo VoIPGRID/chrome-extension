@@ -19,5 +19,14 @@
       "https://client.voys.nl/",
       "storage"
     ],
-    "options_page": "options.html"
+    "content_scripts": [
+    {
+      "matches": ["*://*/*"],
+      "js": ["assets/js/jquery.js", "clicktodial_contentscript.js"]
+    }
+    ],
+    "options_page": "options.html",
+    "web_accessible_resources" :[
+        "assets/img/clicktodial.png"
+    ]
 }
