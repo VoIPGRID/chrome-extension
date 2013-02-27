@@ -17,7 +17,8 @@
     },
     "permissions": [
       "https://client.voys.nl/",
-      "storage"
+      "storage",
+      "notifications"
     ],
     "content_scripts": [
     {

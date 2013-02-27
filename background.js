@@ -6,6 +6,7 @@ const userdestinationresource = "userdestination";
 const queueresource = 'queuecallgroup';
 const selecteduserdestinationresource = 'selecteduserdestination';
 const userdestinationresource = 'userdestination';
+const clicktodialresource = 'clicktodial';
 
 const base_platform_url = "https://client.voys.nl/";
 
@@ -26,6 +27,8 @@ var client_id = '';
 var user_id = '';
 
 var queue_timer = '';
+
+var dialed_number = '';
 
 var doLogin = function(user, pass, panel) {
   storage.username = user;
@@ -329,6 +332,76 @@ $(window).bind('storage', function (e) {
     setIcon();
   }
 });
+
+/* handles clicktodial: initiates a call and shows the clicktodial panel. */
+var clicktodial = function(b_number) {
+    dialed_number = b_number;
+    var username = storage.username;
+    var password = storage.password;
+    if (false && username && password) {
+        var base64auth = 'Basic ' + btoa(username + ':' + password);
+        var content = '{\"b_number\": \"' + b_number.replace(/[^0-9+]/g, '') + '\"}';
+        var request = $.ajax({
+          url: platform_url + 'api/' + clicktodialresource + '/',
+          dataType: 'json',
+          data: '{\"fixeddestination\": ' + selected_fixed + ', \"phoneaccount\": ' + selected_phone + '}',
+          settings: {
+            accepts: 'application/json',
+            contentType: 'application/json'
+          },
+          headers: {
+            Authorization: base64auth
+          },
+          type: 'POST'
+        });
+        request.done( function (response) {
+            if (response.json != null && response.json['callid'] != null) {
+                // display the clicktodialpanel only if we have a callid
+                callid = response.json['callid'];
+                status_timer = timer.setInterval(updatestatus, 500);
+                clicktodialpanel = panel({
+                    width: 302,
+                    height: 85,
+                    contentScriptFile: [data.url('assets/js/jquery.js'), data.url('assets/js/clicktodialpanel.js')],
+                    contentURL: data.url('clicktodial.html'),
+                    onHide: function() {
+                        timer.clearInterval(status_timer);
+                        clicktodialpanel.hide();
+                    }
+                });
+                clicktodialpanel.port.on('close', function() {
+                    timer.clearInterval(status_timer);
+                    clicktodialpanel.hide();
+                });
+                clicktodialpanel.port.emit('updatenumber', b_number);
+                clicktodialpanel.show();
+            }
+            else {
+                require('notifications').notify({
+                    text: 'Het is niet gelukt om het gesprek op te zetten.', // 'The call could not be set up.'
+                    iconURL: data.url('clicktodial.gif')
+                });
+            }
+        });
+    }
+    else {
+      var notification = webkitNotifications.createNotification(
+        'assets/img/clicktodial.png',
+        'VoIPGrid!',
+        'Om gebruik te kunnen maken van Klik en Bel moet eerst ingelogd worden, door op het icoontje op de ' +
+                    'toolbar te klikken en je gegevens in te vullen.');
+      notification.show();
+    }
+};
+
+// Listen for content script messages
+chrome.extension.onMessage.addListener(
+  function(request, sender, sendResponse) {
+    if (request.type === "click") {
+      clicktodial(request.number);
+    }
+  }
+);
 
 // Exported values
 window.doLogin = doLogin;
