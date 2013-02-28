@@ -53,7 +53,7 @@
                     ' line-height: 18px !important; margin: 0 4px !important; position: relative !important;' +
                     ' bottom: -3px !important; padding: 0 !important;');
                 $(a).click(function() {
-                    chrome.extension.sendMessage({type: 'click', number: $(this).attr('rel'), width: window.innerWidth, height: window.innerHeight});
+                    chrome.extension.sendMessage({type: 'click', number: $(this).attr('rel')});
                     return false;
                 });
                 span.appendChild(a);

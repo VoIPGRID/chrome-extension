@@ -335,7 +335,7 @@ $(window).bind('storage', function (e) {
 });
 
 /* handles clicktodial: initiates a call and shows the clicktodial panel. */
-var clicktodial = function(b_number, width, height, tab) {
+var clicktodial = function(b_number, tab) {
     dialed_number = b_number;
     var username = storage.username;
     var password = storage.password;
@@ -380,13 +380,6 @@ var clicktodial = function(b_number, width, height, tab) {
         });
         request.error(function() {
             //status_timer = setInterval(updatestatus, 500);
-            /*var w = 302;
-            var h = 85;
-            var left = Math.floor((width/2)-(w/2));
-            var top = Math.floor((height/2)-(h/2)); 
-
-            chrome.windows.create({'url': 'clicktodial.html', 'type': 'popup', 'width': w, 'height': h, 'left': left, 'top': top} , function(window) {
-            });*/
             var fontUrl = chrome.extension.getURL('assets/font');
             var font = "@font-face {" +
               "font-family: 'FontAwesome';" +
@@ -439,7 +432,7 @@ var clicktodial = function(b_number, width, height, tab) {
 chrome.extension.onMessage.addListener(
   function(request, sender, sendResponse) {
     if (request.type === "click") {
-      clicktodial(request.number, request.width, request.height, sender.tab);
+      clicktodial(request.number, sender.tab);
     }
     if (request.type === "status-closed") {
       clearInterval(status_timer);
