@@ -389,7 +389,7 @@ var clicktodial = function(b_number, tab) {
               "font-style: normal;";
             chrome.tabs.insertCSS(tab.id, {code: font}, function() {
               chrome.tabs.insertCSS(tab.id, {file: 'assets/css/clicktodial.css'}, function() {
-                  chrome.tabs.sendMessage(tab.id, {type: "open"}, function(response) {
+                  chrome.tabs.sendMessage(tab.id, {type: "open", number: b_number}, function(response) {
                     //console.log(response.farewell);
                 });
               });
