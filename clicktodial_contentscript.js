@@ -53,7 +53,7 @@
                     ' line-height: 18px !important; margin: 0 4px !important; position: relative !important;' +
                     ' bottom: -3px !important; padding: 0 !important;');
                 $(a).click(function() {
-                    chrome.extension.sendMessage({type: 'click', number: $(this).attr('rel')});
+                    chrome.extension.sendMessage({type: 'click', number: $(this).attr('rel'), width: window.innerWidth, height: window.innerHeight});
                     return false;
                 });
                 span.appendChild(a);
@@ -64,3 +64,9 @@
         }
     }
 })();
+
+chrome.extension.onMessage.addListener(
+  function(request, sender, sendResponse) {
+     var popup = $('<div class="voipgrid-status"><h2><i class="icon-phone-sign"></i> Gesprek naar <span id="number"></span><i class="icon-remove-sign" id="close" style="float:right;cursor:pointer;"></i></h2><p><strong>Status:</strong> <span id="status"></span></p></div>');
+     $('body').append(popup);
+  });

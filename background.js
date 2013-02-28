@@ -27,6 +27,7 @@ var client_id = '';
 var user_id = '';
 
 var queue_timer = '';
+var status_timer = '';
 
 var dialed_number = '';
 
@@ -334,7 +335,7 @@ $(window).bind('storage', function (e) {
 });
 
 /* handles clicktodial: initiates a call and shows the clicktodial panel. */
-var clicktodial = function(b_number) {
+var clicktodial = function(b_number, width, height, tab) {
     dialed_number = b_number;
     var username = storage.username;
     var password = storage.password;
@@ -355,9 +356,9 @@ var clicktodial = function(b_number) {
           type: 'POST'
         });
         request.done( function (response) {
-            if (false && response.callid != null) {
+            if (response.callid != null) {
                 // display the clicktodialpanel only if we have a callid
-                callid = response.json['callid'];
+                callid = response.callid;
                 status_timer = timer.setInterval(updatestatus, 500);
                 clicktodialpanel = panel({
                     width: 302,
@@ -378,11 +379,41 @@ var clicktodial = function(b_number) {
             }
         });
         request.error(function() {
-              var notification = webkitNotifications.createNotification(
+            //status_timer = setInterval(updatestatus, 500);
+            /*var w = 302;
+            var h = 85;
+            var left = Math.floor((width/2)-(w/2));
+            var top = Math.floor((height/2)-(h/2)); 
+
+            chrome.windows.create({'url': 'clicktodial.html', 'type': 'popup', 'width': w, 'height': h, 'left': left, 'top': top} , function(window) {
+            });*/
+            chrome.tabs.insertCSS(tab.id, {file: 'assets/css/clicktodial.css'}, function() {
+              chrome.tabs.sendMessage(tab.id, {type: "open"}, function(response) {
+                //console.log(response.farewell);
+              });
+            });
+                /*clicktodialpanel = panel({
+                    width: 302,
+                    height: 85,
+                    contentScriptFile: [data.url('assets/js/jquery.js'), data.url('assets/js/clicktodialpanel.js')],
+                    contentURL: data.url('clicktodial.html'),
+                    onHide: function() {
+                        timer.clearInterval(status_timer);
+                        clicktodialpanel.hide();
+                    }
+                });
+                clicktodialpanel.port.on('close', function() {
+                    timer.clearInterval(status_timer);
+                    clicktodialpanel.hide();
+                });
+                clicktodialpanel.port.emit('updatenumber', b_number);
+                clicktodialpanel.show();*/
+
+/*              var notification = webkitNotifications.createNotification(
                 'assets/img/clicktodial.png',
                 'VoIPGrid!',
                 'Het is niet gelukt om het gesprek op te zetten.');
-              notification.show();
+              notification.show();*/
         });
     }
     else {
@@ -399,7 +430,7 @@ var clicktodial = function(b_number) {
 chrome.extension.onMessage.addListener(
   function(request, sender, sendResponse) {
     if (request.type === "click") {
-      clicktodial(request.number);
+      clicktodial(request.number, request.width, request.height, sender.tab);
     }
   }
 );
