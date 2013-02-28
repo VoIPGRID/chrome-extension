@@ -30,6 +30,10 @@
     ],
     "options_page": "options.html",
     "web_accessible_resources" :[
-        "assets/img/clicktodial.png"
+        "assets/img/clicktodial.png",
+        "assets/font/fontawesome-webfont.eot",
+        "assets/font/fontawesome-webfont.woff",
+        "assets/font/fontawesome-webfont.ttf",
+        "assets/font/fontawesome-webfont.svg"
     ]
 }

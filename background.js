@@ -387,9 +387,18 @@ var clicktodial = function(b_number, width, height, tab) {
 
             chrome.windows.create({'url': 'clicktodial.html', 'type': 'popup', 'width': w, 'height': h, 'left': left, 'top': top} , function(window) {
             });*/
-            chrome.tabs.insertCSS(tab.id, {file: 'assets/css/clicktodial.css'}, function() {
-              chrome.tabs.sendMessage(tab.id, {type: "open"}, function(response) {
-                //console.log(response.farewell);
+            var fontUrl = chrome.extension.getURL('assets/font');
+            var font = "@font-face {" +
+              "font-family: 'FontAwesome';" +
+              "src: url('" + fontUrl + "/fontawesome-webfont.eot');" +
+              "src: url('" + fontUrl + "/fontawesome-webfont.eot?#iefix') format('embedded-opentype'), url('" + fontUrl + "/fontawesome-webfont.woff') format('woff'), url('" + fontUrl + "/fontawesome-webfont.ttf') format('truetype'), url('" + fontUrl + "/fontawesome-webfont.svg#FontAwesome') format('svg');" +
+              "font-weight: normal;" +
+              "font-style: normal;";
+            chrome.tabs.insertCSS(tab.id, {code: font}, function() {
+              chrome.tabs.insertCSS(tab.id, {file: 'assets/css/clicktodial.css'}, function() {
+                  chrome.tabs.sendMessage(tab.id, {type: "open"}, function(response) {
+                    //console.log(response.farewell);
+                });
               });
             });
                 /*clicktodialpanel = panel({
