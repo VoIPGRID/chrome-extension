@@ -67,6 +67,9 @@
 
 chrome.extension.onMessage.addListener(
   function(request, sender, sendResponse) {
-     var popup = $('<div class="voipgrid-status"><h2><i class="icon-phone-sign"></i> Gesprek naar <span id="number"></span><i class="icon-remove-sign" id="close" style="float:right;cursor:pointer;"></i></h2><p><strong>Status:</strong> <span id="status"></span></p></div>');
+     var popup = $('<div class="voipgrid-status"><h2><i class="icon-phone-sign"></i> Gesprek naar <span id="number"></span><i class="icon-remove-sign" id="voipgrid-status-close" style="float:right;cursor:pointer;"></i></h2><p><strong>Status:</strong> <span id="status"></span></p></div>');
      $('body').append(popup);
+     $('#voipgrid-status-close').on('click', function() {
+        $('.voipgrid-status').remove();
+     });
   });
