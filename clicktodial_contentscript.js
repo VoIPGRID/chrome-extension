@@ -71,5 +71,6 @@ chrome.extension.onMessage.addListener(
      $('body').append(popup);
      $('#voipgrid-status-close').on('click', function() {
         $('.voipgrid-status').remove();
+        chrome.extension.sendMessage({type: 'status-closed'});
      });
   });

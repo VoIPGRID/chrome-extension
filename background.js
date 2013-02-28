@@ -441,6 +441,9 @@ chrome.extension.onMessage.addListener(
     if (request.type === "click") {
       clicktodial(request.number, request.width, request.height, sender.tab);
     }
+    if (request.type === "status-closed") {
+      clearInterval(status_timer);
+    }
   }
 );
 
