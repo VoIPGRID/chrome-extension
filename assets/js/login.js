@@ -124,6 +124,8 @@ $(function() {
     $('body').css('height', '200');
     $('body').css('width', '360');
 
+    $('#close').attr('style', 'float:right;cursor:pointer;display:block');
+
     // Setup help button
     $("#help").on("click", function() {
       background.openHelp();
@@ -145,6 +147,8 @@ $(function() {
   var showLogin = function() {
     $("#loginform").show();
     $("#body").hide();
+
+    $('#close').attr('style', 'float:right;cursor:pointer;display:none');
 
     // Handler for the login button
     $("#login").on("click", function() {
