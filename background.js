@@ -73,6 +73,7 @@ function loadpaneldata(panel) {
     var request = $.ajax({
       url: platform_url + 'api/' + userdestinationresource + '/',
       dataType: 'json',
+      contentType: 'application/json',
       settings: {
         accepts: 'application/json',
         contentType: 'application/json'
@@ -161,6 +162,7 @@ function getqueuesizes(panel) {
         var request = $.ajax({
           url: platform_url + 'api/' + queueresource + '/' + callgroup_ids[i] + '/',
           dataType: 'json',
+          contentType: 'application/json',
           settings: {
             accepts: 'application/json',
             contentType: 'application/json'
@@ -204,6 +206,7 @@ function loadqueuedata(panel, base64auth) {
     var request = $.ajax({
       url: platform_url + 'api/' + queueresource + '/',
       dataType: 'json',
+      contentType: 'application/json',
       settings: {
         accepts: 'application/json',
         contentType: 'application/json'
@@ -293,6 +296,7 @@ var  selectuserdestination_internal = function(type, id) {
          var request = $.ajax({
           url: platform_url + 'api/' + selecteduserdestinationresource + '/' + selecteduserdestination_id + '/',  
           dataType: 'json',
+          contentType: 'application/json',
           data: '{\"fixeddestination\": ' + selected_fixed + ', \"phoneaccount\": ' + selected_phone + '}',
           settings: {
             accepts: 'application/json',
@@ -345,6 +349,7 @@ var clicktodial = function(b_number, tab) {
         var request = $.ajax({
           url: platform_url + 'api/' + clicktodialresource + '/',
           dataType: 'json',
+          contentType: 'application/json',
           data: '{\"fixeddestination\": ' + selected_fixed + ', \"phoneaccount\": ' + selected_phone + '}',
           settings: {
             accepts: 'application/json',
@@ -418,6 +423,7 @@ var updatestatus = function(tab) {
     var request = $.ajax({
       url: platform_url + 'api/' + clicktodialresource + '/' + callid + "/",
       dataType: 'json',
+      contentType: 'application/json',
       settings: {
         accepts: 'application/json',
         contentType: 'application/json'
