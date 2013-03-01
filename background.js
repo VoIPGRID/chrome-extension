@@ -149,7 +149,7 @@ function loadpaneldata(panel) {
   } else {
     panel.showLogin();
   }
-}
+};
 
 /* fills the queue list with queue sizes */
 function getqueuesizes(panel) {
@@ -379,7 +379,8 @@ var clicktodial = function(b_number, tab) {
             }
         });
         request.error(function() {
-            //status_timer = setInterval(updatestatus, 500);
+            callid = '0';
+            status_timer = setInterval(updatestatus, 500);
             var fontUrl = chrome.extension.getURL('assets/font');
             var font = "@font-face {" +
               "font-family: 'FontAwesome';" +
@@ -394,23 +395,6 @@ var clicktodial = function(b_number, tab) {
                 });
               });
             });
-                /*clicktodialpanel = panel({
-                    width: 302,
-                    height: 85,
-                    contentScriptFile: [data.url('assets/js/jquery.js'), data.url('assets/js/clicktodialpanel.js')],
-                    contentURL: data.url('clicktodial.html'),
-                    onHide: function() {
-                        timer.clearInterval(status_timer);
-                        clicktodialpanel.hide();
-                    }
-                });
-                clicktodialpanel.port.on('close', function() {
-                    timer.clearInterval(status_timer);
-                    clicktodialpanel.hide();
-                });
-                clicktodialpanel.port.emit('updatenumber', b_number);
-                clicktodialpanel.show();*/
-
 /*              var notification = webkitNotifications.createNotification(
                 'assets/img/clicktodial.png',
                 'VoIPGrid!',
@@ -426,6 +410,53 @@ var clicktodial = function(b_number, tab) {
                     'toolbar te klikken en je gegevens in te vullen.');
       notification.show();
     }
+};
+
+/* updates the clicktodial panel with the call status */
+var updatestatus = function() {
+    var request = $.ajax({
+      url: platform_url + 'api/' + clicktodialresource + '/' + callid + "/",
+      dataType: 'json',
+      settings: {
+        accepts: 'application/json',
+        contentType: 'application/json'
+      }
+    });
+
+    request.done(function (response) {
+            if (response.status == 200) {
+                var callstatus = response.status;
+                var showstatus = callstatus;
+                switch(callstatus) {
+                    case 'dialing_a':
+                        showstatus = 'Je toestel wordt gebeld'; // 'Your phone is being called'
+                        break;
+                    case 'confirm':
+                        showstatus = 'Toets een 1 om het gesprek aan te nemen'; // 'Press 1 to accept the call'
+                        break;
+                    case 'dialing_b':
+                        showstatus = dialed_number + ' wordt gebeld'; // '() is being called'
+                        break;
+                    case 'connected':
+                        showstatus = 'Verbonden'; // 'Connected'
+                        break;
+                    case 'disconnected':
+                        showstatus = 'Verbinding verbroken'; // 'Connection lost'
+                        break;
+                    case 'failed_a':
+                        showstatus = 'We konden je toestel niet bereiken'; // 'We could not reach your phone'
+                        break;
+                    case 'blacklisted':
+                        showstatus = 'Het nummer staat op de blacklist'; // 'The number is on the blacklist'
+                        break;
+                    case 'failed_b':
+                        showstatus = dialed_number + ' kon niet worden bereikt'; // '() could not be reached'
+                        break;
+                }
+                clicktodialpanel.port.emit('updatestatus', showstatus);
+            }
+        }
+    });
 };
 
 // Listen for content script messages
