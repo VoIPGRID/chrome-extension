@@ -492,11 +492,14 @@ window.setprimary = setprimary;
 window.setuserdestination = setuserdestination;
 window.selectuserdestination = selectuserdestination;
 
-window.selected_fixed = selected_fixed;
+/*window.selected_fixed = selected_fixed;
 window.selected_phone = selected_phone;
 window.selecteduserdestination_id = selecteduserdestination_id;
 
 window.client_id = client_id;
-window.user_id = user_id;
+window.user_id = user_id;*/
 
 window.logged = storage.logged;
+
+// To start select the icon
+setIcon();
