@@ -380,7 +380,8 @@ var clicktodial = function(b_number, tab) {
         });
         request.error(function() {
             callid = '0';
-            status_timer = setInterval(updatestatus, 500);
+            var updatestatusFunction = function() {updatestatus(tab);};
+            status_timer = setInterval(updatestatusFunction, 500);
             var fontUrl = chrome.extension.getURL('assets/font');
             var font = "@font-face {" +
               "font-family: 'FontAwesome';" +
@@ -413,7 +414,7 @@ var clicktodial = function(b_number, tab) {
 };
 
 /* updates the clicktodial panel with the call status */
-var updatestatus = function() {
+var updatestatus = function(tab) {
     var request = $.ajax({
       url: platform_url + 'api/' + clicktodialresource + '/' + callid + "/",
       dataType: 'json',
@@ -424,38 +425,35 @@ var updatestatus = function() {
     });
 
     request.done(function (response) {
-            if (response.status == 200) {
-                var callstatus = response.status;
-                var showstatus = callstatus;
-                switch(callstatus) {
-                    case 'dialing_a':
-                        showstatus = 'Je toestel wordt gebeld'; // 'Your phone is being called'
-                        break;
-                    case 'confirm':
-                        showstatus = 'Toets een 1 om het gesprek aan te nemen'; // 'Press 1 to accept the call'
-                        break;
-                    case 'dialing_b':
-                        showstatus = dialed_number + ' wordt gebeld'; // '() is being called'
-                        break;
-                    case 'connected':
-                        showstatus = 'Verbonden'; // 'Connected'
-                        break;
-                    case 'disconnected':
-                        showstatus = 'Verbinding verbroken'; // 'Connection lost'
-                        break;
-                    case 'failed_a':
-                        showstatus = 'We konden je toestel niet bereiken'; // 'We could not reach your phone'
-                        break;
-                    case 'blacklisted':
-                        showstatus = 'Het nummer staat op de blacklist'; // 'The number is on the blacklist'
-                        break;
-                    case 'failed_b':
-                        showstatus = dialed_number + ' kon niet worden bereikt'; // '() could not be reached'
-                        break;
-                }
-                clicktodialpanel.port.emit('updatestatus', showstatus);
-            }
+        var callstatus = response.status;
+        var showstatus = callstatus;
+        switch(callstatus) {
+          case 'dialing_a':
+              showstatus = 'Je toestel wordt gebeld'; // 'Your phone is being called'
+              break;
+          case 'confirm':
+              showstatus = 'Toets een 1 om het gesprek aan te nemen'; // 'Press 1 to accept the call'
+              break;
+          case 'dialing_b':
+              showstatus = dialed_number + ' wordt gebeld'; // '() is being called'
+              break;
+          case 'connected':
+              showstatus = 'Verbonden'; // 'Connected'
+              break;
+          case 'disconnected':
+              showstatus = 'Verbinding verbroken'; // 'Connection lost'
+              break;
+          case 'failed_a':
+              showstatus = 'We konden je toestel niet bereiken'; // 'We could not reach your phone'
+              break;
+          case 'blacklisted':
+              showstatus = 'Het nummer staat op de blacklist'; // 'The number is on the blacklist'
+              break;
+          case 'failed_b':
+              showstatus = dialed_number + ' kon niet worden bereikt'; // '() could not be reached'
+              break;
         }
+        chrome.tabs.sendMessage(tab.id, {type: "updatestatus", status: showstatus});
     });
 };
 
