@@ -469,6 +469,13 @@ chrome.extension.onMessage.addListener(
   }
 );
 
+var clickOnMenu = function(info, tab) {
+  var number = info.selectionText.replace('(0)', '').replace(/[- \.\(\)]/g, '');
+  clicktodial(number, tab);
+};
+
+chrome.contextMenus.create({title: 'Bel geselecteerde nummer', contexts: ["selection"], onclick: clickOnMenu});
+
 // Exported values
 window.doLogin = doLogin;
 window.loggedOut = loggedOut;

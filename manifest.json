@@ -20,8 +20,12 @@
       "storage",
       "notifications",
       "tabs",
+      "contextMenus",
       "*://*/*"
     ],
+    "icons": {
+        "16": "assets/img/call-green-16.png"
+    },
     "content_scripts": [
     {
       "matches": ["*://*/*"],
