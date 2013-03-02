@@ -20,6 +20,9 @@ var platform_url = storage.url;
 var selected_fixed = null;
 var selected_phone = null;
 var selecteduserdestination_id = '';
+var fixeddestinations = [];
+var phoneaccounts = [];
+var queues = [];
 
 var callgroup_ids = new Array();
 var client_id = '';
@@ -53,6 +56,9 @@ var loggedOut = function(panel) {
   client_id = '';
   user_id = '';
   selecteduserdestination_id = '';
+  fixeddestinations = [];
+  phoneaccounts = [];
+  queues = [];
   clearInterval(queue_timer);
   chrome.browserAction.setIcon({path: 'assets/img/call-gray.png'})
   if (panel && panel.errorcallback) {
@@ -60,7 +66,63 @@ var loggedOut = function(panel) {
     panel.showLogin()
     panel.updatehead('Uitgelogd');
   }
+};
+
+var buildPanel = function(panel) {
+  if (storage.logged) {
+    buildLoggedInPanel(panel);
+  } else {
+    loggedOut(panel);
+  }
 }
+
+var buildLoggedInPanel = function(panel) {
+  if(selected_fixed == null && selected_phone == null) {
+      // set 'no' as selected radio input and disable statusupdate select input
+      panel.noselecteduserdestination();
+  }
+  var html = '';
+  console.log("selected_fixed")
+  console.log(selected_fixed)
+  console.log(selected_phone)
+  if (fixeddestinations.length == 0 && phoneaccounts.length == 0) {
+      html = '<option>Je hebt momenteel geen bestemmingen.</option>'; // 'You have no destinations at the moment.'
+      panel.nouserdestinations();
+  } else {
+      for (var i in fixeddestinations) {
+          f = fixeddestinations[i];
+          var selected = '';
+          if (f.id == selected_fixed) {
+              selected = ' selected="selected"';
+          }
+          html += '<option id="fixed-' + f['id'] + '" value="fixed-' + f['id'] + '"' + selected + 
+                  '>+' + f['phonenumber'] + '/' + f['description'] +  '</option>';
+      }
+      for (var i in phoneaccounts) {
+          p = phoneaccounts[i];
+          var selected = '';
+          if (p.id == selected_phone) {
+              selected = ' selected="selected"';
+          }
+          html += '<option id="phone-' + p['id'] + '" value="phone-' + p['id'] + '"' + selected + 
+                  '>' + p['internal_number'] + '/' + p['description'] +  '</option>';
+      }
+      // make sure the radio inputs are enabled
+      panel.enableuserdestinations();
+  }
+  if (selected_fixed == null && selected_phone == null) {
+    chrome.browserAction.setIcon({path: 'assets/img/call-red.png'})
+  } else {
+    chrome.browserAction.setIcon({path: 'assets/img/call-green.png'})
+  }
+  panel.updatehead(html);
+  // the user destinations have been loaded succesfully. we may fetch the queue list now.
+//  loadqueuedata(panel, base64auth);
+  panel.updatehead(storage.username);
+  panel.updatestatus(html);
+  // Show the new popup
+  panel.donecallback();
+};
 
 /* constructs select input of userdestinations and sets up queue list with a list of callgroups */
 function loadpaneldata(panel) {
@@ -83,68 +145,28 @@ function loadpaneldata(panel) {
       }
     });
     request.done(function(response) {
-        var html = '';
         storage.logged = true;
 
         var userdestinations = response.objects;
         if (userdestinations == null || userdestinations.length == 0) {
-          loggedOut(panel);
+          //loggedOut(panel);
+          delete storage.logged;
         } else {
           var ud = userdestinations[0];
-            // construct select input of userdestinations
-            client_id = ud.client;
-            user_id = ud.user;
-            selecteduserdestination_id = ud.selecteduserdestination.id;
-            selected_fixed = ud.selecteduserdestination.fixeddestination;
-            selected_phone = ud.selecteduserdestination.phoneaccount;
-            if(selected_fixed == null && selected_phone == null) {
-                // set 'no' as selected radio input and disable statusupdate select input
-                panel.noselecteduserdestination();
-            }
-            if (ud.fixeddestinations.length == 0 && ud.phoneaccounts.length == 0) {
-                html = '<option>Je hebt momenteel geen bestemmingen.</option>'; // 'You have no destinations at the moment.'
-                panel.nouserdestinations();
-            } else {
-                for (var i in ud.fixeddestinations) {
-                    f =ud.fixeddestinations[i];
-                    var selected = '';
-                    if (f.id == selected_fixed) {
-                        selected = ' selected="selected"';
-                    }
-                    html += '<option id="fixed-' + f['id'] + '" value="fixed-' + f['id'] + '"' + selected + 
-                            '>+' + f['phonenumber'] + '/' + f['description'] +  '</option>';
-                }
-                for (var i in ud.phoneaccounts) {
-                    p = ud.phoneaccounts[i];
-                    var selected = '';
-                    if (p.id == selected_phone) {
-                        selected = ' selected="selected"';
-                    }
-                    html += '<option id="phone-' + p['id'] + '" value="phone-' + p['id'] + '"' + selected + 
-                            '>' + p['internal_number'] + '/' + p['description'] +  '</option>';
-                }
-                // make sure the radio inputs are enabled
-                panel.enableuserdestinations();
-            }
-            if (selected_fixed == null && selected_phone == null) {
-              chrome.browserAction.setIcon({path: 'assets/img/call-red.png'})
-            } else {
-              chrome.browserAction.setIcon({path: 'assets/img/call-green.png'})
-            }
-            panel.updatehead(html);
-            // the user destinations have been loaded succesfully. we may fetch the queue list now.
-            loadqueuedata(panel, base64auth);
-            panel.updatehead(username);
-            panel.updatestatus(html);
-            // Show the new popup
-            if (panel.donecallback) {
-              panel.donecallback();
-            }
+          // construct select input of userdestinations
+          client_id = ud.client;
+          user_id = ud.user;
+          selecteduserdestination_id = ud.selecteduserdestination.id;
+          selected_fixed = ud.selecteduserdestination.fixeddestination;
+          selected_phone = ud.selecteduserdestination.phoneaccount;
+          fixeddestinations = ud.fixeddestinations;
+          phoneaccounts = ud.phoneaccounts;
+          loadqueuedata(base64auth);
         }
       });
       request.fail(function(jqXHR, textStatus) {
         if (jqXHR.status == 401) {
-          loggedOut(panel);
+          delete storage.logged;
         }
       });
   } else {
@@ -202,7 +224,7 @@ function getqueuesizes(panel) {
 };
 
 /* fetches queue info and loads them into the list on the main panel */
-function loadqueuedata(panel, base64auth) {
+function loadqueuedata(base64auth) {
     var request = $.ajax({
       url: platform_url + 'api/' + queueresource + '/',
       dataType: 'json',
@@ -218,9 +240,10 @@ function loadqueuedata(panel, base64auth) {
 
     request.done(function(response) {
           var html = '';
-          var queues = response.objects;
+          queues = response.objects;
           // no queues, no list
           if (queues.length == 0) {
+              callgroup_ids = new Array();
               html = '<ul><li>Je hebt momenteel geen wachtrijen.</li></ul>'; // 'You have no queues at the moment.'
           }
           // build html list for queue info
@@ -281,7 +304,7 @@ var selectuserdestination = function(value) {
 };
 
 /* sets the selected userdestination to the provided type and id */
-var  selectuserdestination_internal = function(type, id) {
+var selectuserdestination_internal = function(type, id) {
     var username = storage.username;
     var password = storage.password;
     if (username && password) {
@@ -310,6 +333,7 @@ var  selectuserdestination_internal = function(type, id) {
         clearInterval(queue_timer);
         queue_timer = setInterval(getqueuesizes, 5000);
         if (id == null) {
+          console.log("set rei")
           chrome.browserAction.setIcon({path: 'assets/img/call-red.png'})
         }
         else {
@@ -322,8 +346,7 @@ var setIcon = function() {
   // Set the icon if we are logged
   if (storage.logged) {
     chrome.browserAction.setIcon({path: 'assets/img/call-green.png'})
-  }
-  else {
+  } else {
     chrome.browserAction.setIcon({path: 'assets/img/call-gray.png'})
   }
 };
@@ -503,3 +526,5 @@ window.logged = storage.logged;
 
 // To start select the icon
 setIcon();
+// do a login right away
+loadpaneldata();

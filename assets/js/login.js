@@ -168,5 +168,5 @@ $(function() {
     $("#body").hide();
   }
 
-  background.loadpaneldata(panel);
+  background.buildPanel(panel);
 });
