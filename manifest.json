@@ -13,7 +13,7 @@
           "38": "assets/img/call-gray-38.png"
         },
         "default_title": "VoIPGRID",
-        "default_popup": "login.html"
+        "default_popup": "panel.html"
     },
     "permissions": [
       "https://client.voys.nl/",
