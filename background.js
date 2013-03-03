@@ -66,7 +66,7 @@ var loggedOut = function(panel) {
   clearInterval(queue_timer);
   chrome.browserAction.setIcon({path: 'assets/img/call-gray.png'});
   queue_size = 0;
-  if (panel && panel.errorcallback) {
+  if (panel) {
     panel.errorcallback()
     panel.showLogin()
     panel.updatehead('Uitgelogd');

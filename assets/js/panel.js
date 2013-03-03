@@ -148,6 +148,9 @@ $(function() {
     $("#loginform").show();
     $("#body").hide();
 
+    $('body').css('height', '200');
+    $('body').css('width', '360');
+
     $('#close').attr('style', 'float:right;cursor:pointer;display:none');
 
     // Handler for the login button
