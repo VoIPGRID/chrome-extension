@@ -40,7 +40,8 @@ var dialed_number = '';
 var doLogin = function(user, pass, panel) {
   storage.username = user;
   storage.password = pass;
-  loadpaneldata(panel);
+  current_panel = panel;
+  loadpaneldata();
 };
 
 var openHelp = function() {
@@ -76,7 +77,7 @@ var buildPanel = function(panel) {
   if (storage.logged) {
     current_panel = panel;
     buildLoggedInPanel(panel);
-    buildQueuesInPanel(panel)
+    buildQueuesInPanel(panel);
   } else {
     loggedOut(panel);
   }
@@ -175,30 +176,36 @@ var loadpaneldata = function() {
       }
     });
     request.done(function(response) {
-        storage.logged = true;
+      storage.logged = true;
 
-        var userdestinations = response.objects;
-        if (userdestinations == null || userdestinations.length == 0) {
-          //loggedOut(panel);
-          delete storage.logged;
-        } else {
-          var ud = userdestinations[0];
-          // construct select input of userdestinations
-          client_id = ud.client;
-          user_id = ud.user;
-          selecteduserdestination_id = ud.selecteduserdestination.id;
-          selected_fixed = ud.selecteduserdestination.fixeddestination;
-          selected_phone = ud.selecteduserdestination.phoneaccount;
-          fixeddestinations = ud.fixeddestinations;
-          phoneaccounts = ud.phoneaccounts;
-          loadqueuedata(base64auth);
+      var userdestinations = response.objects;
+      if (userdestinations == null || userdestinations.length == 0) {
+        //loggedOut(panel);
+        delete storage.logged;
+      } else {
+        var ud = userdestinations[0];
+        // construct select input of userdestinations
+        client_id = ud.client;
+        user_id = ud.user;
+        selecteduserdestination_id = ud.selecteduserdestination.id;
+        selected_fixed = ud.selecteduserdestination.fixeddestination;
+        selected_phone = ud.selecteduserdestination.phoneaccount;
+        fixeddestinations = ud.fixeddestinations;
+        phoneaccounts = ud.phoneaccounts;
+        loadqueuedata(base64auth);
+      }
+      if (current_panel) {
+        buildPanel(current_panel);
+      }
+    });
+    request.fail(function(jqXHR, textStatus) {
+      if (jqXHR.status == 401) {
+        delete storage.logged;
+        if (current_panel) {
+          buildPanel(current_panel);
         }
-      });
-      request.fail(function(jqXHR, textStatus) {
-        if (jqXHR.status == 401) {
-          delete storage.logged;
-        }
-      });
+      }
+    });
   }
 };
 
@@ -349,7 +356,6 @@ var selectuserdestination_internal = function(type, id) {
         clearInterval(queue_timer);
         queue_timer = setInterval(getqueuesizes, 5000);
         if (id == null) {
-          console.log("set rei")
           chrome.browserAction.setIcon({path: 'assets/img/call-red.png'})
         }
         else {
