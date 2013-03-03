@@ -395,7 +395,7 @@ var clicktodial = function(b_number, tab) {
           url: platform_url + 'api/' + clicktodialresource + '/',
           dataType: 'json',
           contentType: 'application/json',
-          data: '{\"fixeddestination\": ' + selected_fixed + ', \"phoneaccount\": ' + selected_phone + '}',
+          data: content,
           settings: {
             accepts: 'application/json',
             contentType: 'application/json'
@@ -405,52 +405,34 @@ var clicktodial = function(b_number, tab) {
           },
           type: 'POST'
         });
-        request.done( function (response) {
+        request.done(function (response) {
             if (response.callid != null) {
                 // display the clicktodialpanel only if we have a callid
                 callid = response.callid;
-                status_timer = timer.setInterval(updatestatus, 500);
-                clicktodialpanel = panel({
-                    width: 302,
-                    height: 85,
-                    contentScriptFile: [data.url('assets/js/jquery.js'), data.url('assets/js/clicktodialpanel.js')],
-                    contentURL: data.url('clicktodial.html'),
-                    onHide: function() {
-                        timer.clearInterval(status_timer);
-                        clicktodialpanel.hide();
-                    }
+                // closure for the timer
+                var updatestatusFunction = function() {updatestatus(tab);};
+                status_timer = setInterval(updatestatusFunction, 500);
+                var fontUrl = chrome.extension.getURL('assets/font');
+                var font = "@font-face {" +
+                  "font-family: 'FontAwesome';" +
+                  "src: url('" + fontUrl + "/fontawesome-webfont.eot');" +
+                  "src: url('" + fontUrl + "/fontawesome-webfont.eot?#iefix') format('embedded-opentype'), url('" + fontUrl + "/fontawesome-webfont.woff') format('woff'), url('" + fontUrl + "/fontawesome-webfont.ttf') format('truetype'), url('" + fontUrl + "/fontawesome-webfont.svg#FontAwesome') format('svg');" +
+                  "font-weight: normal;" +
+                  "font-style: normal;";
+                chrome.tabs.insertCSS(tab.id, {code: font}, function() {
+                  chrome.tabs.insertCSS(tab.id, {file: 'assets/css/clicktodial.css'}, function() {
+                      chrome.tabs.sendMessage(tab.id, {type: "open", number: b_number});
+                  });
                 });
-                clicktodialpanel.port.on('close', function() {
-                    timer.clearInterval(status_timer);
-                    clicktodialpanel.hide();
-                });
-                clicktodialpanel.port.emit('updatenumber', b_number);
-                clicktodialpanel.show();
             }
         });
         request.error(function() {
             callid = '0';
-            var updatestatusFunction = function() {updatestatus(tab);};
-            status_timer = setInterval(updatestatusFunction, 500);
-            var fontUrl = chrome.extension.getURL('assets/font');
-            var font = "@font-face {" +
-              "font-family: 'FontAwesome';" +
-              "src: url('" + fontUrl + "/fontawesome-webfont.eot');" +
-              "src: url('" + fontUrl + "/fontawesome-webfont.eot?#iefix') format('embedded-opentype'), url('" + fontUrl + "/fontawesome-webfont.woff') format('woff'), url('" + fontUrl + "/fontawesome-webfont.ttf') format('truetype'), url('" + fontUrl + "/fontawesome-webfont.svg#FontAwesome') format('svg');" +
-              "font-weight: normal;" +
-              "font-style: normal;";
-            chrome.tabs.insertCSS(tab.id, {code: font}, function() {
-              chrome.tabs.insertCSS(tab.id, {file: 'assets/css/clicktodial.css'}, function() {
-                  chrome.tabs.sendMessage(tab.id, {type: "open", number: b_number}, function(response) {
-                    //console.log(response.farewell);
-                });
-              });
-            });
-/*              var notification = webkitNotifications.createNotification(
-                'assets/img/clicktodial.png',
-                'VoIPGrid!',
-                'Het is niet gelukt om het gesprek op te zetten.');
-              notification.show();*/
+            var notification = webkitNotifications.createNotification(
+              'assets/img/clicktodial.png',
+              'VoIPGrid!',
+              'Het is niet gelukt om het gesprek op te zetten.');
+            notification.show();
         });
     }
     else {
@@ -536,13 +518,6 @@ window.loadpaneldata = loadpaneldata;
 window.setprimary = setprimary;
 window.setuserdestination = setuserdestination;
 window.selectuserdestination = selectuserdestination;
-
-/*window.selected_fixed = selected_fixed;
-window.selected_phone = selected_phone;
-window.selecteduserdestination_id = selecteduserdestination_id;
-
-window.client_id = client_id;
-window.user_id = user_id;*/
 
 window.logged = storage.logged;
 
