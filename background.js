@@ -25,6 +25,7 @@ var phoneaccounts = [];
 var queues = [];
 var queue_size = 0;
 var queue_id = 0;
+var current_panel = null;
 
 var callgroup_ids = new Array();
 var client_id = '';
@@ -73,6 +74,7 @@ var loggedOut = function(panel) {
 
 var buildPanel = function(panel) {
   if (storage.logged) {
+    current_panel = panel;
     buildLoggedInPanel(panel);
     buildQueuesInPanel(panel)
   } else {
@@ -240,6 +242,10 @@ function getqueuesizes() {
               chrome.browserAction.setIcon({path: filename})
            }
         });
+
+        if (current_panel != null) {
+          current_panel.updatequeuesize(queue_size, queue_id);
+        }
       }
     } else {
       chrome.browserAction.setIcon({path: 'assets/img/call-gray.png'})
