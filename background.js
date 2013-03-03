@@ -23,6 +23,8 @@ var selecteduserdestination_id = '';
 var fixeddestinations = [];
 var phoneaccounts = [];
 var queues = [];
+var queue_size = 0;
+var queue_id = 0;
 
 var callgroup_ids = new Array();
 var client_id = '';
@@ -60,7 +62,8 @@ var loggedOut = function(panel) {
   phoneaccounts = [];
   queues = [];
   clearInterval(queue_timer);
-  chrome.browserAction.setIcon({path: 'assets/img/call-gray.png'})
+  chrome.browserAction.setIcon({path: 'assets/img/call-gray.png'});
+  queue_size = 0;
   if (panel && panel.errorcallback) {
     panel.errorcallback()
     panel.showLogin()
@@ -71,6 +74,7 @@ var loggedOut = function(panel) {
 var buildPanel = function(panel) {
   if (storage.logged) {
     buildLoggedInPanel(panel);
+    buildQueuesInPanel(panel)
   } else {
     loggedOut(panel);
   }
@@ -82,9 +86,6 @@ var buildLoggedInPanel = function(panel) {
       panel.noselecteduserdestination();
   }
   var html = '';
-  console.log("selected_fixed")
-  console.log(selected_fixed)
-  console.log(selected_phone)
   if (fixeddestinations.length == 0 && phoneaccounts.length == 0) {
       html = '<option>Je hebt momenteel geen bestemmingen.</option>'; // 'You have no destinations at the moment.'
       panel.nouserdestinations();
@@ -124,8 +125,35 @@ var buildLoggedInPanel = function(panel) {
   panel.donecallback();
 };
 
+var buildQueuesInPanel = function(panel) {
+  // no queues, no list
+  if (queues.length == 0) {
+      callgroup_ids = new Array();
+      html = '<ul><li>Je hebt momenteel geen wachtrijen.</li></ul>'; // 'You have no queues at the moment.'
+  }
+  // build html list for queue info
+  else {
+      callgroup_ids = new Array();
+      html = '<ul>'
+      for (var i in queues) {
+          q = queues[i];
+          var selected = '';
+          if (q.id == storage.primary) {
+              selected = ' class="selected"';
+          }
+          html += '<li title="' + q['id'] + '"' + selected + '><span class="indicator" id="size' + 
+                  q['id'] + '" title="' + q['id'] + '">?</span> ' + q['description'] + 
+                  ' <span class="code">(' + q['internal_number'] + ')</span></li>';
+          callgroup_ids.push(q.id);
+      }
+      html += '<ul>'
+  }
+  panel.updatelist(html);
+  panel.updatequeuesize(queue_size, queue_id);
+};
+
 /* constructs select input of userdestinations and sets up queue list with a list of callgroups */
-function loadpaneldata(panel) {
+var loadpaneldata = function() {
   var username = storage.username;
   var password = storage.password;
 
@@ -169,13 +197,11 @@ function loadpaneldata(panel) {
           delete storage.logged;
         }
       });
-  } else {
-    panel.showLogin();
   }
 };
 
 /* fills the queue list with queue sizes */
-function getqueuesizes(panel) {
+function getqueuesizes() {
     var username = storage.username;
     var password = storage.password;
     if (username && password) {
@@ -197,7 +223,8 @@ function getqueuesizes(panel) {
         // do a request for each callgroup
         request.done(function(response) {
           // update list item for this specific callgroup
-          var queue_size = response.queue_size;
+          queue_size = response.queue_size;
+          queue_id = response.id;
           var number = parseInt(queue_size);
           if (isNaN(number)) {
               queue_size = '?'; // queue size is not available
@@ -212,71 +239,54 @@ function getqueuesizes(panel) {
               }
               chrome.browserAction.setIcon({path: filename})
            }
-           if (panel) {
-             panel.updatequeuesize(queue_size, response.id);
-           }
         });
       }
-    }
-    else {
+    } else {
       chrome.browserAction.setIcon({path: 'assets/img/call-gray.png'})
     }
 };
 
 /* fetches queue info and loads them into the list on the main panel */
 function loadqueuedata(base64auth) {
-    var request = $.ajax({
-      url: platform_url + 'api/' + queueresource + '/',
-      dataType: 'json',
-      contentType: 'application/json',
-      settings: {
-        accepts: 'application/json',
-        contentType: 'application/json'
-      },
-      headers: {
-        Authorization: base64auth
-      }
-    });
+  var request = $.ajax({
+    url: platform_url + 'api/' + queueresource + '/',
+    dataType: 'json',
+    contentType: 'application/json',
+    settings: {
+      accepts: 'application/json',
+      contentType: 'application/json'
+    },
+    headers: {
+      Authorization: base64auth
+    }
+  });
 
-    request.done(function(response) {
-          var html = '';
-          queues = response.objects;
-          // no queues, no list
-          if (queues.length == 0) {
-              callgroup_ids = new Array();
-              html = '<ul><li>Je hebt momenteel geen wachtrijen.</li></ul>'; // 'You have no queues at the moment.'
-          }
-          // build html list for queue info
-          else {
-              callgroup_ids = new Array();
-              html = '<ul>'
-              for (var i in queues) {
-                  q = queues[i];
-                  var selected = '';
-                  if (q.id == storage.primary) {
-                      selected = ' class="selected"';
-                  }
-                  html += '<li title="' + q['id'] + '"' + selected + '><span class="indicator" id="size' + 
-                          q['id'] + '" title="' + q['id'] + '">?</span> ' + q['description'] + 
-                          ' <span class="code">(' + q['internal_number'] + ')</span></li>';
-                  callgroup_ids.push(q.id);
-              }
-              html += '<ul>'
-          }
-          panel.updatelist(html);
-          getqueuesizes(panel);
-          queue_timer = setInterval(getqueuesizes, 5000);
-    });
-    request.fail(function(jqXHR, textStatus) {
-      if (jqXHR.status == 401) {
-        loggedOut(panel);
-      }
-    });
-}
+  request.done(function(response) {
+    queues = response.objects;
+    // no queues, no list
+    if (queues.length == 0) {
+        callgroup_ids = new Array();
+    }
+    // build html list for queue info
+    else {
+        callgroup_ids = new Array();
+        for (var i in queues) {
+            q = queues[i];
+        }
+    }
+    getqueuesizes();
+    queue_timer = setInterval(getqueuesizes, 5000);
+  });
+  request.fail(function(jqXHR, textStatus) {
+    if (jqXHR.status == 401) {
+      delete storage.logged;
+    }
+  });
+};
 
-var setprimary = function(panel, id) {
+var setprimary = function(id) {
   storage.primary = id;
-  getqueuesizes(panel);
+  getqueuesizes();
   clearInterval(queue_timer);
   queue_timer = setInterval(getqueuesizes, 5000);
   if (id == '') {
