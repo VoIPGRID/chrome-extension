@@ -150,8 +150,8 @@ var buildQueuesInPanel = function(panel) {
           if (q.id == storage.primary) {
               selected = ' class="selected"';
           }
-          html += '<li title="' + q['id'] + '"' + selected + '><span class="indicator" id="size' + 
-                  q['id'] + '" title="' + q['id'] + '">?</span> ' + q['description'] + 
+          html += '<li attr_title="' + q['id'] + '"' + selected + '><span class="indicator" id="size' + 
+                  q['id'] + '" attr_title="' + q['id'] + '">?</span> ' + q['description'] + 
                   ' <span class="code">(' + q['internal_number'] + ')</span></li>';
           callgroup_ids.push(q.id);
       }

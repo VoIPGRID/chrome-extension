@@ -104,7 +104,7 @@ $(function() {
 
   // widget select a li
   $('.widget.queues').on('click', 'li', function() {
-      if($(this).attr('title') != undefined) {
+      if($(this).attr('attr_title') != undefined) {
           $(this).siblings().removeClass('selected');
           if($(this).attr('class') == 'selected') {
               $(this).removeClass('selected');
@@ -112,7 +112,7 @@ $(function() {
           }
           else {
               $(this).addClass('selected');
-              background.setprimary(panel, $(this).attr('title'));
+              background.setprimary(panel, $(this).attr('attr_title'));
           }
       }
   }); 
