@@ -255,11 +255,13 @@ function getqueuesizes() {
               }
               chrome.browserAction.setIcon({path: filename})
            }
+          if (current_panel != null) {
+            buildQueuesInPanel(current_panel)
+          }
         });
-
-        if (current_panel != null) {
-          current_panel.updatequeuesize(queue_size, queue_id);
-        }
+        request.fail(function(jqXHR, textStatus) {
+          console.log('queuesize call fail ' + textStatus);
+        });
       }
     } else {
       chrome.browserAction.setIcon({path: 'assets/img/call-gray.png'})
@@ -292,6 +294,7 @@ function loadqueuedata(base64auth) {
         callgroup_ids = new Array();
         for (var i in queues) {
             q = queues[i];
+            callgroup_ids.push(q.id);
         }
     }
     getqueuesizes();
