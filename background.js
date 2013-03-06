@@ -203,6 +203,7 @@ var loadpaneldata = function() {
         delete storage.logged;
         if (current_panel) {
           buildPanel(current_panel);
+          current_panel.updatehead('Je gebruikersnaam en/of wachtwoord is onjuist.');
         }
       }
     });
