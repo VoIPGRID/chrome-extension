@@ -23,8 +23,7 @@ var selecteduserdestination_id = '';
 var fixeddestinations = [];
 var phoneaccounts = [];
 var queues = [];
-var queue_size = 0;
-var queue_id = 0;
+var queue_sizes = {};
 var current_panel = null;
 
 var callgroup_ids = new Array();
@@ -71,7 +70,7 @@ var loggedOut = function(panel) {
   queues = [];
   clearInterval(queue_timer);
   chrome.browserAction.setIcon({path: 'assets/img/call-gray.png'});
-  queue_size = 0;
+  queue_size = {};
   if (panel) {
     panel.errorcallback()
     panel.showLogin()
@@ -158,7 +157,9 @@ var buildQueuesInPanel = function(panel) {
       html += '<ul>'
   }
   panel.updatelist(html);
-  panel.updatequeuesize(queue_size, queue_id);
+  for (var id in queue_sizes) {
+    panel.updatequeuesize(queue_sizes[id], id);
+  }
 };
 
 /* constructs select input of userdestinations and sets up queue list with a list of callgroups */
@@ -239,11 +240,11 @@ function getqueuesizes() {
         // do a request for each callgroup
         request.done(function(response) {
           // update list item for this specific callgroup
-          queue_size = response.queue_size;
-          queue_id = response.id;
-          var number = parseInt(queue_size);
+          var queue_id = response.id;
+          queue_sizes[queue_id] = response.queue_size;
+          var number = parseInt(queue_sizes[queue_id]);
           if (isNaN(number)) {
-              queue_size = '?'; // queue size is not available
+              queue_sizes[queue_id] = '?'; // queue size is not available
           }
           if (response.id == storage.primary) {
               var filename = 'assets/img/queue10.png';
