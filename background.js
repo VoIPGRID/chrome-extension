@@ -37,6 +37,9 @@ var status_timer = '';
 
 var dialed_number = '';
 
+// Titlo for the notification messages
+var notification_title = '';
+
 var doLogin = function(user, pass, panel) {
   storage.username = user;
   storage.password = pass;
@@ -431,7 +434,7 @@ var clicktodial = function(b_number, tab) {
             callid = '0';
             var notification = webkitNotifications.createNotification(
               'assets/img/clicktodial.png',
-              'VoIPGrid!',
+              notification_title,
               'Het is niet gelukt om het gesprek op te zetten.');
             notification.show();
         });
@@ -439,7 +442,7 @@ var clicktodial = function(b_number, tab) {
     else {
       var notification = webkitNotifications.createNotification(
         'assets/img/clicktodial.png',
-        'VoIPGrid!',
+        notification_title,
         'Om gebruik te kunnen maken van Klik en Bel moet eerst ingelogd worden, door op het icoontje op de ' +
                     'toolbar te klikken en je gegevens in te vullen.');
       notification.show();
