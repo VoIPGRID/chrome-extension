@@ -4,7 +4,22 @@ $(function() {
   var background = chrome.extension.getBackgroundPage();
 
   // close all widgets with data-opened="false"
-  $('.widget[data-opened="false"] .widget-content').hide();
+  for(var id in background.widgets_state) {
+    if (background.widgets_state[id]) {
+      $('#' + id)
+        .data('opened', true)            
+        .attr('data-opened', 'true')
+        .find('.widget-content').show(200, function() {
+            // get back the scrollbar after resizing
+            $('body').removeClass('scrollbarhide');
+        });
+    } else {
+      $('#' + id)
+          .data('opened', false)
+          .attr('data-opened', 'false')
+          .find('.widget-content').hide(200);
+    }
+  }
 
   // a widget header click will minimize/maximize the widget's panel
   $('.widget .widget-header').on('click', function() {
@@ -14,6 +29,7 @@ $(function() {
                   .data('opened', false)
                   .attr('data-opened', 'false')
                   .find('.widget-content').hide(200);
+          background.setWidgetsState($(this).parent()[0])
       }
       else {
           // hide the scrollbar while resizing
@@ -25,6 +41,7 @@ $(function() {
                       // get back the scrollbar after resizing
                       $('body').removeClass('scrollbarhide');
                   });
+          background.setWidgetsState($(this).parent()[0])
       }
   });
 

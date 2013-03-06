@@ -40,6 +40,9 @@ var dialed_number = '';
 // Titlo for the notification messages
 var notification_title = '';
 
+// State of the panel widgets
+var widgets_state = {availability: false, queues:false};
+
 var doLogin = function(user, pass, panel) {
   storage.username = user;
   storage.password = pass;
@@ -513,6 +516,10 @@ var clickOnMenu = function(info, tab) {
 
 chrome.contextMenus.create({title: 'Bel geselecteerde nummer', contexts: ["selection"], onclick: clickOnMenu});
 
+var setWidgetsState = function  (item, state) {
+  widgets_state[$(item).attr('id')] = $(item).data('opened');
+};
+
 // Exported values
 window.doLogin = doLogin;
 window.loggedOut = loggedOut;
@@ -522,8 +529,10 @@ window.loadpaneldata = loadpaneldata;
 window.setprimary = setprimary;
 window.setuserdestination = setuserdestination;
 window.selectuserdestination = selectuserdestination;
+window.setWidgetsState = setWidgetsState;
 
 window.logged = storage.logged;
+window.widgets_state = widgets_state;
 
 // To start select the icon
 setIcon();
