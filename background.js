@@ -308,7 +308,8 @@ function loadqueuedata(base64auth) {
   });
 };
 
-var setprimary = function(id) {
+var setprimary = function(panel, id) {
+  current_panel = panel;
   storage.primary = id;
   getqueuesizes();
   clearInterval(queue_timer);
