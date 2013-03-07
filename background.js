@@ -120,9 +120,9 @@ var buildLoggedInPanel = function(panel) {
       panel.enableuserdestinations();
   }
   if (selected_fixed == null && selected_phone == null) {
-    chrome.browserAction.setIcon({path: 'assets/img/call-red.png'})
+    chrome.browserAction.setIcon({path: 'assets/img/call-red.png'});
   } else {
-    chrome.browserAction.setIcon({path: 'assets/img/call-green.png'})
+    setIcon();
   }
   panel.updatehead(html);
   // the user destinations have been loaded succesfully. we may fetch the queue list now.
@@ -217,6 +217,17 @@ var loadpaneldata = function() {
   }
 };
 
+var setPrimaryIcon = function(number) {
+  var filename = 'assets/img/queue10.png';
+  if (isNaN(number)) {
+      filename = 'assets/img/queue.png';
+  }
+  else if (number < 10) {
+      filename = 'assets/img/queue' + number + '.png';
+  }
+  chrome.browserAction.setIcon({path: filename})
+}
+
 /* fills the queue list with queue sizes */
 function getqueuesizes() {
     var username = storage.username;
@@ -247,14 +258,7 @@ function getqueuesizes() {
               queue_sizes[queue_id] = '?'; // queue size is not available
           }
           if (response.id == storage.primary) {
-              var filename = 'assets/img/queue10.png';
-              if (isNaN(number)) {
-                  filename = 'assets/img/queue.png';
-              }
-              else if (number < 10) {
-                  filename = 'assets/img/queue' + number + '.png';
-              }
-              chrome.browserAction.setIcon({path: filename})
+              setPrimaryIcon(number);
            }
           if (current_panel != null) {
             buildQueuesInPanel(current_panel)
@@ -379,7 +383,11 @@ var selectuserdestination_internal = function(type, id) {
 var setIcon = function() {
   // Set the icon if we are logged
   if (storage.logged) {
-    chrome.browserAction.setIcon({path: 'assets/img/call-green.png'})
+    if (storage.primary) {
+      setPrimaryIcon(storage.primary);
+    } else {
+      chrome.browserAction.setIcon({path: 'assets/img/call-green.png'})
+    }
   } else {
     chrome.browserAction.setIcon({path: 'assets/img/call-gray.png'})
   }
