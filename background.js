@@ -8,7 +8,7 @@ const selecteduserdestinationresource = 'selecteduserdestination';
 const userdestinationresource = 'userdestination';
 const clicktodialresource = 'clicktodial';
 
-const base_platform_url = "https://client.voys.nl/";
+const base_platform_url = "https://partner.voipgrid.nl";
 
 // set the url if missing
 if (!storage.url) {
