@@ -8,7 +8,7 @@ const selecteduserdestinationresource = 'selecteduserdestination';
 const userdestinationresource = 'userdestination';
 const clicktodialresource = 'clicktodial';
 
-const base_platform_url = "https://partner.voipgrid.nl";
+const base_platform_url = "https://partner.voipgrid.nl/";
 
 // set the url if missing
 if (!storage.url) {
@@ -439,9 +439,37 @@ var clicktodial = function(b_number, tab) {
                   "src: url('" + fontUrl + "/fontawesome-webfont.eot?#iefix') format('embedded-opentype'), url('" + fontUrl + "/fontawesome-webfont.woff') format('woff'), url('" + fontUrl + "/fontawesome-webfont.ttf') format('truetype'), url('" + fontUrl + "/fontawesome-webfont.svg#FontAwesome') format('svg');" +
                   "font-weight: normal;" +
                   "font-style: normal;";
+                // The insertCSS does not accept an url, the code below comes from:
+                // http://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,400,600
+                var googleFonts = "@font-face { " +
+                  "  font-family: 'Open Sans'; " +
+                  "  font-style: normal; " +
+                  "  font-weight: 400; " +
+                  "  src: local('Open Sans'), local('OpenSans'), url(http://themes.googleusercontent.com/static/fonts/opensans/v6/cJZKeOuBrn4kERxqtaUH3bO3LdcAZYWl9Si6vvxL-qU.woff) format('woff'); " +
+                  "} " +
+                  "@font-face { " +
+                  "  font-family: 'Open Sans'; " +
+                  "  font-style: normal; " +
+                  "  font-weight: 600; " +
+                  "  src: local('Open Sans Semibold'), local('OpenSans-Semibold'), url(http://themes.googleusercontent.com/static/fonts/opensans/v6/MTP_ySUJH_bn48VBG8sNSqRDOzjiPcYnFooOUGCOsRk.woff) format('woff'); " +
+                  "} " +
+                  "@font-face { " +
+                  "  font-family: 'Open Sans'; " +
+                  " font-style: italic; " +
+                  "  font-weight: 400; " +
+                  "  src: local('Open Sans Italic'), local('OpenSans-Italic'), url(http://themes.googleusercontent.com/static/fonts/opensans/v6/xjAJXh38I15wypJXxuGMBrrIa-7acMAeDBVuclsi6Gc.woff) format('woff'); " +
+                  "} " +
+                  "@font-face { " +
+                  "  font-family: 'Open Sans'; " +
+                  " font-style: italic; " +
+                  " font-weight: 600; " +
+                  "  src: local('Open Sans Semibold Italic'), local('OpenSans-SemiboldItalic'), url(http://themes.googleusercontent.com/static/fonts/opensans/v6/PRmiXeptR36kaC0GEAetxuw_rQOTGi-AJs5XCWaKIhU.woff) format('woff');" +
+                  "}";
                 chrome.tabs.insertCSS(tab.id, {code: font}, function() {
-                  chrome.tabs.insertCSS(tab.id, {file: 'assets/css/clicktodial.css'}, function() {
-                      chrome.tabs.sendMessage(tab.id, {type: "open", number: b_number});
+                  chrome.tabs.insertCSS(tab.id, {code: googleFonts}, function() {
+                    chrome.tabs.insertCSS(tab.id, {file: 'assets/css/clicktodial.css'}, function() {
+                        chrome.tabs.sendMessage(tab.id, {type: "open", number: b_number});
+                    });
                   });
                 });
             }
