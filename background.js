@@ -1,4 +1,4 @@
-// Main script for the VoipGrid Chrome extension
+// Main script for the VoIPGRID Chrome extension
 
 var storage = localStorage;
 
