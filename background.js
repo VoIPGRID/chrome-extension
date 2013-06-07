@@ -400,7 +400,7 @@ var setIcon = function() {
 // bind changes to the local storage
 $(window).bind('storage', function (e) {
   // logout
-  if (e.originalEvent.key = "url") {
+  if (e.originalEvent.key == "url") {
     platform_url = e.originalEvent.newValue;
     loggedOut();
     setIcon();
