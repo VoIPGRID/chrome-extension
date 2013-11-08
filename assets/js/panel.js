@@ -21,27 +21,59 @@ $(function() {
     }
   }
 
+  // close all widgets with data-opened="false"
+  $('.widget[data-opened="false"] .widget-content').hide();
+
+  var widgetIsOpenned = function(widget){
+      return $(widget).parent().data('opened') === true;
+  }
+
+  var widgetClose = function(widget){
+      $(widget).parent()
+          .data('opened', false)
+          .attr('data-opened', 'false')
+          .find('.widget-content')
+          .hide(200);
+  };
+
+  var widgetOpen = function(widget){
+      $('html').addClass('scrollbarhide');
+
+      $(widget).parent()
+          .data('opened', true)            
+          .attr('data-opened', 'true')
+          .find('.widget-content')
+          .show(200, function() {
+              $('body').removeClass('scrollbarhide');
+          });
+  };
+
+  var widgetIsQueues = function(widget){
+      return $(widget).parent().hasClass('queues');
+  };
+
+  // var widgetIsContacts = function(widget){
+  //     return $(widget).parent().hasClass('hblf');
+  // };
+
   // a widget header click will minimize/maximize the widget's panel
   $('.widget .widget-header').on('click', function() {
-      // check if it's closed or opened
-      if($(this).parent().data('opened') === true) {
-          $(this).parent()
-                  .data('opened', false)
-                  .attr('data-opened', 'false')
-                  .find('.widget-content').hide(200);
-          background.setWidgetsState($(this).parent()[0])
+
+      // if(widgetIsContacts(this)){
+      //     if($(this).find("input:focus").length > 0){
+      //         widgetOpen(this);
+      //         return;
+      //     }
+      // }
+
+      if(widgetIsOpenned(this)){
+          widgetClose(this);
+      }else{
+          widgetOpen(this);
       }
-      else {
-          // hide the scrollbar while resizing
-          $('html').addClass('scrollbarhide');
-          $(this).parent()
-                  .data('opened', true)            
-                  .attr('data-opened', 'true')
-                  .find('.widget-content').show(200, function() {
-                      // get back the scrollbar after resizing
-                      $('body').removeClass('scrollbarhide');
-                  });
-          background.setWidgetsState($(this).parent()[0])
+
+      if(widgetIsQueues(this)){
+        background.openqueuewidget(widgetIsOpenned(this));
       }
   });
 
@@ -180,6 +212,14 @@ $(function() {
 
   $("#close").on("click", function() {
     window.close();
+  });
+
+  $(window).show(function(){
+    background.changeState('show');
+  });
+
+  $(window).unload(function(){
+    background.changeState('hide');
   });
 
   if (background.logged) {

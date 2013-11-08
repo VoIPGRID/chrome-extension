@@ -35,6 +35,11 @@ var client_id = '';
 
 var user_id = '';
 
+var is_queue_selected = false;
+var is_queue_showed = false;
+var is_user_auth = false;
+var is_panel_open = false;
+
 var queue_timer = '';
 var status_timer = '';
 
@@ -46,10 +51,49 @@ var notification_title = '';
 // State of the panel widgets
 var widgets_state = {availability: false, queues:false};
 
+function getQueueTimeout(){
+    if(!is_user_auth){
+        return  0;
+    }else{
+        if(is_panel_open){
+            if(is_queue_showed){
+                return 5000;
+            }else{
+                if(is_queue_selected){
+                    return 20000;
+                }else{
+                    return 0;
+                }
+            }
+        }else{
+            if(is_queue_selected){
+                return 20000;
+            }else{
+                return 0;
+            }
+        }
+    }
+}
+
+function startQueueTimer(){
+    clearInterval(queue_timer);
+    var timeout = getQueueTimeout();
+
+    if(timeout > 0){
+        getqueuesizes();
+
+        queue_timer = setInterval
+            (getqueuesizes, timeout);
+    }
+}
+
 var doLogin = function(user, pass, panel) {
   storage.username = user;
   storage.password = pass;
   current_panel = panel;
+
+  is_user_auth = true;
+
   loadpaneldata();
 };
 
@@ -72,7 +116,12 @@ var loggedOut = function(panel) {
   fixeddestinations = [];
   phoneaccounts = [];
   queues = [];
-  clearInterval(queue_timer);
+
+  is_queue_showed = false;
+  is_user_auth = false;
+
+  startQueueTimer();
+
   chrome.browserAction.setIcon({path: 'assets/img/call-gray.png'});
   queue_size = {};
   if (panel) {
@@ -306,8 +355,10 @@ function loadqueuedata(base64auth) {
             callgroup_ids.push(q.id);
         }
     }
-    getqueuesizes();
-    queue_timer = setInterval(getqueuesizes, 5000);
+
+    is_user_auth = true;
+    startQueueTimer();
+
   });
   request.fail(function(jqXHR, textStatus) {
     if (jqXHR.status == 401) {
@@ -319,17 +370,27 @@ function loadqueuedata(base64auth) {
 var setprimary = function(panel, id) {
   current_panel = panel;
   storage.primary = id;
-  getqueuesizes();
-  clearInterval(queue_timer);
-  queue_timer = setInterval(getqueuesizes, 5000);
+
   if (id == '') {
+    is_queue_selected = false;
+
     if (selected_fixed == null && selected_phone == null) {
       chrome.browserAction.setIcon({path: 'assets/img/call-red.png'})
     } else {
       chrome.browserAction.setIcon({path: 'assets/img/call-green.png'})
     }
+  }else{
+    is_queue_selected = true;
   }
+
+  startQueueTimer();
+  console.log('is_queue_selected: ' + is_queue_selected);
 };
+
+var openqueuewidget = function(isOpened){
+  is_queue_showed = isOpened;
+  startQueueTimer();
+}
 
 var setuserdestination = function(value) {
   // on selecting the 'no' radio button, set the selected userdestination to None.
@@ -373,8 +434,9 @@ var selectuserdestination_internal = function(type, id) {
           },
           type: 'PUT'
         });
-        clearInterval(queue_timer);
-        queue_timer = setInterval(getqueuesizes, 5000);
+
+        startQueueTimer();
+        
         if (id == null) {
           chrome.browserAction.setIcon({path: 'assets/img/call-red.png'})
         }
@@ -551,6 +613,8 @@ chrome.extension.onMessage.addListener(
     if (request.type === "status-closed") {
       clearInterval(status_timer);
     }
+
+    console.log('chrome.extension.onMessage.addListener');
   }
 );
 
@@ -571,6 +635,11 @@ var setWidgetsState = function  (item, state) {
   widgets_state[$(item).attr('id')] = $(item).data('opened');
 };
 
+var changeState = function(state){
+  is_panel_open = state == 'show';
+  startQueueTimer();
+};
+
 // Exported values
 window.doLogin = doLogin;
 window.loggedOut = loggedOut;
@@ -578,12 +647,15 @@ window.openHelp = openHelp;
 window.openSettings = openSettings;
 window.loadpaneldata = loadpaneldata;
 window.setprimary = setprimary;
+window.openqueuewidget = openqueuewidget;
 window.setuserdestination = setuserdestination;
 window.selectuserdestination = selectuserdestination;
 window.setWidgetsState = setWidgetsState;
 
 window.logged = storage.logged;
 window.widgets_state = widgets_state;
+
+window.changeState = changeState;
 
 // To start select the icon
 setIcon();
