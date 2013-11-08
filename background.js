@@ -601,6 +601,13 @@ var updatestatus = function(tab) {
               break;
         }
         chrome.tabs.sendMessage(tab.id, {type: "updatestatus", status: showstatus});
+
+        // breack line if status is disconected
+        if(callstatus == 'disconnected'){
+            // clear interval but not close panel
+            // panel has status 'Verbinding verbroken'
+            timer.clearInterval(status_timer);
+        }
     });
 };
 
