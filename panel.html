@@ -5,12 +5,15 @@
       <meta charset="utf-8">
       <link href="./assets/css/panel.css" rel="stylesheet"> 
       <link href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,400,600" rel="stylesheet">
+
       <script src="assets/js/jquery.js"></script>
+      <script src="assets/js/SIP-config.js"></script>
+      <script src="assets/js/phoneaccount.js"></script>
       <script src="assets/js/panel.js"></script>
   </head>
 
 <body>
-    <div class="account">
+    <div class="account" id="login-body">
         <form id="loginform">
           <fieldset>
             <table>
@@ -27,24 +30,25 @@
           <ul class='menu'><li data-link='login'><i class='icon-signin' id='login'></i>Inloggen</li></ul>
         </form>
         <i class="icon-user"></i> <span id="head">Uitgelogd</span> <!-- 'Logged out' -->
-        <i class="icon-remove-sign" id="close" style="float:right;cursor:pointer;"></i>
+        <i class="icon-remove-sign close-panel-btn" style="float:right;cursor:pointer;"></i>
     </div>
 
     <div id="body">
-        <ul class="menu">
-            <li data-link="help">
-                <i class="icon-question-sign" id="help"></i>
-                Help
-            </li>
-            <li data-link="settings">
-                <i class="icon-cog" id="settings"></i>
-                Instellingen
-            </li>
-            <li data-link="logout">
-                <i class="icon-signout" id="logout"></i>
-                Uitloggen
-            </li>
-        </ul>
+        <div class="account">
+            <div class="pull-right">
+                <i data-link="help" class="icon-question-sign" id="help"></i>
+                
+                <i data-link="settings" class="icon-cog" id="settings"></i>
+
+                <i class="icon-remove-sign close-panel-btn" 
+                        style="float:right; cursor:pointer;"></i>
+            </div>
+
+            <div>
+                <i class="icon-signout" data-link="logout" id="logout"></i> 
+                    <span id="user-name">emily.taylor33@hasalongdomain.com</span>
+            </div>
+        </div>
     
         <div id="availability" class="widget availability" data-opened="false">
             <div class="widget-header">
@@ -63,6 +67,22 @@
                         <option>Je hebt momenteel geen bestemmingen.</option> <!-- 'You have no destinations at the moment.' -->
                     </select>
                 </form>
+            </div>
+        </div>
+
+        <div class="widget hblf" data-opened="false">
+            <div class="widget-header">
+                <h3>
+                    <i class="icon-phone-sign"></i> Collega's
+                    <form class="form-search">
+                        <input name="search" type="search" class="search-query" id="search-query" />
+                        <i class="icon-search"></i>
+                    </form>
+                </h3>
+            </div>
+            <div class="widget-content" id="hblf">
+                <ul>
+                </ul>
             </div>
         </div>
     

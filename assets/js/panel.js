@@ -1,6 +1,7 @@
 // Script for the login page
 
 $(function() {
+
   var background = chrome.extension.getBackgroundPage();
 
   // close all widgets with data-opened="false"
@@ -52,19 +53,19 @@ $(function() {
       return $(widget).parent().hasClass('queues');
   };
 
-  // var widgetIsContacts = function(widget){
-  //     return $(widget).parent().hasClass('hblf');
-  // };
+  var widgetIsContacts = function(widget){
+      return $(widget).parent().hasClass('hblf');
+  };
 
   // a widget header click will minimize/maximize the widget's panel
   $('.widget .widget-header').on('click', function() {
 
-      // if(widgetIsContacts(this)){
-      //     if($(this).find("input:focus").length > 0){
-      //         widgetOpen(this);
-      //         return;
-      //     }
-      // }
+      if(widgetIsContacts(this)){
+          if($(this).find("input:focus").length > 0){
+              widgetOpen(this);
+              return;
+          }
+      }
 
       if(widgetIsOpenned(this)){
           widgetClose(this);
@@ -75,6 +76,21 @@ $(function() {
       if(widgetIsQueues(this)){
         background.openqueuewidget(widgetIsOpenned(this));
       }
+
+      if(widgetIsContacts(this)){
+        background.opencontactswidget(widgetIsOpenned(this));
+      }
+  });
+
+  // change search query
+  $('#search-query').keyup(function(){
+
+      background.search_query = $(this)
+          .val()
+          .trim()
+          .toLowerCase();
+
+      update_contacts_view_list();
   });
 
   // update the heading which displays user info
@@ -118,9 +134,48 @@ $(function() {
     resetloginform();
   };
 
+  var update_contacts_view_list = function(){
+    var container = $('#hblf ul');
+
+    var showEmpty = function(){
+        container.append(
+          $('<li>', {text: "Je hebt momenteel geen collegs's."})
+        );
+    };
+
+    var clearAll = function(){
+        container.empty();
+    }
+
+    clearAll();
+
+    var count = 0;
+
+    for(var i in background.phone_accounts){
+        // search query
+        if(background.phone_accounts[i].description.toLowerCase().indexOf(background.search_query) != -1){
+            background.phone_accounts[i].renderTo(container);
+            count++;
+        }
+    }
+
+    if(count == 0){
+        showEmpty();
+    }
+  }
+
   // update the list of queue callgroups
   var updatelist = function(html) {
     $('#queue').html(html);
+  };
+
+  // update the list of queue callgroups
+  var init_contacts_list = function(args) {
+    for(var i in args){
+        background.phone_accounts.push((new PhoneAccount()).fromJSON(args[i]));
+    }
+
+    update_contacts_view_list();
   };
 
   var panel = {
@@ -132,6 +187,8 @@ $(function() {
     updatelist: updatelist,
     updatequeuesize: updatequeuesize,
     enableuserdestinations: enableuserdestinations,
+    init_contacts_list: init_contacts_list,
+    update_contacts_view_list: update_contacts_view_list
   }
 
   // widget select a li
@@ -167,13 +224,13 @@ $(function() {
 
 
   var donecallback = function() {
-    $("#loginform").hide();
+    $("#login-body").hide();
     $("#body").show();
     // TBD find a good size
-    $('body').css('height', '200');
+    $('body').css('height', '193');
     $('body').css('width', '360');
 
-    $('#close').attr('style', 'float:right;cursor:pointer;display:block');
+    $('.close-panel-btn').attr('style', 'float:right;cursor:pointer;display:block');
 
     // Setup help button
     $("#help").on("click", function() {
@@ -194,13 +251,13 @@ $(function() {
   panel.donecallback = donecallback;
 
   var showLogin = function() {
-    $("#loginform").show();
+    $("#login-body").show();
     $("#body").hide();
 
     $('body').css('height', '200');
     $('body').css('width', '360');
 
-    $('#close').attr('style', 'float:right;cursor:pointer;display:none');
+    $('.close-panel-btn').attr('style', 'float:right;cursor:pointer;display:none');
 
     // Handler for the login button
     $("#login").on("click", function() {
@@ -210,7 +267,7 @@ $(function() {
 
   panel.showLogin = showLogin;
 
-  $("#close").on("click", function() {
+  $(".close-panel-btn").on("click", function() {
     window.close();
   });
 
@@ -223,7 +280,7 @@ $(function() {
   });
 
   if (background.logged) {
-    $("#loginform").hide();
+    $("#login-body").hide();
   } else {
     $("#body").hide();
   }

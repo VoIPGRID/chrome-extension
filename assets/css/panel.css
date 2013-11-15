@@ -1062,12 +1062,14 @@ body {
   color: #3c3c50;
   font: 13px/1.7em 'Open Sans';
 }
+.pull-right {
+  text-align: right;
+}
 div.account {
   padding: 10px;
 }
 div.account i {
-  display: block;
-  float: left;
+  cursor: pointer;
   font-size: 21px;
   margin-right: 9px;
   margin-left: 2px;
@@ -1171,6 +1173,9 @@ ul.menu li i:before {
 .widget-content ul {
   margin: 0;
   padding: 0;
+
+  max-height: 215px;
+  overflow: auto;
 }
 .widget-content ul li {
   cursor: pointer;
@@ -1233,13 +1238,91 @@ ul.menu li i:before {
   width: 100%;
   -mox-box-sizing: border-box;
 }
+.hblf .widget-header {
+  position: relative;
+}
+.hblf .widget-header form {
+  position: absolute;
+  right: 35px;
+  top: 0;
+  left: 30%;
+}
+.hblf .widget-header form input[type="search"] {
+  width: 90%;
+  background: #F9F9F9;
+  border: 1px solid #DDDDDD;
+  padding-left: 20px;
+  box-sizing: border-box;
+}
+.hblf .widget-header form i {
+  position: absolute;
+  top: 2px;
+  left: 5px;
+  color: #78788C;
+  font-size: 16px;
+  font-weight: normal;
+}
+.hblf .widget-content span.indicator {
+  border-radius: 3px;
+  background: none;
+  width: 17px;
+  height: 17px;
+  line-height: 16px;
+  box-shadow: none;
+  margin-right: 8px;
+}
+.hblf .widget-content span.indicator i {
+  font-size: 21px;
+  color: #78788C;
+  left: -3px;
+  top: 3px;
+  position: relative;
+}
+.hblf .widget-content span.indicator.busy i {
+  color: #EA0000;
+}
+.hblf .widget-content span.indicator.available i {
+  color: green;
+}
+.hblf li.contact {
+  list-style-type: none;
+  margin: 0;
+  height: auto;
+  padding: 3px 7px;
+  line-height: normal;
+}
+.hblf li.contact .status-icon {
+  float: left;
+  position: relative;
+  margin: 3px 0;
+  width: 30px;
+}
+.hblf li.contact .status-icon .icon-phone-sign {
+  font-size: 21px;
+}
+.hblf li.contact .status-icon.busy i {
+  color: #EA0000;
+}
+.hblf li.contact .status-icon.available i {
+  color: green;
+}
+.hblf li.contact .info {
+  margin-left: 30px;
+}
+.hblf li.contact .name {
+  font-weight: bold;
+}
+.hblf li.contact .extension {
+  color: #9B9C9E;
+  font-weight: normal;
+}
 footer {
   font-size: 12px;
   height: 35px;
   line-height: 35px;
   padding: 0 10px;
   color: #78788c;
-  /*background: url('../img/logo.png') no-repeat center right;*/
+  background: url('../img/logo.png') no-repeat center right;
   border-top: 1px solid #d5d5d5;
   margin-top: -1px;
 }

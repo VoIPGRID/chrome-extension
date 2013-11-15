@@ -7,6 +7,7 @@ const queueresource = 'queuecallgroup';
 const selecteduserdestinationresource = 'selecteduserdestination';
 const userdestinationresource = 'userdestination';
 const clicktodialresource = 'clicktodial';
+const phoneaccountsource = 'phoneaccount';
 
 const base_platform_url = "https://partner.voipgrid.nl/";
 
@@ -94,6 +95,10 @@ var doLogin = function(user, pass, panel) {
 
   is_user_auth = true;
 
+  if(window.SIP != null && typeof(window.SIP) != 'undefined'){
+    chrome.extension.sendMessage({type: 'sip_start'});
+  }
+
   loadpaneldata();
 };
 
@@ -116,6 +121,10 @@ var loggedOut = function(panel) {
   fixeddestinations = [];
   phoneaccounts = [];
   queues = [];
+
+  if(window.SIP != null && typeof(window.SIP) != 'undefined'){
+    chrome.extension.sendMessage({type: 'sip_stop'});
+  }
 
   is_queue_showed = false;
   is_user_auth = false;
@@ -252,6 +261,7 @@ var loadpaneldata = function() {
         selected_phone = ud.selecteduserdestination.phoneaccount;
         fixeddestinations = ud.fixeddestinations;
         phoneaccounts = ud.phoneaccounts;
+
         loadqueuedata(base64auth);
       }
       if (current_panel) {
@@ -315,16 +325,47 @@ function getqueuesizes() {
            }
           if (current_panel != null) {
             buildQueuesInPanel(current_panel)
+          }else{
+            console.log('get queue sizes fail: panel is not defined')
           }
         });
         request.fail(function(jqXHR, textStatus) {
-          console.log('queuesize call fail ' + textStatus);
+          console.log('queuesize call fail: ' + textStatus);
         });
       }
     } else {
       chrome.browserAction.setIcon({path: 'assets/img/call-gray.png'})
     }
 };
+
+function loadcontactsdata(base64auth){
+  window.phone_accounts.removeAll();
+
+  var request = $.ajax({
+    url: platform_url + 'api/' + phoneaccountsource + '/' + phoneaccountsource + '/',
+    dataType: 'json',
+    contentType: 'application/json',
+    settings: {
+      accepts: 'application/json',
+      contentType: 'application/json'
+    },
+    headers: {
+      Authorization: base64auth
+    }
+  });
+
+  request.done(function(response){
+    if(!current_panel){
+      console.log('contacts loading fail: panel is not defined');
+    }else{
+      current_panel.init_contacts_list(response.objects);
+    }
+  });
+
+  request.fail(function(jqXHR, textStatus) {
+    console.log('contacts loading fail ' + textStatus);
+  });
+}
 
 /* fetches queue info and loads them into the list on the main panel */
 function loadqueuedata(base64auth) {
@@ -358,7 +399,6 @@ function loadqueuedata(base64auth) {
 
     is_user_auth = true;
     startQueueTimer();
-
   });
   request.fail(function(jqXHR, textStatus) {
     if (jqXHR.status == 401) {
@@ -390,6 +430,10 @@ var setprimary = function(panel, id) {
 var openqueuewidget = function(isOpened){
   is_queue_showed = isOpened;
   startQueueTimer();
+}
+
+var opencontactswidget = function(isOpened){
+  current_panel.update_contacts_view_list();
 }
 
 var setuserdestination = function(value) {
@@ -647,6 +691,27 @@ var changeState = function(state){
   startQueueTimer();
 };
 
+var sip_stack_started = function(){
+  var username = storage.username;
+  var password = storage.password;
+  if (username && password) {
+    var base64auth = 'Basic ' + 
+          btoa(username + ':' + password);
+    loadcontactsdata(base64auth);
+  }
+}
+
+var init_SIP = function(){
+  /* sip initialization */
+  SIPml.init(function(e){
+      console.log('SIPml engine initialized');   
+          window.SIP = (new window.SIPConstructor()).init();
+  }, function(e){
+      console.log('The SIPml engine could not be initialized');
+      console.log('Error: ' + e.message);
+  });
+}
+
 // Exported values
 window.doLogin = doLogin;
 window.loggedOut = loggedOut;
@@ -655,6 +720,7 @@ window.openSettings = openSettings;
 window.loadpaneldata = loadpaneldata;
 window.setprimary = setprimary;
 window.openqueuewidget = openqueuewidget;
+window.opencontactswidget = opencontactswidget;
 window.setuserdestination = setuserdestination;
 window.selectuserdestination = selectuserdestination;
 window.setWidgetsState = setWidgetsState;
@@ -663,8 +729,14 @@ window.logged = storage.logged;
 window.widgets_state = widgets_state;
 
 window.changeState = changeState;
+window.phone_accounts = [];
+window.search_query = '';
+
+window.SIP = null;
 
 // To start select the icon
 setIcon();
 // do a login right away
 loadpaneldata();
+// init SIPml
+init_SIP();
