@@ -177,9 +177,11 @@ $(function() {
 
     for(var i in background.phone_accounts){
         background.SIP.subscribeTo({
+            phone_account: background.phone_accounts[i],
             impu: background.phone_accounts[i].impu,
             notify: function(args){
-                background.phone_accounts[i].updateState(args);
+                console.log(i + ' ' + this.phone_account.impu);
+                this.phone_account.updateState(args);
             },
             error: function(args){
                 args.code;
@@ -192,7 +194,6 @@ $(function() {
             }
         });
     }
-
     update_contacts_view_list();
   };
 
