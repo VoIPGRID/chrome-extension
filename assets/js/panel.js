@@ -175,6 +175,24 @@ $(function() {
         background.phone_accounts.push((new PhoneAccount()).fromJSON(args[i]));
     }
 
+    for(var i in background.phone_accounts){
+        background.SIP.subscribeTo({
+            impu: background.phone_accounts[i].impu,
+            notify: function(args){
+                background.phone_accounts[i].updateState(args);
+            },
+            error: function(args){
+                args.code;
+                args.description;
+                background.phone_accounts[i].updateState(
+                    { 
+                        state: 'unavailable'
+                    }
+                );
+            }
+        });
+    }
+
     update_contacts_view_list();
   };
 

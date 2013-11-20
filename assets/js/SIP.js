@@ -14,6 +14,7 @@ window.SIPConstructor = function () {
     var sipStack;
     var registerSession;
     var callSession;
+    var isStopped = true;
 
     var init = function () {
             console.log('Init SIP module');
@@ -44,9 +45,15 @@ window.SIPConstructor = function () {
                     if (request.type === "sip_start") {
                         stop();
                         start();
+
+                        isStopped = false;
                     };
                     if (request.type === "sip_stop") {
-                        stop();
+                        if(!isStopped){
+                            stop();
+                        }
+
+                        isStopped = true;
                     };
                 });
 
@@ -69,8 +76,12 @@ window.SIPConstructor = function () {
                     impu: sipConfig['sip_impu'], // mandatory: valid SIP Uri (IMS Public Identity)
                     password: sipConfig['sip_pass'], // optional
                     display_name: sipConfig['sip_display_name'], // optional
-                    // websocket_proxy_url: 'ws://sipproxy-test.voipgrid.osso.nl:80', // optional
+                    websocket_proxy_url: 'ws://websocket.voipgrid.osso.nl:80', // optional
+                    
                     enable_rtcweb_breaker: false, // optional
+                    enable_early_ims: true,
+                    enable_media_stream_cache: false,
+
                     sip_headers: [ // optional
                         { name: 'User-Agent', value: 'IM/Webclient SIPml5'},//.IM-client/OMA1.0 sipML5-v1.0.0.0' },
                         { name: 'Organization', value: 'Voys Telecom' }
@@ -194,6 +205,9 @@ window.SIPConstructor = function () {
         stop: stop,
         login: login,
         makeCall: makeCall,
-        subscribeTo: subscribeTo
+        subscribeTo: subscribeTo,
+        isStopped: function () {
+            return isStopped;
+        }
     };
 };

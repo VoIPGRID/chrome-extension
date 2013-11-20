@@ -95,9 +95,7 @@ var doLogin = function(user, pass, panel) {
 
   is_user_auth = true;
 
-  if(window.SIP != null && typeof(window.SIP) != 'undefined'){
-    chrome.extension.sendMessage({type: 'sip_start'});
-  }
+  console.log('Plugin do login...');
 
   loadpaneldata();
 };
@@ -122,10 +120,6 @@ var loggedOut = function(panel) {
   phoneaccounts = [];
   queues = [];
 
-  if(window.SIP != null && typeof(window.SIP) != 'undefined'){
-    chrome.extension.sendMessage({type: 'sip_stop'});
-  }
-
   is_queue_showed = false;
   is_user_auth = false;
 
@@ -145,8 +139,16 @@ var buildPanel = function(panel) {
     current_panel = panel;
     buildLoggedInPanel(panel);
     buildQueuesInPanel(panel);
+
+    if(window.SIP != null && window.SIP.isStopped()){
+      chrome.extension.sendMessage({type: 'sip_start'});
+    }
   } else {
     loggedOut(panel);
+
+    if(window.SIP != null && !(window.SIP.isStopped())){
+      chrome.extension.sendMessage({type: 'sip_stop'});
+    }
   }
 }
 
@@ -339,7 +341,7 @@ function getqueuesizes() {
 };
 
 function loadcontactsdata(base64auth){
-  window.phone_accounts.removeAll();
+  window.phone_accounts = [];
 
   var request = $.ajax({
     url: platform_url + 'api/' + phoneaccountsource + '/' + phoneaccountsource + '/',
@@ -355,10 +357,10 @@ function loadcontactsdata(base64auth){
   });
 
   request.done(function(response){
-    if(!current_panel){
-      console.log('contacts loading fail: panel is not defined');
-    }else{
+    if(current_panel != null && typeof(current_panel != 'undefined')){
       current_panel.init_contacts_list(response.objects);
+    }else{
+      console.log('contacts loading fail: panel is not defined');
     }
   });
 
@@ -703,9 +705,8 @@ var sip_stack_started = function(){
 
 var init_SIP = function(){
   /* sip initialization */
-  SIPml.init(function(e){
-      console.log('SIPml engine initialized');   
-          window.SIP = (new window.SIPConstructor()).init();
+  SIPml.init(function(e){ 
+      window.SIP = (new window.SIPConstructor()).init();
   }, function(e){
       console.log('The SIPml engine could not be initialized');
       console.log('Error: ' + e.message);
@@ -734,9 +735,13 @@ window.search_query = '';
 
 window.SIP = null;
 
-// To start select the icon
-setIcon();
-// do a login right away
-loadpaneldata();
 // init SIPml
 init_SIP();
+
+// To start select the icon
+setIcon();
+
+// do a login right away
+loadpaneldata();
+
+
