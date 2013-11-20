@@ -186,7 +186,7 @@ $(function() {
             error: function(args){
                 args.code;
                 args.description;
-                background.phone_accounts[i].updateState(
+                this.phone_account.updateState(
                     { 
                         state: 'unavailable'
                     }
