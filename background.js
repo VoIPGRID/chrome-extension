@@ -191,7 +191,7 @@ var buildLoggedInPanel = function(panel) {
   panel.updatehead(html);
   // the user destinations have been loaded succesfully. we may fetch the queue list now.
 //  loadqueuedata(panel, base64auth);
-  panel.updatehead(storage.username);
+  panel.update_user_name(storage.username);
   panel.updatestatus(html);
   // Show the new popup
   panel.donecallback();

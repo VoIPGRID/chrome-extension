@@ -98,6 +98,10 @@ $(function() {
     $('#head').html(html);
   };
 
+  var update_user_name = function(text){
+    $('#user-name').text(text);
+  }
+
   var updatestatus = function(html) {
     $('#statusupdate').html(html);
   };
@@ -207,7 +211,8 @@ $(function() {
     updatequeuesize: updatequeuesize,
     enableuserdestinations: enableuserdestinations,
     init_contacts_list: init_contacts_list,
-    update_contacts_view_list: update_contacts_view_list
+    update_contacts_view_list: update_contacts_view_list,
+    update_user_name: update_user_name
   }
 
   // widget select a li
