@@ -1,19 +1,26 @@
 /* center position */
-.voipgrid-status {
+.voipgrid-container {
     position: fixed;
     left: 50%;
     top: 50%;
     margin-left: -150px;
-    margin-top: -42px;
+    margin-top: -40px;
     width: 300px;
-    height: 83px;
-    background: white;
-    font-family: "Open Sans", "Helvetica Neue", Arial, sans-serif;
-    font-size: 12px;
+
     border-radius: 5px;
     box-shadow: rgba(0,0,0,0.25) 0 0 0 2038px, rgba(0,0,0,0.25) 0 10px 20px;
 
     z-index: 2147483647;
+
+    background-color: none;
+    line-height:
+}
+
+.voipgrid-status {
+    height: 83px;
+    background: white;
+    font-family: "Open Sans", "Helvetica Neue", Arial, sans-serif;
+    border-radius: 5px;
 }
 .voipgrid-status h2 {
     margin: 0;
@@ -27,15 +34,22 @@
     height: 40px;
     font-weight: normal;
     padding: 0 12px;
-    border-radius: 5px 5px 0 0;
     letter-spacing: 0.2px;
+    border-radius: 5px;
+    font-family: "Open Sans", "Helvetica Neue", Arial, sans-serif;
 }
 .voipgrid-status strong {
     color: #99c225;
+    font-size: 12px;
+    line-height: normal;
+    font-family: "Open Sans", "Helvetica Neue", Arial, sans-serif;
 }
 .voipgrid-status p {
     padding: 12px;
     margin: 0;
+    font-size: 12px;
+    line-height: normal;
+    font-family: "Open Sans", "Helvetica Neue", Arial, sans-serif;
 }
 .voipgrid-status i.icon-phone-sign {
     display: inline-block;
@@ -43,6 +57,7 @@
     height: 16px;
     float: left;
     margin: 12px 8px 0 0;
+    font-family: "Open Sans", "Helvetica Neue", Arial, sans-serif;
 }
 /* icon in base64 */
 .voipgrid-status i.icon-phone-sign {
@@ -56,7 +71,7 @@
   font-weight: normal;
   font-style: normal;
 }*/
-.icon-remove-sign:before {
+.voipgrid-status h2 .icon-remove-sign:before {
   font-family: FontAwesome;
   font-weight: normal;
   font-style: normal;

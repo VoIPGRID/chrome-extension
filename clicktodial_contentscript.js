@@ -1,3 +1,4 @@
+
 $(function () {
     chrome.extension.sendRequest({method: "isC2DEnabled"}, function(response) {
         if (response == "false")
@@ -96,9 +97,29 @@ $(function () {
             return elements;
         };
 
+        var getClickTodialElements = function(element){
+            var elements = [];
+
+            $(element).find('.' + elementClassName).each(function(){
+                elements.push(this);
+            })
+
+            return elements;
+        };
+
+        var removeClickToDialElements = function(elements){
+            for(var i in elements){
+                var element = $(elements[i]);
+
+                var text = element.text();
+                element.replaceWith(text);
+            }
+        }
+
         // callback function
         var observerCallback = function(mutations){
 
+            console.log(mutations.length);
             // array for text elements with phones
             var elements = [];
 
@@ -117,30 +138,103 @@ $(function () {
 
         var config = { 
             childList: true, 
-            characterData: true
+            characterData: true,
+            subtree: true
         };
 
-        if(target != null && typeof(target) != 'undefined'){
-            var elements = getElements(target);
-            processElements(elements);
+        chrome.extension.onMessage.addListener(
+            function(request, sender, sendResponse) {
+                switch (request.type) { 
+                    case 'start_observer': {
+                        if(target != null && typeof(target) != 'undefined'){
+                            observer.observe(target, config);
 
-            observer.observe(target, config);
-        }
+                            var elements = getElements(target);
+                            processElements(elements);
+
+                            var elements = getElements(target);
+                            processElements(elements);
+                        }
+                        break;
+                    }
+                    case 'stop_observer': {
+                        observer.disconnect();
+
+                        // remove click to dial elements if exist
+                        var elements = getClickTodialElements(target);
+                        removeClickToDialElements(elements);
+                        break;
+                    }
+                }
+            }
+        );
+
+        chrome.extension.sendMessage({type: 'starting_observer_event'});
     });
 });
 
 chrome.extension.onMessage.addListener(
   function(request, sender, sendResponse) {
     if (request.type === "open") {
-        var popup = $('<div class="voipgrid-status"><h2><i class="icon-phone-sign"></i> Gesprek naar <span id="voipgrid-status-number"></span><i class="icon-remove-sign" id="voipgrid-status-close" style="float:right;cursor:pointer;"></i></h2><p><strong>Status:</strong> <span id="voipgrid-status-status"></span></p></div>');
-        $('body').append(popup);
-        $('#voipgrid-status-close').on('click', function() {
-           $('.voipgrid-status').remove();
-           chrome.extension.sendMessage({type: 'status-closed'});
+        
+        var container = $('.voipgrid-container');
+
+        if(container.length == 0){
+            container = $('<div>', {'class': 'voipgrid-container'}); 
+
+            $('body').append(container);
+        }    
+
+        var verticalAlign = function(){
+            container.css('margin-top', (-40 * container.children('.voipgrid-status').length) + 'px');
+        }
+
+        var popup = $('<div>', {'class': 'voipgrid-status', 'data-callid': request.callid});
+
+        var title = $('<h2>');
+        var titleIconSign = $('<i>', {'class': 'icon-phone-sign'});
+        var titleNum = $('<span>', {'text': request.number});
+        var titleIconRemove = $('<i>', {'class': 'icon-remove-sign'})
+                .css('float', 'right')
+                .css('cursor', 'pointer');
+
+        titleIconRemove.click(function(){
+            popup.remove();
+
+            if (container.children('.voipgrid-status').length == 0) {
+                container.remove();
+            } else {
+                verticalAlign();
+            }
+
+            chrome.extension.sendMessage
+                ({type: 'status-closed', callid: request.callid});
         });
-        $('#voipgrid-status-number').html(request.number);
+
+        title.append(titleIconSign)
+            .append('Gesprek naar ')
+            .append(titleNum)
+            .append(titleIconRemove);
+
+        var body = $('<p>');
+        var bodyStatusHeader = $('<strong>', {'text': 'Status: '});
+        var bodyStatusContent = $('<span>', {'class': 'voipgrid-status-status'});
+
+        body.append(bodyStatusHeader)
+            .append(bodyStatusContent);
+
+        popup.append(title)
+            .append(body);
+
+        container.prepend(popup);
+
+        verticalAlign();
     }
+
     if (request.type === "updatestatus") {
-        $('#voipgrid-status-status').html(request.status);
+        var popup = $('.voipgrid-container')
+            .children('[data-callid="' + request.callid + '"]');
+
+        popup.find('.voipgrid-status-status').html(request.status);
     }
   });

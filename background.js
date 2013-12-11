@@ -42,7 +42,50 @@ var is_user_auth = false;
 var is_panel_open = false;
 
 var queue_timer = '';
-var status_timer = '';
+
+var StatusTimers = function(){
+  var that = {
+    timers: []
+  }
+
+  this.getByCallID = function(callid){
+    var timers = $.grep(that.timers, function(elem, index) {
+      elem.callid == callid;
+    });
+
+    if(timers.length > 0){
+      return timers[0];
+    }
+
+    return null;
+  }
+
+  this.addTimer = function(callid, callback, timeout){
+    var timer = setInterval(callback, timeout);
+
+    that.timers.push({
+      callid: callid,
+      timer: timer
+    })
+  }
+
+  this.removeTimer = function(callid){
+    var index = -1;
+
+    for(var i in that.timers){
+      if(that.timers[i].callid == callid){
+        index = i;
+        clearInterval(that.timers[i]);
+        break;
+      }
+    }
+
+
+    that.timers.slice(index, 1);
+  }
+}
+
+var status_timers = new StatusTimers();
 
 var dialed_number = '';
 
@@ -109,6 +152,22 @@ var openSettings = function() {
   chrome.tabs.create({url: url});
 };
 
+var startObserver = function(){
+  chrome.tabs.getAllInWindow(null, function(tabs){
+    for (var i = 0; i < tabs.length; i++) {
+      chrome.tabs.sendMessage(tabs[i].id, { type: "start_observer" });                         
+    }
+  });
+}
+
+var stopObserver = function(){
+  chrome.tabs.getAllInWindow(null, function(tabs){
+    for (var i = 0; i < tabs.length; i++) {
+      chrome.tabs.sendMessage(tabs[i].id, { type: "stop_observer" });                         
+    }
+  });
+}
+
 var loggedOut = function(panel) {
   delete storage.username;
   delete storage.password;
@@ -132,6 +191,8 @@ var loggedOut = function(panel) {
     panel.showLogin()
     panel.updatehead('Uitgelogd');
   }
+
+  stopObserver();
 };
 
 var buildPanel = function(panel) {
@@ -157,6 +218,10 @@ var buildLoggedInPanel = function(panel) {
       // set 'no' as selected radio input and disable statusupdate select input
       panel.noselecteduserdestination();
   }
+
+  console.log(selected_fixed);
+  console.log(selected_phone);
+
   var html = '';
   if (fixeddestinations.length == 0 && phoneaccounts.length == 0) {
       html = '<option>Je hebt momenteel geen bestemmingen.</option>'; // 'You have no destinations at the moment.'
@@ -269,6 +334,10 @@ var loadpaneldata = function() {
       if (current_panel) {
         buildPanel(current_panel);
       }
+
+      is_user_auth = true;
+      startQueueTimer();
+      startObserver();
     });
     request.fail(function(jqXHR, textStatus) {
       if (jqXHR.status == 401) {
@@ -398,9 +467,6 @@ function loadqueuedata(base64auth) {
             callgroup_ids.push(q.id);
         }
     }
-
-    is_user_auth = true;
-    startQueueTimer();
   });
   request.fail(function(jqXHR, textStatus) {
     if (jqXHR.status == 401) {
@@ -459,14 +525,17 @@ var selectuserdestination_internal = function(type, id) {
     var password = storage.password;
     if (username && password) {
         var base64auth = 'Basic ' + btoa(username + ':' + password);
+
         selected_fixed = null;
         selected_phone = null;
+
         if (type == 'fixed') {
             selected_fixed = id;
         } else if(type == 'phone') {
             selected_phone = id;
         }
-         var request = $.ajax({
+
+        var request = $.ajax({
           url: platform_url + 'api/' + selecteduserdestinationresource + '/' + selecteduserdestination_id + '/',  
           dataType: 'json',
           contentType: 'application/json',
@@ -539,11 +608,14 @@ var clicktodial = function(b_number, tab) {
         });
         request.done(function (response) {
             if (response.callid != null) {
-                // display the clicktodialpanel only if we have a callid
-                callid = response.callid;
                 // closure for the timer
-                var updatestatusFunction = function() {updatestatus(tab);};
-                status_timer = setInterval(updatestatusFunction, 500);
+                var updatestatusFunction = function() {
+                  updatestatus(tab, response.callid);
+                };
+
+                status_timers.addTimer
+                  (response.callid, updatestatusFunction, 500);
+
                 var fontUrl = chrome.extension.getURL('assets/font');
                 var font = "@font-face {" +
                   "font-family: 'FontAwesome';" +
@@ -580,7 +652,7 @@ var clicktodial = function(b_number, tab) {
                 chrome.tabs.insertCSS(tab.id, {code: font}, function() {
                   chrome.tabs.insertCSS(tab.id, {code: googleFonts}, function() {
                     chrome.tabs.insertCSS(tab.id, {file: 'assets/css/clicktodial.css'}, function() {
-                        chrome.tabs.sendMessage(tab.id, {type: "open", number: b_number});
+                        chrome.tabs.sendMessage(tab.id, {type: "open", number: b_number, callid: response.callid});
                     });
                   });
                 });
@@ -606,7 +678,7 @@ var clicktodial = function(b_number, tab) {
 };
 
 /* updates the clicktodial panel with the call status */
-var updatestatus = function(tab) {
+var updatestatus = function(tab, callid) {
     var request = $.ajax({
       url: platform_url + 'api/' + clicktodialresource + '/' + callid + "/",
       dataType: 'json',
@@ -646,13 +718,15 @@ var updatestatus = function(tab) {
               showstatus = dialed_number + ' kon niet worden bereikt'; // '() could not be reached'
               break;
         }
-        chrome.tabs.sendMessage(tab.id, {type: "updatestatus", status: showstatus});
+        chrome.tabs.sendMessage(tab.id, {type: "updatestatus", status: showstatus, callid: callid});
+
+        // console.log(response);
 
         // breack line if status is disconected
         if(callstatus == 'disconnected'){
             // clear interval but not close panel
             // panel has status 'Verbinding verbroken'
-            timer.clearInterval(status_timer);
+            status_timers.removeTimer(response.callid);
         }
     });
 };
@@ -660,16 +734,26 @@ var updatestatus = function(tab) {
 // Listen for content script messages
 chrome.extension.onMessage.addListener(
   function(request, sender, sendResponse) {
-    if (request.type === "click") {
-      clicktodial(request.number, sender.tab);
+    switch (request.type){
+      case 'click':{
+        clicktodial(request.number, sender.tab);
+        break;
+      }
+      case 'status-closed':{
+        console.log(request.callid);
+        status_timers.removeTimer(request.callid);
+        break;
+      }
+      case 'starting_observer_event': {
+        if(is_user_auth){
+          chrome.tabs.sendMessage(sender.tab.id, {type: 'start_observer'});
+        }
+        break;
+      }
     }
-    if (request.type === "status-closed") {
-      clearInterval(status_timer);
-    }
-
-    console.log('chrome.extension.onMessage.addListener');
   }
 );
+
 
 chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
     if (request.method == "isC2DEnabled") {
