@@ -587,11 +587,15 @@ $(window).bind('storage', function (e) {
 /* handles clicktodial: initiates a call and shows the clicktodial panel. */
 var clicktodial = function(b_number, tab) {
     dialed_number = b_number;
+    
     var username = storage.username;
     var password = storage.password;
+
     if (username && password) {
-        var base64auth = 'Basic ' + btoa(username + ':' + password);
+        var base64auth = 'Basic ' + btoa('username' + ':' + 'password');
+
         var content = '{\"b_number\": \"' + b_number.replace(/[^0-9+]/g, '') + '\"}';
+
         var request = $.ajax({
           url: platform_url + 'api/' + clicktodialresource + '/',
           dataType: 'json',
@@ -604,10 +608,43 @@ var clicktodial = function(b_number, tab) {
           headers: {
             Authorization: base64auth
           },
-          type: 'POST'
-        });
-        request.done(function (response) {
-            if (response.callid != null) {
+          type: 'POST',
+          complete: function (jqxhr, txt_status){
+            // need to delete
+            console.log(jqxhr);
+
+            var errorNotification = function(){
+              callid = '0';
+
+              var notification = webkitNotifications.createNotification(
+                'assets/img/clicktodial.png',
+                notification_title,
+                'Het is niet gelukt om het gesprek op te zetten.');
+
+              notification.show();
+
+              loggedOut(current_panel);
+
+              chrome.browserAction.getPopup
+                ({ }, function (result){
+                  console.log(result);
+
+                  var notification = webkitNotifications.createHTMLNotification(
+                      result
+                    );
+
+                  notification.show();
+                })
+            }
+
+            if(jqxhr.status == 401){
+              // authorization failed
+              errorNotification();
+            } else {
+              var response = JSON.parse(jqxhr.responseText);
+
+              if (response.callid != null) {
+                
                 // closure for the timer
                 var updatestatusFunction = function() {
                   updatestatus(tab, response.callid);
@@ -623,8 +660,10 @@ var clicktodial = function(b_number, tab) {
                   "src: url('" + fontUrl + "/fontawesome-webfont.eot?#iefix') format('embedded-opentype'), url('" + fontUrl + "/fontawesome-webfont.woff') format('woff'), url('" + fontUrl + "/fontawesome-webfont.ttf') format('truetype'), url('" + fontUrl + "/fontawesome-webfont.svg#FontAwesome') format('svg');" +
                   "font-weight: normal;" +
                   "font-style: normal;";
+                
                 // The insertCSS does not accept an url, the code below comes from:
                 // http://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,400,600
+                
                 var googleFonts = "@font-face { " +
                   "  font-family: 'Open Sans'; " +
                   "  font-style: normal; " +
@@ -649,25 +688,23 @@ var clicktodial = function(b_number, tab) {
                   " font-weight: 600; " +
                   "  src: local('Open Sans Semibold Italic'), local('OpenSans-SemiboldItalic'), url(http://themes.googleusercontent.com/static/fonts/opensans/v6/PRmiXeptR36kaC0GEAetxuw_rQOTGi-AJs5XCWaKIhU.woff) format('woff');" +
                   "}";
+
                 chrome.tabs.insertCSS(tab.id, {code: font}, function() {
                   chrome.tabs.insertCSS(tab.id, {code: googleFonts}, function() {
                     chrome.tabs.insertCSS(tab.id, {file: 'assets/css/clicktodial.css'}, function() {
                         chrome.tabs.sendMessage(tab.id, {type: "open", number: b_number, callid: response.callid});
                     });
                   });
-                });
+                });          
+              } else {
+                errorNotification();
+              } 
+
             }
+          }
         });
-        request.error(function() {
-            callid = '0';
-            var notification = webkitNotifications.createNotification(
-              'assets/img/clicktodial.png',
-              notification_title,
-              'Het is niet gelukt om het gesprek op te zetten.');
-            notification.show();
-        });
-    }
-    else {
+
+    } else {
       var notification = webkitNotifications.createNotification(
         'assets/img/clicktodial.png',
         notification_title,

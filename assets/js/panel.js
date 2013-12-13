@@ -44,9 +44,9 @@ $(function() {
           .data('opened', true)            
           .attr('data-opened', 'true')
           .find('.widget-content')
-          .show(//0, function() {
-          //     $('body').removeClass('scrollbarhide');
-          /*}*/);
+          .show(0, function() {
+             $('body').removeClass('scrollbarhide');
+          });
   };
 
   var widgetIsQueues = function(widget){
