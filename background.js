@@ -263,7 +263,7 @@ var buildLoggedInPanel = function(panel) {
 };
 
 var buildQueuesInPanel = function(panel) {
-  // no queues, no list
+  // no queueТебеs, no list
   if (queues.length == 0) {
       callgroup_ids = new Array();
       html = '<ul><li>Je hebt momenteel geen wachtrijen.</li></ul>'; // 'You have no queues at the moment.'
@@ -592,7 +592,7 @@ var clicktodial = function(b_number, tab) {
     var password = storage.password;
 
     if (username && password) {
-        var base64auth = 'Basic ' + btoa('username' + ':' + 'password');
+        var base64auth = 'Basic ' + btoa(username + ':' + password);
 
         var content = '{\"b_number\": \"' + b_number.replace(/[^0-9+]/g, '') + '\"}';
 
@@ -613,35 +613,33 @@ var clicktodial = function(b_number, tab) {
             // need to delete
             console.log(jqxhr);
 
-            var errorNotification = function(){
+            var unauthorizedNotification = function(){
               callid = '0';
 
+              var notification = webkitNotifications.createNotification(
+                'assets/img/clicktodial.png',
+                notification_title,
+                'Gesprek niet opgezet vanwege onjuiste gebruikersnaam of wachtwoord. Meldt uzelf opnieuw aan en probeer het opnieuw.');
+
+              notification.show();
+
+              loggedOut(current_panel);
+            }
+
+            var failNotifications = function(){
               var notification = webkitNotifications.createNotification(
                 'assets/img/clicktodial.png',
                 notification_title,
                 'Het is niet gelukt om het gesprek op te zetten.');
 
               notification.show();
-
-              loggedOut(current_panel);
-
-              chrome.browserAction.getPopup
-                ({ }, function (result){
-                  console.log(result);
-
-                  var notification = webkitNotifications.createHTMLNotification(
-                      result
-                    );
-
-                  notification.show();
-                })
             }
 
-            if(jqxhr.status == 401){
-              // authorization failed
-              errorNotification();
-            } else {
-              var response = JSON.parse(jqxhr.responseText);
+            if(jqxhr.status == 201)
+            {
+
+              var response = 
+                JSON.parse(jqxhr.responseText);
 
               if (response.callid != null) {
                 
@@ -697,9 +695,16 @@ var clicktodial = function(b_number, tab) {
                   });
                 });          
               } else {
-                errorNotification();
+                failNotifications();
               } 
-
+            // response statis != 201
+            } else {
+              // unauthorized
+              if(jqxhr.status == 401) {
+                unauthorizedNotification();
+              } else {
+                failNotifications();
+              }
             }
           }
         });
