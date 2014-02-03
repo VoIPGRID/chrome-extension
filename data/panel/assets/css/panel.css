@@ -270,6 +270,103 @@ input[type="search"] {
 }
 
 /**
+ * widget: contacts
+ */
+.contacts .search-form {
+  display: inline-block;
+  position: absolute;
+  left: 30%;
+  top: 0;
+  right: 35px;
+}
+
+.contacts .search-form .search-button {
+  height: 32px;
+  line-height: 32px;
+  position: absolute;
+  left: .4em;
+  top: 12.5%;
+}
+
+.contacts .search-form .form-control {
+  width: 100%;
+  padding-left: 28px;
+  background: #F9F9F9;
+  border: 1px solid #dddddd;
+
+  /* include border-width in sizing */
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.contacts .list {
+  margin: 0;
+  padding: 0;
+
+  /* show a scrollbar after +/- 5 contacts */
+  max-height: 210px;
+  overflow: auto;
+}
+
+.contacts .contact {
+  border-bottom: 1px solid #dddddd;
+  margin: 0;
+  height: auto;
+  padding: 3px 7px 2px;
+  line-height: normal;
+}
+
+.contacts .contact .status-icon {
+  margin: 5px 0 0 5px;
+  width: 30px;
+  line-height: 31px;
+  color: #778899;
+}
+
+.status-icon.busy .fa,
+.status-icon.ringing .fa {
+  color: #ea0000;
+}
+
+.status-icon.available .fa {
+  color: #008000;
+}
+
+.contacts .contact {
+  overflow: hidden;
+}
+
+.contacts .contact .info {
+  margin-left: 30px;
+}
+.contacts .contact .name {
+  font-weight: bold;
+}
+.contacts .contact .extension {
+  color: #9b9c9e;
+  font-weight: normal;
+}
+
+.contacts .empty-list li,
+.contacts .not-found-contacts li {
+  height: 43px;
+  line-height: 43px;
+}
+
+.contacts .contact .status-icon {
+  cursor: not-allowed;
+}
+
+.contacts .contact .available {
+  cursor: pointer;
+}
+
+.contacts .contact .status-icon.available.ringing {
+  cursor: not-allowed;
+}
+
+/**
  * widget: queues
  */
 .queues .queue {

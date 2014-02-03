@@ -17,6 +17,7 @@
             "lib/timer.js",
             "lib/storage.js",
             "lib/widgets/availability.js",
+            "lib/widgets/contacts.js",
             "lib/widgets/queues.js"
         ]
     },
