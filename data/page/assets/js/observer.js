@@ -59,59 +59,21 @@
 
     /**
      * Find elements that match our regex for a dutch phone number and
-     * don't already have an icon next to them.
+     * don't already have an icon next to them using *findAndReplaceDOMText*.
      */
     function insertIconsIntoElement(element) {
-        /**
-         * Insert icons next to content in *element* which matches *phoneRegex*.
-         */
-        function insertIcons(element) {
-            if(element && element.nodeType) {
-                switch(element.nodeType) {
-                    case 1:
-                        for(var child = element.firstChild; child; child = child.nextSibling) {
-                            insertIcons(child);
-                        }
-                        break;
-
-                    case 3:
-                        // skip previously attented elements
-                        if(!$(element.parentNode).hasClass(phoneElementClassName) &&
-                           phoneRegex.test(element.nodeValue)
-                        ) {
-                            // prevent adding another icon next time
-                            $(element.parentNode).addClass(phoneElementClassName);
-
-                            $(element.parentNode).html($(element.parentNode).html().replace(
-                                phoneRegex,
-                                function($0) {
-                                    // skip numbers that look like dates
-                                    if(dateRegex.test(element.nodeValue)) {
-                                        return $0;
-                                    }
-
-                                    // insert the icon after the phone number
-                                    var newIcon = icon.clone();
-                                    newIcon.attr('data-number', $0);
-                                    return $0 + $('<div>').append(newIcon).html();
-                                }
-                            ));
-                        }
-                        break;
-                }
+        findAndReplaceDOMText(element, {
+            find: phoneRegex,
+            replace: function(portion, match, matchIndex) {
+                // insert the icon after the phone number
+                var newIcon = icon.clone();
+                newIcon.attr('data-number', match[0]);
+                return $('<span>').addClass(phoneElementClassName).html(match[0] + $('<div>').append(newIcon).html())[0];
+            },
+            filterElements: function(element) {
+                return !$(element).hasClass(phoneElementClassName);
             }
-        }
-
-        // filter elements to insert icons into
-        $(element).find(selector)
-            .filter(function(index, possibleMatch) {
-                // skip previous matches
-                return !$(possibleMatch).hasClass(phoneElementClassName) &&
-                    $(possibleMatch).parents(phoneElementClassName).length === 0;
-            })
-            .each(function(index, element) {
-                insertIcons(element);
-            });
+        });
     }
 
     /**
@@ -170,7 +132,7 @@
 
                 // remove our CSS class from previously identified elements containing phone numbers
                 var phoneElements = $('.'+phoneElementClassName);
-                $(phoneElements).removeClass(phoneElementClassName);
+                $(phoneElements).contents().unwrap();
 
                 // remove our stylesheet
                 $(printStyle).remove();

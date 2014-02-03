@@ -46,6 +46,7 @@
             ],
             "js": [
                 "data/assets/lib/jquery/jquery.js",
+                "data/assets/lib/findAndReplaceDOMText/findAndReplaceDOMText.js",
                 "data/clicktodial/assets/js/clicktodial-contentscript.js",
                 "data/page/assets/js/observer.js"
             ],
