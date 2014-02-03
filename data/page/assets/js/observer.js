@@ -62,18 +62,47 @@
      * don't already have an icon next to them using *findAndReplaceDOMText*.
      */
     function insertIconsIntoElement(element) {
+        stop_observer();
+
         findAndReplaceDOMText(element, {
             find: phoneRegex,
             replace: function(portion, match, matchIndex) {
+                // return original text if there was "no text"
+                if(!$.trim(portion.node.wholeText).length) {
+                    return portion.text;
+                }
+
+                // return original text if the match is across elements
+                if(!phoneRegex.test(portion.text)) {
+                    return portion.text;
+                }
+
                 // insert the icon after the phone number
                 var newIcon = icon.clone();
                 newIcon.attr('data-number', match[0]);
                 return $('<span>').addClass(phoneElementClassName).html(match[0] + $('<div>').append(newIcon).html())[0];
             },
             filterElements: function(element) {
-                return !$(element).hasClass(phoneElementClassName);
+                // apply date filter (to already matched elements only)
+                var match = false, skip = false;
+                for(var child = element.firstChild; child; child = child.nextSibling) {
+                    if(phoneRegex.test(child.nodeValue)) {
+                        phoneRegex.lastIndex = 0;
+                        match = true;
+                        break;
+                    }
+                    phoneRegex.lastIndex = 0;
+                }
+                if(match) {
+                    if(dateRegex.test(element.innerHTML)) {
+                        skip = true;
+                    }
+                }
+                return !skip && !$(element).hasClass(phoneElementClassName);
             }
         });
+
+        start_observer();
     }
 
     /**
@@ -84,6 +113,22 @@
             insertIconsIntoElement(mutation.target);
         });
     });
+
+    function start_observer() {
+        if(observer) {
+            observer.observe($('body')[0], {
+                characterData: true,
+                childList: true,
+                subtree: true,
+            });
+        }
+    }
+
+    function stop_observer() {
+        if(observer) {
+            observer.disconnect();
+        }
+    }
 
     /**
      * Observer: start.
@@ -102,13 +147,7 @@
                     insertIconsIntoElement($('body')[0]);
 
                     // now also process mutations
-                    if(observer) {
-                        observer.observe($('body')[0], {
-                            characterData: true,
-                            childList: true,
-                            subtree: true,
-                        });
-                    }
+                    start_observer();
                 }
             }
         });
@@ -121,10 +160,8 @@
             if(request == 'page.observer.stop') {
                 console.info('page.observer.stop');
 
-                if(observer) {
-                    // stop processing mutations
-                    observer.disconnect();
-                }
+                // stop processing mutations
+                stop_observer();
 
                 // remove icons from page
                 var iconElements = $('.'+phoneIconClassName);
