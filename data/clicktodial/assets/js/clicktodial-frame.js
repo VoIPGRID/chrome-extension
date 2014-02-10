@@ -51,4 +51,10 @@
     }, false);
 
     window.addEventListener('unload', hidePanel, false);
+
+    // start doing things with this panel
+    chrome.runtime.sendMessage({'clicktodialpanel.onshow': {
+        // extra info to identify call
+        callid: callid
+    }});
 })();

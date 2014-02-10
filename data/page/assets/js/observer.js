@@ -58,6 +58,23 @@
     var printStyle = $('<link rel="stylesheet" href="' + chrome.runtime.getURL('data/page/assets/css/print.css') + '" media="print">');
 
     /**
+     * Click event handler: dial the number in $.data
+     */
+    $('body').on('click', '.'+phoneIconClassName, function(event) {
+        if($(this).data('number') && $(this).parents('.'+phoneElementClassName).length) {
+            // remove focus
+            $(this).blur();
+
+            // don't do anything with this click in the actual page
+            event.preventDefault();
+            event.stopPropagation();
+
+            // dial
+            chrome.runtime.sendMessage({'clicktodial.dial': {'b_number': $(this).data('number')}});
+        }
+    });
+
+    /**
      * Find elements that match our regex for a dutch phone number and
      * don't already have an icon next to them using *findAndReplaceDOMText*.
      */

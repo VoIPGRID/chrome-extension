@@ -38,12 +38,6 @@
         $(iframes[callid]).hide();
         $(iframes[callid]).load(function() {
             $(iframes[callid]).show();
-
-            // start doing things with this panel
-            chrome.runtime.sendMessage({'clicktodialpanel.onshow': {
-                // extra info to identify call
-                callid: callid
-            }});
         });
         $('html').append(iframes[callid]);
 
