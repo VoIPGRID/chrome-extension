@@ -51,8 +51,23 @@
     var printStyle = $('<link rel="stylesheet" href="' + chrome.runtime.getURL('data/page/assets/css/print.css') + '" media="print">');
 
     /**
-     * Create an HTML element containing an anchor with a phone icon with
-     * the phone number in a data attribute.
+     * Click event handler: dial the number in $.data
+     */
+    $('body').on('click', '.'+phoneIconClassName, function(event) {
+        if($(this).data('number') && $(this).parents('.'+phoneElementClassName).length) {
+            // remove focus
+            $(this).blur();
+
+            // don't do anything with this click in the actual page
+            event.preventDefault();
+            event.stopPropagation();
+
+            // dial
+            chrome.runtime.sendMessage({'clicktodial.dial': {'b_number': $(this).data('number')}});
+        }
+    });
+
+    /**
      */
     function createIconElement(number) {
         function newIcon(number) {
