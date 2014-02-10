@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="nl" class="no-scroll">
+    <head>
+        <meta charset="utf-8" />
+        <link href="../../assets/fonts/font-awesome.css" rel="stylesheet" />
+        <link href="../../assets/lib/normalize/normalize.css" rel="stylesheet" />
+        <link href="../../assets/fonts/open-sans.css" rel="stylesheet" />
+        <link href="../../assets/css/main.css" rel="stylesheet" />
+        <link href="../assets/css/panel.css" rel="stylesheet" />
+        <script src="../../assets/lib/jquery/jquery.js"></script>
+        <script src="../assets/js/panel.js"></script>
+        <script src="../assets/js/widgets.js"></script>
+        <script src="../../widgets/assets/js/availability.js"></script>
+        <script src="../../widgets/assets/js/queues.js"></script>
+    </head>
+    <body class="no-select">
+        <!-- Login form -->
+        <div class="login-section">
+            <form class="login-form">
+                <!-- 'Email address' -->
+                <label for="username">E-mailadres</label>
+                <input id="username" type="text" tabindex="1" />
+                <!-- 'Password' -->
+                <label for="password">Wachtwoord</label>
+                <input id="password" type="password" tabindex="2" />
+                <!-- failed-text: 'Incorrect username/password' -->
+                <!-- logout-text: 'Logged out' -->
+                <!-- loading-text: 'Logging in ..' -->
+                <!-- 'Log in' -->
+                <button id="login" type="button" class="login-button" data-link="login" data-failed-text="Onjuiste gebruiksernaam/wachtwoord" data-logout-text="Uitgelogd" data-loading-text="<i class='fa fa-spinner fa-spin'></i> Inloggen ..">Inloggen</button>
+            </form>
+        </div>
+        <!-- /Login form -->
+        <!-- Plugin container -->
+        <div class="container hide">
+            <div class="account-info">
+                <div class="pull-right">
+                    <!-- 'log out' -->
+                    <span id="logout" data-link="logout" class="logout">uitloggen</span>
+                    <span class="shortcuts">
+                        <!-- 'Close' -->
+                        <i id="close" class="fa pull-right fa-times-circle" title="Sluiten"></i>
+                        <!-- 'Settings' -->
+                        <i id="settings" class="fa pull-right fa-cog" data-link="settings" title="Instellingen"></i>
+                        <!-- 'Help' -->
+                        <i id="help" class="fa pull-right fa-question-circle" data-link="help" title="Help"></i>
+                    </span>
+                </div>
+                <span id="user-name" class="user-name"></span>
+            </div>
+            <div class="widget availability" data-opened="false" data-widget="availability">
+                <div class="widget-header no-select">
+                    <h3 class="widget-title">
+                        <i class="fa fa-fw fa-phone-square fa-vertical-align widget-icon"></i>
+                        <i class="fa fa-fw fa-spinner fa-spin fa-vertical-align busy-icon"></i>
+                        <!-- 'Availability' -->
+                        Bereikbaarheid
+                    </h3>
+                </div>
+                <div class="widget-content hide">
+                    <form class="form form-inline">
+                        <div class="form-group availability-toggle">
+                            <!-- 'Are you available?' -->
+                            <label>Ben je bereikbaar?</label>
+                            <div class="radio">
+                                <label>
+                                    <!-- 'Yes' -->
+                                    <input id="yes" type="radio" name="availability" class="form-control" value="yes" checked="checked" /> JA
+                                </label>
+                            </div>
+                            <div class="radio">
+                                <label>
+                                    <!-- 'No' -->
+                                    <input id="no" type="radio" name="availability" class="form-control" value="no" /> NEE
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group availability-destination">
+                            <select id="statusupdate" class="form-control" name="selecteddestination"></select>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="widget queues" data-opened="false" data-widget="queues">
+                <div class="widget-header no-select">
+                    <h3 class="widget-title">
+                        <i class="fa fa-fw fa-clock-o fa-vertical-align widget-icon"></i>
+                        <i class="fa fa-fw fa-spinner fa-spin fa-vertical-align busy-icon"></i>
+                        <!-- 'Queues' -->
+                        Wachtrijen
+                    </h3>
+                </div>
+                <div class="widget-content hide">
+                    <ul class="template hide">
+                        <li class="queue">
+                            <span class="indicator">?</span>
+                            <span class="text"></span>
+                            <span class="code"></span>
+                        </li>
+                    </ul>
+                    <ul class="list">
+                    </ul>
+                    <ul class="empty-list hide">
+                        <li class="queue">
+                            <span class="indicator">?</span>
+                            <!-- 'You don't have any queues' -->
+                            <span class="text">Je hebt momenteel geen wachtrijen.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- /Plugin container -->
+    </body>
+</html>

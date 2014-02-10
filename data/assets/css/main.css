@@ -1,0 +1,25 @@
+/**
+ * General styling, not used for parts of this plugin in particular.
+ */
+
+/* Prevent firefox from showing the cursor: text for normal elements like divs etc. */
+.no-select {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+}
+
+/* Hide elements */
+.hide {
+    display: none;
+}
+
+/* Resize fa icons */
+.fa {
+    font-size: 19px;
+}
+
+.fa.fa-vertical-align {
+    margin-top: -3px;
+    vertical-align: middle;
+}
