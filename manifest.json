@@ -15,8 +15,8 @@
             "lib/panels.js",
             "lib/timer.js",
             "lib/storage.js",
-            "lib/widgets/availability.js",  // require main.js
-            "lib/widgets/queues.js"  // require main.js
+            "lib/widgets/availability.js",
+            "lib/widgets/queues.js"
         ]
     },
     "browser_action": {
@@ -55,7 +55,7 @@
         }
     ],
     "options_page": "options/options.html",
-    "web_accessible_resources" :[
+    "web_accessible_resources": [
         "data/clicktodial/assets/img/clicktodial.png",
         "data/clicktodial/html/clicktodial.html",
         "data/page/assets/css/print.css"
