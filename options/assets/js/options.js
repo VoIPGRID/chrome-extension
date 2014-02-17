@@ -16,7 +16,11 @@
 
         function save() {
             $('input').each(function(index, input) {
-                storage.put($(input).attr('id'), $(input).val());
+                if($(input).attr('type') == 'checkbox' || $(input).attr('radio')) {
+                    storage.put($(input).attr('id'), $(input).is(':checked'));
+                } else {
+                    storage.put($(input).attr('id'), $(input).val());
+                }
             });
 
             $('.message').text('Instellingen opgeslagen.').show();
