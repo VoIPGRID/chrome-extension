@@ -23,7 +23,7 @@
 
     // element that shows the icon and triggers a call
     var iconStyle = {
-        'background-attachment': 'scroll',
+        // 'background-attachment': 'scroll',  // this is set later, conditionally
         'background-color': 'transparent !important',
         'background-image': 'url(' + chrome.runtime.getURL('data/clicktodial/assets/img/clicktodial.png') + ')',
         'background-repeat': 'no-repeat',
@@ -96,7 +96,7 @@
 
                 // insert the icon after the phone number
                 var newIcon = icon.clone();
-                newIcon.attr('data-number', match[0]);
+                newIcon.attr('data-number', $.trim(match[0]));
                 return $('<span>').addClass(phoneElementClassName).html(match[0] + $('<div>').append(newIcon).html())[0];
             },
             filterElements: function(element) {
@@ -116,6 +116,17 @@
                     }
                 }
                 return !skip && !$(element).hasClass(phoneElementClassName);
+            }
+        });
+
+        /**
+         * This is to prevent alerts in GMail asking to send messages
+         * without "attachments" eventhough you "mention" them in your message
+         * (according to Google).
+         */
+        $('.'+phoneIconClassName).each(function(index, element) {
+            if($(element).css('background-attachment') != 'scroll') {
+                $(element).css('background-attachment', 'scroll');
             }
         });
 
