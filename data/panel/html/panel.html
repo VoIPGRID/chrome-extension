@@ -8,6 +8,7 @@
         <link href="../../assets/css/main.css" rel="stylesheet" />
         <link href="../assets/css/panel.css" rel="stylesheet" />
         <script src="../../assets/lib/jquery/jquery.js"></script>
+        <script src="../../assets/lib/translate/chrome-i18n-html-translate.js"></script>
         <script src="../assets/js/panel.js"></script>
         <script src="../assets/js/widgets.js"></script>
         <script src="../../widgets/assets/js/availability.js"></script>
@@ -17,17 +18,11 @@
         <!-- Login form -->
         <div class="login-section">
             <form class="login-form">
-                <!-- 'Email address' -->
-                <label for="username">E-mailadres</label>
+                <label for="username" data-i18n-content="loginFormUsernameLabel"></label>
                 <input id="username" type="text" tabindex="1" />
-                <!-- 'Password' -->
-                <label for="password">Wachtwoord</label>
+                <label for="password" data-i18n-content="loginFormPasswordLabel"></label>
                 <input id="password" type="password" tabindex="2" />
-                <!-- failed-text: 'Incorrect username/password' -->
-                <!-- logout-text: 'Logged out' -->
-                <!-- loading-text: 'Logging in ..' -->
-                <!-- 'Log in' -->
-                <button id="login" type="button" class="login-button" data-link="login" data-failed-text="Onjuiste gebruiksernaam/wachtwoord" data-logout-text="Uitgelogd" data-loading-text="<i class='fa fa-spinner fa-spin'></i> Inloggen ..">Inloggen</button>
+                <button id="login" type="button" class="login-button" data-link="login" data-i18n-attrs='{"data-failed-text": "loginFormLoginFailedText", "data-logout-text": "loginFormLogoutText", "data-loading-text": "loginFormLoadingText", "data-reset-text": "loginFormLoginButtonText"}' data-i18n-content="loginFormLoginButtonText"></button>
             </form>
         </div>
         <!-- /Login form -->
@@ -35,15 +30,11 @@
         <div class="container hide">
             <div class="account-info">
                 <div class="pull-right">
-                    <!-- 'log out' -->
-                    <span id="logout" data-link="logout" class="logout">uitloggen</span>
+                    <span id="logout" data-link="logout" class="logout" data-i18n-content="logoutLinkText"></span>
                     <span class="shortcuts">
-                        <!-- 'Close' -->
-                        <i id="close" class="fa pull-right fa-times-circle" title="Sluiten"></i>
-                        <!-- 'Settings' -->
-                        <i id="settings" class="fa pull-right fa-cog" data-link="settings" title="Instellingen"></i>
-                        <!-- 'Help' -->
-                        <i id="help" class="fa pull-right fa-question-circle" data-link="help" title="Help"></i>
+                        <i id="close" class="fa pull-right fa-times-circle" data-i18n-title="closePanelTitle"></i>
+                        <i id="settings" class="fa pull-right fa-cog" data-link="settings" data-i18n-title="openSettingsTitle"></i>
+                        <i id="help" class="fa pull-right fa-question-circle" data-link="help" data-i18n-title="openHelpTitle"></i>
                     </span>
                 </div>
                 <span id="user-name" class="user-name"></span>
@@ -53,25 +44,21 @@
                     <h3 class="widget-title">
                         <i class="fa fa-fw fa-phone-square fa-vertical-align widget-icon"></i>
                         <i class="fa fa-fw fa-spinner fa-spin fa-vertical-align busy-icon"></i>
-                        <!-- 'Availability' -->
-                        Bereikbaarheid
+                        <span data-i18n-content="availabilityWidgetTitle"></span>
                     </h3>
                 </div>
                 <div class="widget-content hide">
                     <form class="form form-inline">
                         <div class="form-group availability-toggle">
-                            <!-- 'Are you available?' -->
-                            <label>Ben je bereikbaar?</label>
+                            <label data-i18n-content="availabilityOptionsTitle"></label>
                             <div class="radio">
                                 <label>
-                                    <!-- 'Yes' -->
-                                    <input id="yes" type="radio" name="availability" class="form-control" value="yes" checked="checked" /> JA
+                                    <input id="yes" type="radio" name="availability" class="form-control" value="yes" checked="checked" /> <span data-i18n-content="availabilityOptionYES"></span>
                                 </label>
                             </div>
                             <div class="radio">
                                 <label>
-                                    <!-- 'No' -->
-                                    <input id="no" type="radio" name="availability" class="form-control" value="no" /> NEE
+                                    <input id="no" type="radio" name="availability" class="form-control" value="no" /> <span data-i18n-content="availabilityOptionNO"></span>
                                 </label>
                             </div>
                         </div>
@@ -86,8 +73,7 @@
                     <h3 class="widget-title">
                         <i class="fa fa-fw fa-clock-o fa-vertical-align widget-icon"></i>
                         <i class="fa fa-fw fa-spinner fa-spin fa-vertical-align busy-icon"></i>
-                        <!-- 'Queues' -->
-                        Wachtrijen
+                        <span data-i18n-content="queuesWidgetTitle"></span>
                     </h3>
                 </div>
                 <div class="widget-content hide">
@@ -103,8 +89,7 @@
                     <ul class="empty-list hide">
                         <li class="queue">
                             <span class="indicator">?</span>
-                            <!-- 'You don't have any queues' -->
-                            <span class="text">Je hebt momenteel geen wachtrijen.</span>
+                            <span class="text" data-i18n-content="noQueuesText"></span>
                         </li>
                     </ul>
                 </div>

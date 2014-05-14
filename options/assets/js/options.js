@@ -23,7 +23,7 @@
                 }
             });
 
-            $('.message').text('Instellingen opgeslagen.').show();
+            $('.message').text(translate('optionsSaveText')).show();
 
             setTimeout(function() {
                 $('.message').fadeOut(1000, function() {

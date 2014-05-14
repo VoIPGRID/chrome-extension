@@ -94,7 +94,6 @@
             // when logging in, display an indicator
             function busyLoginButton() {
                 var button = $('.login-button');
-                $(button).data('reset-text', $(button).html());
                 $(button)
                     .html($(button).data('loading-text'))
                     .prop('disabled', true)
@@ -118,12 +117,6 @@
                     .removeClass('info')
                     .removeClass('temporary-text');
             }
-            chrome.runtime.onMessage.addListener(
-                function(request, sender, sendResponse) {
-                    if(request == 'login.indicator.stop') {
-                        resetButton();
-                    }
-                });
 
             // show an error on login fail
             function failedLoginButton() {
@@ -160,7 +153,7 @@
                     }
                 });
 
-            // after login, show the user's email address
+            // after login, show the user's e-mail address
             chrome.runtime.onMessage.addListener(
                 function(request, sender, sendResponse) {
                     if(request.hasOwnProperty('login.success')) {

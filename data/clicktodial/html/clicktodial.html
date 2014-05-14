@@ -8,19 +8,19 @@
         <link href="../../assets/css/main.css" rel="stylesheet" />
         <link href="../assets/css/clicktodial.css" rel="stylesheet" />
         <script src="../assets/js/clicktodial-frame.js"></script>
+        <script src="../../assets/lib/jquery/jquery.js"></script>
+        <script src="../../assets/lib/translate/chrome-i18n-html-translate.js"></script>
     </head>
     <body>
         <div class="voipgrid-status">
             <p class="heading">
                 <i class="fa fa-fw fa-phone-square fa-vertical-align"></i>
-                <!-- 'Calling to' -->
-                Gesprek naar
+                <span data-i18n-content="clicktodialTitle"></span>
                 <span id="number">?</span>
                 <i id="close" class="close fa fa-fw fa-times-circle pull-right"></i>
             </p>
             <p class="status">
-                <!-- 'Status' -->
-                <span class="status-label">Status:</span>
+                <span class="status-label" data-i18n-content="clicktodialStatusLabel"></span>
                 <span id="status" class="status-text"></span>
             </p>
         </div>

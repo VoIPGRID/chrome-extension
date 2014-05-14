@@ -24,8 +24,7 @@
                 var list = $('[name="selecteddestination"]');
                 list.empty();
 
-                // 'You have no destinations at the moment.'
-                var option = $('<option value="">').text('Je hebt momenteel geen bestemmingen.');
+                var option = $('<option value="">').text(translate('noAvailabilityOptionsText'));
                 option.appendTo(list);
 
                 // which suggests you're not available (based on the available data: no possible destinations)
