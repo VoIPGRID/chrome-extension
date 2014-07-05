@@ -2,7 +2,7 @@
  * Styling specifically for the click-to-dial call popup.
  */
 .voipgrid-status {
-    width: 300px;
+    width: 320px;
     height: 81px;
     background: white;
     font-family: "Open Sans", "Helvetica Neue", Arial, sans-serif;
@@ -10,7 +10,7 @@
     box-shadow: rgba(0,0,0,0.25) 0 0 0 2038px, rgba(0,0,0,0.25) 0 10px 20px;
 
     /* center popup */
-    margin-left: -150px;
+    margin-left: -50%;
     margin-top: -42px;
     position: fixed;
     left: 50%;

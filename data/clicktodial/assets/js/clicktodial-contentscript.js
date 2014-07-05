@@ -12,7 +12,7 @@
             'right': '0',
             'bottom': '0',
             'left': '0',
-            'width': '300px',
+            'width': '320px',
             'height': '79px',
             'z-index': '2147483647',
 
