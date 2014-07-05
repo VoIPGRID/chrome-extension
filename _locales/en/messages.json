@@ -1,10 +1,10 @@
 {
-    // manifest.json
+    /* manifest.json */
     "extDescription": {
         "message": "Chrome extension for Click-to-Dial, status updates and queue monitoring",
         "description": "Extension description."
     },
-    // data/clicktodial/html/clicktodial.html
+    /* data/clicktodial/html/clicktodial.html */
     "clicktodialTitle": {
         "message": "Calling to",
         "description": "Text for the title of the Click-to-Dial popup."
@@ -13,7 +13,7 @@
         "message": "Status:",
         "description": "Label for the call status in the Click-to-Dial popup."
     },
-    // data/panel/html/panel.html:login-section
+    /* data/panel/html/panel.html:login-section */
     "loginFormUsernameLabel": {
         "message": "E-mail address",
         "description": "Label for the login form of the field 'username'."
@@ -38,7 +38,7 @@
         "message": "Log in",
         "description": "Text for the login button."
     },
-    // data/panel/html/panel.html:container
+    /* data/panel/html/panel.html:container */
     "logoutLinkText": {
         "message": "log out",
         "description": "Text for the logout link."
@@ -55,7 +55,7 @@
         "message": "Help",
         "description": "Text for the help icon."
     },
-    // data/panel/html/panel.html:widget.availability
+    /* data/panel/html/panel.html:widget.availability */
     "availabilityWidgetTitle": {
         "message": "Availability",
         "description": "Text of the title of the availability widget."
@@ -76,7 +76,7 @@
         "message": "NO",
         "description": "Text for availability option 'no'."
     },
-    // data/panel/html/panel.html:widget.queues
+    /* data/panel/html/panel.html:widget.queues */
     "queuesWidgetTitle": {
         "message": "Queues",
         "description": "Text of the title of the queues widget."
@@ -85,12 +85,12 @@
         "message": "You don't have any queues",
         "description": "Text to show in case there are no queues to display."
     },
-    // lib/api.js
+    /* lib/api.js */
     "unauthorizedNotificationText": {
         "message": "In order to use Click-to-Dial, you first need to log in by clicking the toolbar icon and entering your login details.",
         "description": "Text for the notification shown when calling the API on the remote server returns status '401 Unauthorized'."
     },
-    // lib/clicktodial.js
+    /* lib/clicktodial.js */
     "callFailedNotificationText": {
         "message": "Failed to set up call",
         "description": "Text for the notification shown when a call could not setup successfully."
@@ -143,17 +143,17 @@
         "message": "Calling..",
         "description": "Text to show while status is unknown."
     },
-    // lib/page.js
+    /* lib/page.js */
     "contextMenuLabel": {
         "message": "Call selected number",
         "description": "Text for the option in the right click menu."
     },
-    // options/assets/js/options.js
+    /* options/assets/js/options.js */
     "optionsSaveText": {
         "message": "Options saved.",
         "description": "Success message after saving changes in the options."
     },
-    // options/options.html
+    /* options/options.html */
     "optionsPageTitle": {
         "message": "Options for the VoIPGRID extension",
         "description": "Text for the title of the options page."

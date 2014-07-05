@@ -1,10 +1,10 @@
 {
-    // manifest.json
+    /* manifest.json */
     "extDescription": {
         "message": "Chrome plugin voor klik&bel, statusupdate en wachtrij monitoring",
         "description": "Plugin omschrijving."
     },
-    // data/clicktodial/html/clicktodial.html
+    /* data/clicktodial/html/clicktodial.html */
     "clicktodialTitle": {
         "message": "Gesprek naar",
         "description": "Tekst van de titel voor de klik&bel popup."
@@ -13,7 +13,7 @@
         "message": "Status:",
         "description": "Label van de status van het gesprek in de klik&bel popup."
     },
-    // data/panel/html/panel.html:login-section
+    /* data/panel/html/panel.html:login-section */
     "loginFormUsernameLabel": {
         "message": "E-mailadres",
         "description": "Label voor het loginformulier van het veld 'username'."
@@ -38,7 +38,7 @@
         "message": "Inloggen",
         "description": "Tekst van de loginknop."
     },
-    // data/panel/html/panel.html:container
+    /* data/panel/html/panel.html:container */
     "logoutLinkText": {
         "message": "uitloggen",
         "description": "Tekst van de logoutlink."
@@ -55,7 +55,7 @@
         "message": "Help",
         "description": "Tekst van het help-icoon."
     },
-    // data/panel/html/panel.html:widget.availability
+    /* data/panel/html/panel.html:widget.availability */
     "availabilityWidgetTitle": {
         "message": "Bereikbaarheid",
         "description": "Tekst van de titel voor de bereikbaarheidswidget."
@@ -76,7 +76,7 @@
         "message": "NEE",
         "description": "Tekst bij de bereikbaarheidsoptie 'no'."
     },
-    // data/panel/html/panel.html:widget.queues
+    /* data/panel/html/panel.html:widget.queues */
     "queuesWidgetTitle": {
         "message": "Wachtrijen",
         "description": "Tekst van de titel voor de wachtrijenwidget."
@@ -85,12 +85,12 @@
         "message": "Je hebt momenteel geen wachtrijen",
         "description": "Weer te geven tekst wanneer er geen wachtrijen zijn om te tonen."
     },
-    // lib/api.js
+    /* lib/api.js */
     "unauthorizedNotificationText": {
         "message": "Om gebruik te kunnen maken van klik&bel moet eerst ingelogd worden door op het icoontje op de toolbar te klikken en je gegevens in te vullen.",
         "description": "Tekst van de notificatie die wordt getoond wanneer bij het aanroepen van de API op de server de status '401 Unauthorized' wordt ontvangen."
     },
-    // lib/clicktodial.js
+    /* lib/clicktodial.js */
     "callFailedNotificationText": {
         "message": "Het is niet gelukt om het gesprek op te zetten",
         "description": "Tekst van de notificatie die wordt getoond wanneer het niet lukte een gesprek op te zetten."
@@ -143,17 +143,17 @@
         "message": "Gesprek aan het opzetten..",
         "description": "Tekst zolang er nog geen status bekend is."
     },
-    // lib/page.js
+    /* lib/page.js */
     "contextMenuLabel": {
         "message": "Bel geselecteerde nummer",
         "description": "Tekst voor de optie in het rechtermuisknopmenu."
     },
-    // options/assets/js/options.js
+    /* options/assets/js/options.js */
     "optionsSaveText": {
         "message": "Instellingen opgeslagen.",
         "description": "Tekst na het succesvol opslaan van de instellingen."
     },
-    // options/options.html
+    /* options/options.html */
     "optionsPageTitle": {
         "message": "Instellingen van de VoIPGRID extensie",
         "description": "Tekst van de titel van de optiespagina."
