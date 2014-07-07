@@ -84,6 +84,19 @@
         "message": "Sorry! Je hebt niet de rechten om je bereikbaarheid in te stellen.",
         "description": "Tekst van de melding die wordt getoond bij onvoldoende rechten."
     },
+    /* data/panel/html/panel.html:widget.contacts */
+    "contactsWidgetTitle": {
+        "message": "Collega's",
+        "description": "Tekst van de titel voor de contactenwidget."
+    },
+    "noContactsText": {
+        "message": "Je hebt geen collega's.",
+        "description": "Weer te geven tekst wanneer er geen contacten zijn om te tonen."
+    },
+    "noContactsFoundText": {
+        "message": "Collega's niet gevonden.",
+        "description": "Weer te geven tekst wanneer er geen contacten zijn gevonden."
+    },
     /* data/panel/html/panel.html:widget.queues */
     "queuesWidgetTitle": {
         "message": "Wachtrijen",

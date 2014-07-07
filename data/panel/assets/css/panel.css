@@ -275,7 +275,7 @@ input[type="search"] {
 .contacts .search-form {
   display: inline-block;
   position: absolute;
-  left: 30%;
+  left: 40%;
   top: 0;
   right: 35px;
 }

@@ -84,6 +84,19 @@
         "message": "Sorry! You are not authorized to change your availability.",
         "description": "Text you see instead of the widget in case you're missing permissions."
     },
+    /* data/panel/html/panel.html:widget.contacts */
+    "contactsWidgetTitle": {
+        "message": "Colleagues",
+        "description": "Text of the title of the contacts widget."
+    },
+    "noContactsText": {
+        "message": "You don't have any colleagues.",
+        "description": "Text to show in case there are no contacts to display."
+    },
+    "noContactsFoundText": {
+        "message": "No colleagues matched.",
+        "description": "Text to show in case there are no contacts found."
+    },
     /* data/panel/html/panel.html:widget.queues */
     "queuesWidgetTitle": {
         "message": "Queues",
