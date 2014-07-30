@@ -46,9 +46,10 @@
                 "<all_urls>"
             ],
             "js": [
-                "data/assets/lib/jquery/jquery.js",
-                "data/assets/lib/findAndReplaceDOMText/findAndReplaceDOMText.js",
+                "data/assets/lib/zepto/zepto.min.js",
                 "data/clicktodial/assets/js/clicktodial-contentscript.js",
+                "data/page/assets/js/parsers/dutch.js",
+                "data/page/assets/js/walker.js",
                 "data/page/assets/js/observer.js"
             ],
             "run_at": "document_end",
