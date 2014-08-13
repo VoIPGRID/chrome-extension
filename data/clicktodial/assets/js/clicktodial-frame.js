@@ -10,6 +10,19 @@
         element.appendChild(document.createTextNode(text));
     }
 
+    function hidePanel() {
+        // stop the call status timer
+        chrome.runtime.sendMessage({'clicktodialpanel.onhide': {
+            // extra info to identify call
+            callid: callid
+        }});
+
+        // close this frame
+        parent.postMessage('clicktodialpanel.onhide' + callid, '*');
+
+        return false;
+    }
+
     window.addEventListener('message', function(e) {
         if(e.data.hasOwnProperty('clicktodial.b_number')) {
             if(e.data['clicktodial.b_number'].callid == callid) {
@@ -29,21 +42,14 @@
                     setText(statusElement, status);
                 }
             }
+        } else if(e.data.hasOwnProperty('clicktodial.hide')) {
+            if(e.data['clicktodial.hide'].callid == callid) {
+                console.info('clicktodial.hide');
+
+                hidePanel();
+            }
         }
     });
-
-    var hidePanel = function() {
-        // stop the call status timer
-        chrome.runtime.sendMessage({'clicktodialpanel.onhide': {
-            // extra info to identify call
-            callid: callid
-        }});
-
-        // close this frame
-        parent.postMessage('clicktodialpanel.onhide' + callid, '*');
-
-        return false;
-    };
 
     document.addEventListener('DOMContentLoaded', function() {
         var closeButton = document.getElementById('close');

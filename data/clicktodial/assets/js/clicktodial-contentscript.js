@@ -50,6 +50,24 @@
         });
     }
 
+    // hide panel when clicking outside the iframe
+    var hideFrameOnClick = function(event) {
+        var callids = Object.keys(iframes);
+        if(callids.length) {
+            // build request
+            var last_callid = callids.pop();
+            var request = {'clicktodial.hide': {
+                callid: last_callid,
+            }};
+
+            var iframe = iframes[last_callid];
+            if(iframe && iframe.length && iframe[0].contentWindow) {
+                iframe[0].contentWindow.postMessage(request, '*');
+            }
+        }
+    };
+    $('html').on('click', hideFrameOnClick);
+
     chrome.runtime.onMessage.addListener(
         function(request, sender, sendResponse) {
             if(request.hasOwnProperty('clicktodialpanel.show')) {
