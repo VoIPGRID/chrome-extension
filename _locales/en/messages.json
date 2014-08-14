@@ -51,6 +51,10 @@
         "message": "Settings",
         "description": "Text for the settings icon."
     },
+    "refreshPanelTitle": {
+        "message": "Refresh your data",
+        "description": "Text for the refresh icon."
+    },
     "openHelpTitle": {
         "message": "Help",
         "description": "Text for the help icon."
@@ -76,6 +80,10 @@
         "message": "NO",
         "description": "Text for availability option 'no'."
     },
+    "availabilityUnauthorizedWarning": {
+        "message": "Sorry! You are not authorized to change your availability.",
+        "description": "Text you see instead of the widget in case you're missing permissions."
+    },
     /* data/panel/html/panel.html:widget.queues */
     "queuesWidgetTitle": {
         "message": "Queues",
@@ -84,6 +92,10 @@
     "noQueuesText": {
         "message": "You don't have any queues",
         "description": "Text to show in case there are no queues to display."
+    },
+    "queuesUnauthorizedWarning": {
+        "message": "Sorry! You are not authorized to monitor any queues you might have.",
+        "description": "Text you see instead of the widget in case you're missing permissions."
     },
     /* lib/api.js */
     "unauthorizedNotificationText": {

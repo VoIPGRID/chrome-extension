@@ -51,6 +51,10 @@
         "message": "Instellingen",
         "description": "Tekst van het instellingen-icoon."
     },
+    "refreshPanelTitle": {
+        "message": "Gegevens opnieuw ophalen",
+        "description": "Tekst van het update-icoon."
+    },
     "openHelpTitle": {
         "message": "Help",
         "description": "Tekst van het help-icoon."
@@ -76,6 +80,10 @@
         "message": "NEE",
         "description": "Tekst bij de bereikbaarheidsoptie 'no'."
     },
+    "availabilityUnauthorizedWarning": {
+        "message": "Sorry! Je hebt niet de rechten om je bereikbaarheid in te stellen.",
+        "description": "Tekst van de melding die wordt getoond bij onvoldoende rechten."
+    },
     /* data/panel/html/panel.html:widget.queues */
     "queuesWidgetTitle": {
         "message": "Wachtrijen",
@@ -84,6 +92,10 @@
     "noQueuesText": {
         "message": "Je hebt momenteel geen wachtrijen",
         "description": "Weer te geven tekst wanneer er geen wachtrijen zijn om te tonen."
+    },
+    "queuesUnauthorizedWarning": {
+        "message": "Sorry! Je hebt niet de rechten om wachtrijen te bekijken.",
+        "description": "Tekst van de melding die wordt getoond bij onvoldoende rechten."
     },
     /* lib/api.js */
     "unauthorizedNotificationText": {

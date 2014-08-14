@@ -17,7 +17,9 @@
         storage = backgroundPage.storage;
 
         $(function() {
-            // show/hide the login form
+            /**
+             * Show/hide the login form.
+             */
             function showLoginForm() {
                 $('.login-section').removeClass('hide');
 
@@ -32,7 +34,9 @@
                 $('.login-section').addClass('hide');
             }
 
-            // show/hide the panel's content
+            /**
+             * Show/hide the panel's content.
+             */
             function showPanel() {
                 $('.container').removeClass('hide');
             }
@@ -40,7 +44,9 @@
                 $('.container').addClass('hide');
             }
 
-            // capture keys in login form
+            /**
+             * Capture keys in login form.
+             */
             $('.login-form :input').keydown(function(e) {
                 switch(e.which) {
                     // cycle through proper fields with tab
@@ -71,7 +77,9 @@
                 }
             });
 
-            // attempt to login
+            /**
+             * Attempt to login.
+             */
             function login() {
                 // login when form is not empty
                 if($('#username').val().trim().length && $('#password').val().length) {
@@ -82,7 +90,9 @@
                 }
             }
 
-            // login with the button
+            /**
+             * Login with the button.
+             */
             $('.login-button').click(function() {
                 if($('.login-button').hasClass('temporary-text')) {
                     resetButton();
@@ -91,7 +101,9 @@
                 }
             });
 
-            // when logging in, display an indicator
+            /**
+             * When logging in, display an indicator.
+             */
             function busyLoginButton() {
                 var button = $('.login-button');
                 $(button)
@@ -106,7 +118,9 @@
                     }
                 });
 
-            // reset the login indicator
+            /**
+             * Reset the login indicator.
+             */
             function resetButton() {
                 var button = $('.login-button');
                 $(button)
@@ -118,7 +132,9 @@
                     .removeClass('temporary-text');
             }
 
-            // show an error on login fail
+            /**
+             * Show an error on login fail.
+             */
             function failedLoginButton() {
                 var button = $('.login-button');
                 $(button)
@@ -134,7 +150,9 @@
                     }
                 });
 
-            // show a message on logout
+            /**
+             * Show a message on logout.
+             */
             function loggedOutButton() {
                 var button = $('.login-button');
                 $(button)
@@ -165,18 +183,33 @@
                     }
                 });
 
-            // capture icon clicks in the plugin container
+            // spin refresh icon while reloading widgets
+            chrome.runtime.onMessage.addListener(
+                function(request, sender, sendResponse) {
+                    if(request == 'mainpanel.refresh.start') {
+                        $('#refresh').addClass('fa-spin');
+                    } else if(request == 'mainpanel.refresh.stop') {
+                        setTimeout(function() {
+                            $('#refresh').removeClass('fa-spin');
+                        }, 200);
+                    }
+                });
+
+            /**
+             * Capture icon clicks in the plugin container.
+             */
             $('#logout').click(function(event) {
                 chrome.runtime.sendMessage('logout.attempt');
             });
             $('#help').click(function(event) {
                 chrome.runtime.sendMessage('help');
-                // chrome.runtime.sendMessage('close');
                 window.close();
+            });
+            $('#refresh').click(function(event) {
+                chrome.runtime.sendMessage('refresh');
             });
             $('#settings').click(function(event) {
                 chrome.runtime.sendMessage('settings');
-                // chrome.runtime.sendMessage('close');
                 window.close();
             });
             $('#close').click(function() {

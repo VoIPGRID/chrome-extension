@@ -67,7 +67,9 @@
         });
 
     $(function($) {
-        // select a queue
+        /**
+         * Select a queue.
+         */
         $('.queues .list').on('click', '.queue', function(event) {
             var queueId = null;
             if($(this).data('queue-id')) {

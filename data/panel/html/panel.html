@@ -34,6 +34,7 @@
                     <span class="shortcuts">
                         <i id="close" class="fa pull-right fa-times-circle" data-i18n-title="closePanelTitle"></i>
                         <i id="settings" class="fa pull-right fa-cog" data-link="settings" data-i18n-title="openSettingsTitle"></i>
+                        <i id="refresh" class="fa pull-right fa-refresh" data-i18n-title="refreshPanelTitle"></i>
                         <i id="help" class="fa pull-right fa-question-circle" data-link="help" data-i18n-title="openHelpTitle"></i>
                     </span>
                 </div>
@@ -44,6 +45,7 @@
                     <h3 class="widget-title">
                         <i class="fa fa-fw fa-phone-square fa-vertical-align widget-icon"></i>
                         <i class="fa fa-fw fa-spinner fa-spin fa-vertical-align busy-icon"></i>
+                        <i class="fa fa-fw fa-triangle fa-exclamation-triangle fa-vertical-align unauthorized-icon"></i>
                         <span data-i18n-content="availabilityWidgetTitle"></span>
                     </h3>
                 </div>
@@ -67,12 +69,14 @@
                         </div>
                     </form>
                 </div>
+                <div class="unauthorized-warning hide" data-i18n-content="availabilityUnauthorizedWarning"></div>
             </div>
             <div class="widget queues" data-opened="false" data-widget="queues">
                 <div class="widget-header no-select">
                     <h3 class="widget-title">
                         <i class="fa fa-fw fa-clock-o fa-vertical-align widget-icon"></i>
                         <i class="fa fa-fw fa-spinner fa-spin fa-vertical-align busy-icon"></i>
+                        <i class="fa fa-fw fa-triangle fa-exclamation-triangle fa-vertical-align unauthorized-icon"></i>
                         <span data-i18n-content="queuesWidgetTitle"></span>
                     </h3>
                 </div>
@@ -93,6 +97,7 @@
                         </li>
                     </ul>
                 </div>
+                <div class="unauthorized-warning hide" data-i18n-content="queuesUnauthorizedWarning"></div>
             </div>
         </div>
         <!-- /Plugin container -->

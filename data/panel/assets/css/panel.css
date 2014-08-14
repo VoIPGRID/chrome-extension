@@ -171,6 +171,18 @@ input[type="search"] {
   margin-right: .3em;
 }
 
+.widget .widget-icon {
+  display: inline-block;
+}
+
+.widget.busy .widget-icon {
+  display: none;
+}
+
+.widget.unauthorized .widget-icon {
+  display: none;
+}
+
 .widget .busy-icon {
   display: none;
 }
@@ -179,7 +191,19 @@ input[type="search"] {
   display: inline-block;
 }
 
-.widget.busy .widget-icon {
+.widget .unauthorized-icon {
+  display: none;
+}
+
+.widget.unauthorized .unauthorized-icon {
+  display: inline-block;
+}
+
+.widget.unauthorized .widget-content {
+  display: none;
+}
+
+.widget .unauthorized-warning {
   display: none;
 }
 
@@ -213,6 +237,11 @@ input[type="search"] {
 .widget-content .empty-list li {
   cursor: auto;
   overflow: hidden;
+}
+
+.unauthorized-warning {
+  padding: 14px 10px 14px;
+  font-size: 14px;
 }
 
 /**

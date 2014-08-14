@@ -60,7 +60,9 @@
         });
 
     $(function($) {
-        // change the user's availability
+        /**
+         * Change the user's availability.
+         */
         $('.availability-toggle [name="availability"]').change(function() {
             // these values are used for val() == 'no' which clears the current destination
             var selectedType = null;
@@ -79,7 +81,9 @@
             }});
         });
 
-        // change the user's destination
+        /**
+         * Change the user's destination.
+         */
         $('.availability [name="selecteddestination"]').change(function() {
             var value = $(this).find('option:selected').val().split('-');
             var selectedType = value[0];
