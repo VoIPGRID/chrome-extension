@@ -8,7 +8,7 @@
     var blockedTagNames = (function() {
         // tag list based on:
         // https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5/HTML5_element_list
-        var tags = new Array(
+        var tags = [
             'TITLE',
             'BASE',
             'LINK',
@@ -59,7 +59,7 @@
             'SUMMARY',
             'MENUITEM',
             'MENU'
-        );
+        ];
 
         var allowed = {};
         for(var i = 0; i < tags.length; i++) {
@@ -69,7 +69,11 @@
         return allowed;
     })();
 
-    window.skipNode = function (node) {
+    /**
+     * Test if `node` should even be processed.
+     */
+    window.skipNode = function(node) {
+        // nodetype 1 == HTML element
         if(node.nodeType == 1) {
             // skip some elements which normally wouldn't contain a phone number
             if(node.tagName in blockedTagNames) {
@@ -77,6 +81,7 @@
             }
         }
 
+        // nodetype 3 == Text node
         if(node.nodeType == 3) {
             // skip empty nodes
             if(node.data.trim().length === 0) {
@@ -102,7 +107,7 @@
     };
 
     /**
-     * walk the DOM and apply fn for every node.
+     * Walk the DOM and apply fn for every node.
      */
     window.walkTheDOM = function (node, fn) {
         if(node) do {

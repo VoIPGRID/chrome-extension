@@ -4,8 +4,10 @@
 (function() {
     'use strict';
 
-    // a copy from lib/translate.js to prevent wrapping every page in an
-    // asynchronous call to retrieve `translate` from `backgroundPage`
+    /**
+     * A copy from `lib/translate.js` to prevent wrapping every page in an
+     * asynchronous call to retrieve `translate` from `backgroundPage`.
+     */
     window.translate = function(messageID, args) {
         return chrome.i18n.getMessage(messageID, args);
     };

@@ -47,13 +47,23 @@
             ],
             "js": [
                 "data/assets/lib/zepto/zepto.min.js",
-                "data/clicktodial/assets/js/clicktodial-contentscript.js",
+                "data/clicktodial/assets/js/clicktodial-contentscript.js"
+            ],
+            "run_at": "document_end",
+            "all_frames": false
+        },
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "data/assets/lib/zepto/zepto.min.js",
                 "data/page/assets/js/parsers/dutch.js",
                 "data/page/assets/js/walker.js",
                 "data/page/assets/js/observer.js"
             ],
             "run_at": "document_end",
-            "all_frames": false
+            "all_frames": true
         }
     ],
     "options_page": "options/options.html",

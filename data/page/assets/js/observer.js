@@ -1,12 +1,14 @@
 (function() {
     'use strict';
 
+    var debug = false;
+
     // identify our elements with these class names
     var phoneElementClassName = 'voipgrid-phone-number';
     var phoneIconClassName = 'voipgrid-phone-icon';
 
     var iconStyle = (function() {
-        // cannot set !important with .css("property", "value !important"),
+        // cannot set !important with `.css("property", "value !important"),`
         // so build a string to use as style
         var iconStyle = {
             // 'background-attachment': 'scroll',  // this is set later, conditionally
@@ -37,7 +39,10 @@
     // this style's intention is to hide the icons when printing
     var printStyle = $('<link rel="stylesheet" href="' + chrome.runtime.getURL('data/page/assets/css/print.css') + '" media="print">');
 
-
+    /**
+     * Create an HTML element containing an anchor with a phone icon with
+     * the phone number in a data attribute.
+     */
     function createIconElement(number) {
         function newIcon(number) {
             // element that shows the icon and triggers a call
@@ -58,7 +63,7 @@
     }
 
     /**
-     * Click event handler: dial the number in attribute data-number.
+     * Click event handler: dial the number in the attribute `data-number`.
      */
     $('body').on('click', '.'+phoneIconClassName, function(event) {
         if($(this).attr('data-number') && $(this).parents('.'+phoneElementClassName).length) {
@@ -77,7 +82,7 @@
     });
 
     /**
-     * Click event handler: dial the number in the href.
+     * Click event handler: dial the number in the attribute `href`.
      */
     $('body').on('click', '[href^="tel:"]', function(event) {
         // remove focus
@@ -103,58 +108,65 @@
         root = root || document.body;
 
         // walk the DOM looking for elements to parse
-        walkTheDOM(root, function(node) {
-            var curNode = node;
+        // but block reasonably sized pages to prevent locking the page
+        var childrenLength = $(root).find('*').length;
+        if(childrenLength < 2001) {
+            if(debug) console.log('scanning ' + childrenLength + ' elements');
 
-            // is it a Text node?
-            if(node.nodeType === 3) {
-                // does it have non whitespace text content?
-                var text = node.data.trim();
-                if(text.length > 0) {
+            walkTheDOM(root, function(node) {
+                var curNode = node;
 
-                    // scan using every available parser
-                    for(var i = 0; i < window.parsers.length; i++) {
-                        var matches = [];
-                        var parser = new window.parsers[i][1]();
+                // is it a Text node?
+                if(node.nodeType === 3) {
+                    // does it have non whitespace text content?
+                    var text = node.data.trim();
+                    if(text.length > 0) {
 
-                        // transform Text node to HTML-capable node, to
-                        // - deal with html-entities (&nbsp;, &lt;, etc.) since
-                        // they mess up the start/end from
-                        // matches when reading from node.data, and
-                        // - enable inserting the icon html (doesn't work with a text node)
-                        var replacementNode = $('<ctd style="font-style: inherit; font-family: inherit;">')[0];
-                        replacementNode.innerHTML = replacementNode.textContent = replacementNode.innerText = node.data;
+                        // scan using every available parser
+                        window.parsers.forEach(function(localeParser) {
+                            var matches = [];
+                            var parser = localeParser[1]();
 
-                        matches = parser.parse(replacementNode.innerHTML);
-                        count += 1;
+                            // transform Text node to HTML-capable node, to
+                            // - deal with html-entities (&nbsp;, &lt;, etc.) since
+                            // they mess up the start/end from
+                            // matches when reading from node.data, and
+                            // - enable inserting the icon html (doesn't work with a text node)
+                            var replacementNode = $('<ctd style="font-style: inherit; font-family: inherit;">')[0];
+                            replacementNode.innerHTML = replacementNode.textContent = replacementNode.innerText = node.data;
 
-                        // insert icons after every phone number
-                        if(matches.length) {
-                            if(!parser.isBlockingNode(curNode.previousElementSibling) &&
-                                    !parser.isBlockingNode(curNode.parentNode.previousElementSibling)) {
+                            matches = parser.parse(replacementNode.innerHTML);
 
-                                // loop backwards to make indexes work
-                                matches.reverse().forEach(function(match) {
-                                    var iconElement = createIconElement(match.number);
-                                    var originalText = replacementNode.innerHTML.slice(match.start, match.end);
-                                    iconElement.innerHTML = originalText + ' ' + iconElement.innerHTML;
+                            // insert icons after every phone number
+                            if(matches.length) {
+                                if(!parser.isBlockingNode(curNode.previousElementSibling) &&
+                                        !parser.isBlockingNode(curNode.parentNode.previousElementSibling)) {
 
-                                    var number_and_icon = $('<ctd style="font-style: inherit; font-family: inherit;">').append($(iconElement)).html();
-                                    var before = replacementNode.innerHTML.slice(0, match.start);
-                                    var after = replacementNode.innerHTML.slice(match.end);
-                                    replacementNode.innerHTML = before + number_and_icon + after;
-                                });
+                                    // loop backwards to make indexes work
+                                    matches.reverse().forEach(function(match) {
+                                        var iconElement = createIconElement(match.number);
+                                        var originalText = replacementNode.innerHTML.slice(match.start, match.end);
+                                        iconElement.innerHTML = originalText + ' ' + iconElement.innerHTML;
 
-                                node.parentNode.insertBefore(replacementNode, node);
-                                node.parentNode.removeChild(node);
-                                curNode = replacementNode;
+                                        var number_and_icon = $('<ctd style="font-style: inherit; font-family: inherit;">').append($(iconElement)).html();
+                                        var before = replacementNode.innerHTML.slice(0, match.start);
+                                        var after = replacementNode.innerHTML.slice(match.end);
+                                        replacementNode.innerHTML = before + number_and_icon + after;
+                                    });
+
+                                    node.parentNode.insertBefore(replacementNode, node);
+                                    node.parentNode.removeChild(node);
+                                    curNode = replacementNode;
+                                }
                             }
-                        }
+                        });
                     }
                 }
-            }
-            return curNode;
-        });
+                return curNode;
+            });
+        } else {
+            if(debug) console.log('not scanning ' + childrenLength + ' elements');
+        }
 
         if(pause) {
             start_observer();
@@ -178,25 +190,29 @@
     var parkedNodes = [];
     var handleMutationsTimeout;
 
+    /**
+     * Process parked DOM mutations.
+     */
     function handleMutations() {
         // copy and clear parkedNodes
         var _parkedNodes = parkedNodes.slice();
         parkedNodes = [];
 
-        // handle parked mutations, but only if it probably isn't too much to handle
+        // handle mutations if it probably isn't too much to handle
         // (current limit is totally random)
-        if(_parkedNodes.length < 101) {
-            console.info('Processing ' + _parkedNodes.length + ' parked nodes.');
+        if(_parkedNodes.length < 151) {
+            if(debug) console.log('Processing ' + _parkedNodes.length + ' parked nodes.');
             _parkedNodes.forEach(function(node) {
                 doInsert(node);
             });
         } else {
-            console.info('Too many parked nodes (' + _parkedNodes.length + ').');
+            if(debug) console.log('Too many parked nodes (' + _parkedNodes.length + ').');
         }
     }
 
     /**
-     * Observer: start.
+     * Observer start: listen for DOM mutations and let `handleMutations`
+     * process them.
      */
     function start_observer() {
         if(!observer) {
@@ -207,18 +223,16 @@
                 }
 
                 mutations.forEach(function(mutation) {
-                    if(run) {
-                        // parkedMutations
-                        if(mutation.addedNodes.length) {
-                            $.each(mutation.addedNodes, function(index, addedNode) {
-                                if(!skipNode(addedNode)) {
-                                    parkedNodes.push(addedNode);
-                                }
-                            });
-                        } else if(!mutation.removedNodes.length && mutation.target) {
-                            if(!skipNode(mutation.target)) {
-                                parkedNodes.push(mutation.target);
+                    // filter mutations to park
+                    if(mutation.addedNodes.length) {
+                        $.each(mutation.addedNodes, function(index, addedNode) {
+                            if(!skipNode(addedNode)) {
+                                parkedNodes.push(addedNode);
                             }
+                        });
+                    } else if(!mutation.removedNodes.length && mutation.target) {
+                        if(!skipNode(mutation.target)) {
+                            parkedNodes.push(mutation.target);
                         }
                     }
                 });
@@ -239,28 +253,9 @@
             });
         }
     }
-    chrome.runtime.onMessage.addListener(
-        function(request, sender, sendResponse) {
-            if(request == 'page.observer.start') {
-                console.info('page.observer.start');
-
-                // inject our print stylesheet
-                $('head').append(printStyle);
-
-                // insert icons
-                if(debug) {
-                    doObserve();
-                } else {
-                    doInsert();
-                }
-
-                // start listening to DOM mutations
-                start_observer();
-            }
-        });
 
     /**
-     * Observer: stop.
+     * Observer stop: simply stop listening to DOM mutations.
      */
     function stop_observer() {
         if(observer) {
@@ -284,51 +279,36 @@
         });
 
     // signal this script has been loaded and ready to look for phone numbers
-    chrome.runtime.sendMessage('page.observer.ready');
-
-    var count = 0;
-    var run = true;
-    var doObserve = function (root) {
-        run = window.location.href == 'http://localhost/sandbox/regex-test.html';
-
-        if(run) {
-            var icon = document.createElement('i');
-            icon.setAttribute('style', 'position: fixed; top: 0; left: 0; height: 17px; width: 15px; background-color: red; z-index: 99999;');
-            stop_observer();
-            document.body.appendChild(icon);
-            start_observer();
-
-            // embed settimeout to allow the browser to render the icon before locking
-            setTimeout(function() {
-                setTimeout(function() {
-                    var totalTime = 0.0;
-                    var laps = 1;
-                    function lap() {
-                        doInsert(root);
-                    }
-
-                    for(var i = laps; i > 0; i--) {
-                        var start = performance.now();
-                        count = 0;
-                        lap();
-                        totalTime += (performance.now() - start);
-
-                        if(laps > 0 && i > 1) {
-                            undoInsert();
-                        }
-                    }
-
-                    console.info('avg. time:', parseInt( ( totalTime / laps ) * 100, 10) / 100, 'ms');
-                    console.info('scanned text nodes:', count / laps, root);
-                    setTimeout(function() {
-                        stop_observer();
-                        icon.remove();
-                        start_observer();
-                    }, 500);
-                }, 0);
-            }, 0);
+    chrome.runtime.sendMessage('page.observer.ready', function(response) {
+        if(debug) {
+            console.info('page.observer.ready', window.location.href);
         } else {
-            console.info('not scanning this page for phone numbers');
+            console.info('page.observer.ready');
         }
-    };
+
+        var doRun = function() {
+            console.info('page.observer.start');
+
+            // inject our print stylesheet
+            $('head').append(printStyle);
+
+            // insert icons
+            doInsert();
+
+            // start listening to DOM mutations
+            start_observer();
+        };
+
+        if(window != window.top && !(document.body.offsetWidth > 0 || document.body.offsetHeight > 0)) {
+            // this hidden iframe might become visible, wait for this to happen
+            $(window).on('resize', function() {
+                doRun();
+
+                // no reason to wait for more resize events
+                $(window).off('resize');
+            });
+        } else {
+            doRun();
+        }
+    });
 })();

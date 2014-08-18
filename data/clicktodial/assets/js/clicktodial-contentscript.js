@@ -50,7 +50,9 @@
         });
     }
 
-    // hide panel when clicking outside the iframe
+    /**
+     * Hide panel when clicking outside the iframe.
+     */
     var hideFrameOnClick = function(event) {
         var callids = Object.keys(iframes);
         if(callids.length) {
