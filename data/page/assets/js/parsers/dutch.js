@@ -61,9 +61,9 @@
                             ignore = true;
                             if(debug) console.log(';;; > ignore');
                         } else if(charsInFront.slice(-1) == '.') {
-                            // allow `.` if part of `t.` or `tel.`
-                            if(input.substring((posInFront - 2), (posInFront + 1)).toLowerCase().trim() != 't.' &&
-                                    input.substring((posInFront - 4), (posInFront + 1)).toLowerCase().trim() != 'tel.') {
+                            // allow `.` as long there is not an isolated `f` or `fax` in front of it
+                            if(input.substring((posInFront - 2), (posInFront + 1)).toLowerCase().trim() == 'f.' ||
+                                    input.substring((posInFront - 4), (posInFront + 1)).toLowerCase().trim() == 'fax.') {
                                 ignore = true;
                                 if(debug) console.log('... > ignore');
                             }
