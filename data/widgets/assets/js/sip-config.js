@@ -2,10 +2,9 @@
     'use strict';
 
     window.SIPconfig = {
-        realm: 'test.voipgrid.nl:5060',
-        impi: '123450001', // voip account code
-        pass: 'abcdefghijklmnopqrstuvwxyz', // voip account password
-        display_name: 'Demo account',
+        realm: 'websocket.voipgrid.nl',
+        impi: '', // user email address
+        pass: '', // user access token
+        display_name: '', // empty as long as we're just subscribing
     };
-    window.SIPconfig['impu'] = 'sip:' + window.SIPconfig['impi'] + '@' + window.SIPconfig['realm'];
 })();

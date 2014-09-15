@@ -9,8 +9,7 @@
         <link href="../assets/css/panel.css" rel="stylesheet" />
         <script src="../../assets/lib/jquery/jquery.js"></script>
         <script src="../../assets/lib/translate/chrome-i18n-html-translate.js"></script>
-        <script src="../../assets/lib/sipml5/SIPml-api.js"></script>
-        <script src="../../assets/lib/translate/chrome-i18n-html-translate.js"></script>
+        <script src="../../assets/lib/sipml5/SIPml-api.min.js"></script>
         <script src="../assets/js/panel.js"></script>
         <script src="../assets/js/widgets.js"></script>
         <script src="../../widgets/assets/js/availability.js"></script>
@@ -74,6 +73,7 @@
                         </div>
                     </form>
                 </div>
+                <div class="unauthorized-warning hide" data-i18n-content="availabilityUnauthorizedWarning"></div>
             </div>
             <div class="widget contacts" data-opened="false" data-widget="contacts">
                 <div class="widget-header no-select">
@@ -127,7 +127,7 @@
                         </li>
                     </ul>
                 </div>
-                <div class="unauthorized-warning hide" data-i18n-content="availabilityUnauthorizedWarning"></div>
+                <div class="unauthorized-warning hide" data-i18n-content="contactsUnauthorizedWarning"></div>
             </div>
             <div class="widget queues" data-opened="false" data-widget="queues">
                 <div class="widget-header no-select">

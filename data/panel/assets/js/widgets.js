@@ -60,6 +60,7 @@
          */
         function busyWidget(widgetOrWidgetName) {
             var widget = getWidget(widgetOrWidgetName);
+            var isOpen = isWidgetOpen(widget);
             resetWidget(widget);
             $(widget).addClass('busy');
         }
@@ -78,7 +79,11 @@
             $(widget)
                 .removeClass('busy')
                 .removeClass('unauthorized');
+            var isOpen = isWidgetOpen(widget);
             closeWidget(widget);
+            if(isOpen) {
+                openWidget(widget);
+            }
         }
         chrome.runtime.onMessage.addListener(
             function(request, sender, sendResponse) {

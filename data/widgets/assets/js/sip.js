@@ -9,7 +9,7 @@
 
     var sipStack,
         status,
-        subscriptions = {};
+        subscriptions;
 
     window.SIP = (function() {
         var init = function(callbacks) {
@@ -31,27 +31,28 @@
                 impu: window.SIPconfig['impu'], // mandatory: valid SIP Uri (IMS Public Identity)
                 password:window.SIPconfig['pass'], // optional
                 display_name: window.SIPconfig['display_name'], // optional
-                websocket_proxy_url: 'ws://websocket.test.voipgrid.nl:80', // optional
+                websocket_proxy_url: 'wss://websocket.voipgrid.nl', // optional
                 // outbound_proxy_url: 'udp://example.org:5060', // optional
                 enable_rtcweb_breaker: false, // optiona
                 events_listener: { events: '*', listener: eventsListener }, // optional: '*' means all events
                 sip_headers: [ // optional
-                        { name: 'User-Agent', value: 'Firefox add-on/sipML5' },
+                        { name: 'User-Agent', value: 'Chrome add-on/sipML5' },
                         { name: 'Organization', value: 'VoIPGRID' }
                     ]
             });
         };
 
         var start = function() {
-            console.info('SIP.start');
-            if(!status || status == 'stopped') {
+            if((!status || status == 'stopped') && sipStack) {
+                console.info('SIP.start');
+                subscriptions = {};
                 sipStack.start();
             }
         };
 
         var stop = function() {
-            console.info('SIP.stop');
             if(status && status == 'started') {
+                console.info('SIP.stop');
                 sipStack.stop();
             }
         };
@@ -83,7 +84,10 @@
                                 if(stateAttr == 'full') {
                                     // available
                                     status = 'available';
-                                } else if(stateAttr == 'partial') {
+                                }
+
+                                // state node has final say, regardless of stateAttr!
+                                if(stateAttr == 'partial') {
                                     if(stateNode) {
                                         switch(stateNode.textContent) {
                                             case 'trying':
@@ -99,8 +103,6 @@
                                                 break;
                                         }
                                     }
-                                } else {
-                                    // unavailable
                                 }
 
                                 presenceCallback(entityUri, status);

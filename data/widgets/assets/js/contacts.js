@@ -35,7 +35,7 @@
                     list.empty();
                     $('.widget.contacts .empty-list').addClass('hide');
 
-                    if(!storage.user) {
+                    if(!storage.get('user')) {
                         searchQuery = '';
                         phoneAccounts = [];
                         subscribedTo = {};
@@ -87,9 +87,6 @@
 
         // subscribe to presence updates for account_id
         function subscribe(account_id) {
-            var impi = account_id;
-            var impu = 'sip:'+ account_id + '@' + window.SIPconfig['realm'];
-
             var presenceCallback = function(impu, state) {
                 console.info('contacts.updatePresence');
 
@@ -104,7 +101,9 @@
                         .removeClass('available unavailable busy ringing')
                         .addClass(state);
 
-                    subscribedTo[account_id]['state'] = state;  // update cached presence
+                    if(subscribedTo[account_id]) {
+                        subscribedTo[account_id]['state'] = state;  // update cached presence
+                    }
                 }
             };
 
@@ -112,6 +111,8 @@
             subscribedTo[account_id] = {
                 state: null,
             };
+
+            var impu = 'sip:'+ account_id + '@' + window.SIPconfig['realm'];
             window.SIP.subscribe(impu, presenceCallback);
         }
 
@@ -125,7 +126,7 @@
         chrome.runtime.onMessage.addListener(
             function(request, sender, sendResponse) {
                 // start polling for presence information
-                if(request == 'sip.start') {
+                if(request.hasOwnProperty('sip.init')) {
                     var readyCallback = function(event) {
                         var connectedCallback = function() {
                             $.each(cache.contacts.list, function(index, contact) {
@@ -138,8 +139,22 @@
                     var errorCallback = function(event) {
                         console.error('Failed to initialize the engine: ' + event.message);
                     };
-                    SIPml.init(readyCallback, errorCallback);
-                    SIPml.setDebugLevel('warn');  // supported values: info, warn, error and fatal.
+
+                    if(window.SIPml.isInitialized()) {
+                        console.info('SIPml already initialized, calling readyCallback immediately');
+                        readyCallback();
+                    } else {
+                        var email = request['sip.init'].email;
+                        var token = request['sip.init'].token;
+
+                        // update impi, pass and impu for SIP
+                        window.SIPconfig['impi'] = email;
+                        window.SIPconfig['pass'] = token;
+                        window.SIPconfig['impu'] = 'sip:' + window.SIPconfig['impi'] + '@' + window.SIPconfig['realm'];
+
+                        window.SIPml.init(readyCallback, errorCallback);
+                        window.SIPml.setDebugLevel('warn');  // supported values: info, warn, error and fatal.
+                    }
 
                     // hide sip element
                     $('embed').hide();
@@ -179,6 +194,16 @@
 
         chrome.runtime.onMessage.addListener(
             function(request, sender, sendResponse) {
+                // start polling for presence information
+                if(request == 'sip.start') {
+                    if(window.SIP) {
+                        window.SIP.start();
+                    }
+                }
+            });
+
+        chrome.runtime.onMessage.addListener(
+            function(request, sender, sendResponse) {
                 // stop polling for presence information
                 if(request == 'sip.stop') {
                     if(window.SIP) {
@@ -192,7 +217,7 @@
             $('.contacts').on('click', '.status-icon.available:not(.ringing)', function() {
                 var extension = $(this).closest('.contact').find('.extension').text();
                 if(extension && extension.length) {
-                    chrome.runtime.sendMessage({'clicktodial.dial': {b_number: extension, silent: true}});
+                    chrome.runtime.sendMessage({'clicktodial.dial': {'b_number': extension, 'silent': true}});
                 }
             });
 
