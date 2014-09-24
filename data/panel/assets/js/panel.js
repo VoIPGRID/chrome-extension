@@ -201,16 +201,17 @@
             $('#logout').click(function(event) {
                 chrome.runtime.sendMessage('logout.attempt');
             });
+            $('#popout').click(function(event) {
+                chrome.tabs.create({url: chrome.runtime.getURL('/data/panel/html/popout.html')});
+            });
             $('#help').click(function(event) {
                 chrome.runtime.sendMessage('help');
-                window.close();
             });
             $('#refresh').click(function(event) {
                 chrome.runtime.sendMessage('refresh');
             });
             $('#settings').click(function(event) {
                 chrome.runtime.sendMessage('settings');
-                window.close();
             });
             $('#close').click(function() {
                 chrome.runtime.sendMessage('close');

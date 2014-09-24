@@ -59,6 +59,10 @@
         "message": "Help",
         "description": "Tekst van het help-icoon."
     },
+    "popoutTitle": {
+        "message": "Open in los tabblad",
+        "description": "Tekst van de losse BLF-icoon."
+    },
     /* data/panel/html/panel.html:widget.availability */
     "availabilityWidgetTitle": {
         "message": "Bereikbaarheid",

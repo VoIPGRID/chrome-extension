@@ -112,7 +112,7 @@ input[type="search"] {
   /* don't wrap but put dots at the end if it doesn't fit */
   white-space: nowrap;
   overflow: hidden;
-  width: calc(100% - 140px);
+  width: calc(100% - 150px);
   display: inline-block;
   text-overflow: ellipsis;
 }
@@ -149,6 +149,9 @@ input[type="search"] {
 }
 .widget[data-opened="false"] .widget-title {
   background-image: url("../img/arrow-down.png");
+}
+.container.static .widget[data-opened] .widget-title {
+  background-image: none;
 }
 
 .widget .widget-header {

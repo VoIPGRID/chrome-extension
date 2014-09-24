@@ -25,7 +25,6 @@
                         start_pos = 4;
                     }
                     var selector = '#sip' + match[0].substring(start_pos, (match[0].length - 1));
-                    console.log('adding class', state);
                     $(selector).find('.status-icon')
                         .removeClass('available unavailable busy ringing')
                         .addClass(state);
@@ -79,6 +78,9 @@
                     listItem.appendTo(list);
                 });
 
+                // hack in popout to display bottom border
+                $('.contacts .list .contact:visible:last').addClass('last');
+
                 // trigger the callback function to receive presence data
                 // after the list is fully built
                 sendResponse({});
@@ -101,11 +103,13 @@
                 searchQuery = $(this).val().trim().toLowerCase();
 
                 var list = $('.contacts .list');
+                $(list).find('.contact.last').removeClass('last');
 
                 // filter list
-                $.each($('.contacts .contact'), function(index, contact) {
+                $.each($('.contacts .list .contact'), function(index, contact) {
                     // hide contact if not a match
-                    if($(contact).find('.name').text().toLowerCase().indexOf(searchQuery) == -1 && $(contact).find('.extension').text().toLowerCase().indexOf(searchQuery) == -1) {
+                    if($(contact).find('.name').text().toLowerCase().indexOf(searchQuery) == -1 &&
+                            $(contact).find('.extension').text().toLowerCase().indexOf(searchQuery) == -1) {
                         $(contact).addClass('hide');
                     } else {
                         $(contact).removeClass('hide');
@@ -113,9 +117,13 @@
                 });
 
                 // show a message if no contacts matched
-                if($('.contacts .contact:visible').length) {
+                if($('.contacts .list .contact:visible').length) {
+                    $('.widget.contacts .list').css('overflow-x', 'auto');
                     $('.widget.contacts .not-found-contacts').addClass('hide');
+                    // hack in popout to display bottom border
+                    $('.contacts .list .contact:visible:last').addClass('last');
                 } else {
+                    $('.widget.contacts .list').css('overflow-x', 'hidden');
                     $('.widget.contacts .not-found-contacts').removeClass('hide');
                 }
             })

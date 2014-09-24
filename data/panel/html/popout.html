@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- having a <!DOCTYPE html> here actually breaks the flexbox -->
 <html lang="nl" class="no-scroll">
     <head>
         <title data-i18n-content="extDescription"></title>
@@ -8,15 +8,15 @@
         <link href="../../assets/fonts/open-sans.css" rel="stylesheet" />
         <link href="../../assets/css/main.css" rel="stylesheet" />
         <link href="../assets/css/panel.css" rel="stylesheet" />
+        <link href="../assets/css/popout.css" rel="stylesheet" />
         <script src="../../assets/lib/jquery/jquery.js"></script>
         <script src="../../assets/lib/translate/chrome-i18n-html-translate.js"></script>
         <script src="../assets/js/panel.js"></script>
+        <script src="../assets/js/popout.js"></script>
         <script src="../assets/js/widgets.js"></script>
-        <script src="../../widgets/assets/js/availability.js"></script>
         <script src="../../widgets/assets/js/contacts.js"></script>
-        <script src="../../widgets/assets/js/queues.js"></script>
     </head>
-    <body class="no-select">
+    <body class="no-select expand">
         <!-- Login form -->
         <div class="login-section">
             <form class="login-form">
@@ -29,7 +29,7 @@
         </div>
         <!-- /Login form -->
         <!-- Plugin container -->
-        <div class="container hide">
+        <div class="container static hide">
             <div class="account-info">
                 <div class="pull-right">
                     <span id="logout" data-link="logout" class="logout" data-i18n-content="logoutLinkText"></span>
@@ -38,43 +38,10 @@
                         <i id="settings" class="fa pull-right fa-cog" data-link="settings" data-i18n-title="openSettingsTitle"></i>
                         <i id="refresh" class="fa pull-right fa-refresh" data-i18n-title="refreshPanelTitle"></i>
                         <i id="help" class="fa pull-right fa-question-circle" data-link="help" data-i18n-title="openHelpTitle"></i>
-                        <i id="popout" class="fa pull-right fa-search-plus" data-i18n-title="popoutTitle"></i>
                     </span>
                 </div>
-                <span id="user-name" class="user-name"></span>
             </div>
-            <div class="widget availability" data-opened="false" data-widget="availability">
-                <div class="widget-header no-select">
-                    <h3 class="widget-title">
-                        <i class="fa fa-fw fa-phone-square fa-vertical-align widget-icon"></i>
-                        <i class="fa fa-fw fa-spinner fa-spin fa-vertical-align busy-icon"></i>
-                        <i class="fa fa-fw fa-triangle fa-exclamation-triangle fa-vertical-align unauthorized-icon"></i>
-                        <span data-i18n-content="availabilityWidgetTitle"></span>
-                    </h3>
-                </div>
-                <div class="widget-content hide">
-                    <form class="form form-inline">
-                        <div class="form-group availability-toggle">
-                            <label data-i18n-content="availabilityOptionsTitle"></label>
-                            <div class="radio">
-                                <label>
-                                    <input id="yes" type="radio" name="availability" class="form-control" value="yes" checked="checked" /> <span data-i18n-content="availabilityOptionYES"></span>
-                                </label>
-                            </div>
-                            <div class="radio">
-                                <label>
-                                    <input id="no" type="radio" name="availability" class="form-control" value="no" /> <span data-i18n-content="availabilityOptionNO"></span>
-                                </label>
-                            </div>
-                        </div>
-                        <div class="form-group availability-destination">
-                            <select id="statusupdate" class="form-control" name="selecteddestination"></select>
-                        </div>
-                    </form>
-                </div>
-                <div class="unauthorized-warning hide" data-i18n-content="availabilityUnauthorizedWarning"></div>
-            </div>
-            <div class="widget contacts" data-opened="false" data-widget="contacts">
+            <div class="widget contacts" data-opened="true" data-widget="contacts">
                 <div class="widget-header no-select">
                     <h3 class="widget-title">
                         <i class="fa fa-fw fa-group fa-vertical-align widget-icon"></i>
@@ -87,7 +54,7 @@
                         </form>
                     </h3>
                 </div>
-                <div class="widget-content hide">
+                <div class="widget-content">
                     <ul class="template hide">
                         <li class="contact">
                             <div class="status-icon pull-left">
@@ -99,8 +66,7 @@
                             </div>
                         </li>
                     </ul>
-                    <ul class="list">
-                    </ul>
+                    <ul class="list"></ul>
                     <ul class="empty-list hide">
                         <li class="contact">
                             <div class="status-icon pull-left">
@@ -127,34 +93,6 @@
                     </ul>
                 </div>
                 <div class="unauthorized-warning hide" data-i18n-content="contactsUnauthorizedWarning"></div>
-            </div>
-            <div class="widget queues" data-opened="false" data-widget="queues">
-                <div class="widget-header no-select">
-                    <h3 class="widget-title">
-                        <i class="fa fa-fw fa-clock-o fa-vertical-align widget-icon"></i>
-                        <i class="fa fa-fw fa-spinner fa-spin fa-vertical-align busy-icon"></i>
-                        <i class="fa fa-fw fa-triangle fa-exclamation-triangle fa-vertical-align unauthorized-icon"></i>
-                        <span data-i18n-content="queuesWidgetTitle"></span>
-                    </h3>
-                </div>
-                <div class="widget-content hide">
-                    <ul class="template hide">
-                        <li class="queue">
-                            <span class="indicator">?</span>
-                            <span class="text"></span>
-                            <span class="code"></span>
-                        </li>
-                    </ul>
-                    <ul class="list">
-                    </ul>
-                    <ul class="empty-list hide">
-                        <li class="queue">
-                            <span class="indicator">?</span>
-                            <span class="text" data-i18n-content="noQueuesText"></span>
-                        </li>
-                    </ul>
-                </div>
-                <div class="unauthorized-warning hide" data-i18n-content="queuesUnauthorizedWarning"></div>
             </div>
         </div>
         <!-- /Plugin container -->

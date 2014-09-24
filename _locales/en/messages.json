@@ -59,6 +59,10 @@
         "message": "Help",
         "description": "Text for the help icon."
     },
+    "popoutTitle": {
+        "message": "Open in separate tab",
+        "description": "Text for the separate BLF icon."
+    },
     /* data/panel/html/panel.html:widget.availability */
     "availabilityWidgetTitle": {
         "message": "Availability",
