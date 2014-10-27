@@ -101,6 +101,18 @@
         "message": "Collega's niet gevonden.",
         "description": "Weer te geven tekst wanneer er geen contacten zijn gevonden."
     },
+    "contactsUnauthorizedWarning": {
+        "message": "Sorry! Je hebt niet de rechten om de beschikbaarheid van je collega's te bekijken.",
+        "description": "Tekst van de melding die wordt getoond bij onvoldoende rechten."
+    },
+    "contactsConnectingTitle": {
+        "message": "Wacht op aanwezigheidsinformatie.",
+        "description": "Tekst van de titel van het verbindingsicoon bij de contactenwidget."
+    },
+    "contactsNoConnectionTitle": {
+        "message": "Aanwezigheidsinformation niet beschikbaar op dit moment.",
+        "description": "Tekst van de titel van het niet-verbonden-icoon bij de contactenwidget."
+    },
     /* data/panel/html/panel.html:widget.queues */
     "queuesWidgetTitle": {
         "message": "Wachtrijen",

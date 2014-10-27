@@ -16,7 +16,7 @@ body {
 body {
   color: #3c3c50;
   font: 13px/1.7em 'Open Sans';
-  width: 360px;
+  width: 400px;
 }
 
 .no-scroll {
@@ -275,6 +275,14 @@ input[type="search"] {
 /**
  * widget: contacts
  */
+.widget.contacts.unauthorized .search-form {
+  display: none;
+}
+
+.widget.contacts .connection-icon {
+  display: none;
+}
+
 .contacts .search-form {
   display: inline-block;
   position: absolute;
@@ -338,6 +346,7 @@ input[type="search"] {
 
 .contacts .contact {
   overflow: hidden;
+  cursor: default;
 }
 
 .contacts .contact .info {
@@ -358,15 +367,7 @@ input[type="search"] {
 }
 
 .contacts .contact .status-icon {
-  cursor: not-allowed;
-}
-
-.contacts .contact .available {
   cursor: pointer;
-}
-
-.contacts .contact .status-icon.available.ringing {
-  cursor: not-allowed;
 }
 
 /**

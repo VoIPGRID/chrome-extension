@@ -17,7 +17,7 @@
             "lib/timer.js",
             "lib/sip.js",
             "lib/storage.js",
-            "lib/sipml5/SIPml-api.min.js",
+            "lib/sipml5/release/SIPml-api.js",
             "lib/widgets/availability.js",
             "lib/widgets/contacts.js",
             "lib/widgets/queues.js"

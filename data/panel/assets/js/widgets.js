@@ -10,7 +10,7 @@
             if(widgetOrWidgetName instanceof jQuery) {
                 return widgetOrWidgetName;
             }
-            return $('.widget.' + widgetOrWidgetName);
+            return $('.container:not(.static) .widget.' + widgetOrWidgetName);
         }
 
         /**
@@ -111,7 +111,7 @@
          * Open/close the widget's content when clicking its header
          * (except when it's busy).
          */
-        $('.container').on('click', '.widget:not(.busy) .widget-header', function(e) {
+        $('.container:not(.static)').on('click', '.widget:not(.busy) .widget-header', function(e) {
             var widget = $(this).closest('[data-opened]');
             if(isWidgetOpen(widget)) {
                 if(!$(e.target).is(':input')) {

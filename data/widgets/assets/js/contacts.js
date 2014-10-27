@@ -5,30 +5,70 @@
 
     // blink every phone icon with class "ringing"
     var blink = function() {
-       $('.status-icon.ringing')
-        .toggleClass('available')
-        .toggleClass('busy');
+        var ringingNow = $('.status-icon.ringing');
+        $(ringingNow)
+            .toggleClass('available')
+            .toggleClass('busy');
+
+
+        // add slight delay before shaking
+        setTimeout(function() {
+            $(ringingNow).filter('.ringing:not(.shake)')
+                .each(function(index, element) {
+                    // don't shake everything at the same time
+                    setTimeout(function() {
+                        $(element).addClass('shake');
+                    }, (index * 200));
+                });
+        }, 400);
     };
-    setInterval(blink, 300);
+    setInterval(blink, 400);
+
+    var fade = function() {
+        var icon = $('.connecting.connection-icon:visible');
+        if($(icon).css('opacity') === '0') {
+            icon.fadeTo(400, 1.0);
+        } else {
+            icon.fadeTo(400, 0);
+        }
+    };
+    setInterval(fade, 1000);
 
     chrome.runtime.onMessage.addListener(
         function(request, sender, sendResponse) {
-            if(request.hasOwnProperty('contacts.sip')) {
+            if(request == 'contacts.connecting') {
+                console.info('contacts.connecting');
+
+                $('.contacts .connection-icon').hide()
+                    .filter('.connecting').css('display', 'inline-block');
+
+                $('.contacts .status-icon')
+                    .removeClass('available unavailable busy ringing shake');
+            } else if(request == 'contacts.failed_to_start') {
+                console.info('contacts.failed_to_start');
+
+                $('.contacts .connection-icon').hide()
+                    .filter('.no-connection').css('display', 'inline-block');
+            } else if(request == 'contacts.connected') {
+                console.info('contacts.connected');
+
+                $('.contacts .connection-icon').hide();
+            } else if(request == 'contacts.disconnected') {
+                console.info('contacts.disconnected');
+
+                $('.contacts .connection-icon').hide()
+                    .filter('.connecting').css('display', 'inline-block');
+
+                $('.contacts .status-icon')
+                    .removeClass('available unavailable busy ringing shake');
+            } else if(request.hasOwnProperty('contacts.sip')) {
                 console.info('contacts.sip');
 
-                var impu = request['contacts.sip'].impu;
+                var account_id = request['contacts.sip'].account_id;
                 var state = request['contacts.sip'].state;
-                var match = impu.match(/(.*)@/g);
-                if(match.length) {
-                    var start_pos = 0;
-                    if(match[0].indexOf('sip:') === 0) {
-                        start_pos = 4;
-                    }
-                    var selector = '#sip' + match[0].substring(start_pos, (match[0].length - 1));
-                    $(selector).find('.status-icon')
-                        .removeClass('available unavailable busy ringing')
-                        .addClass(state);
-                }
+                $('#sip' + account_id + ' .status-icon')
+                    .removeClass('available unavailable busy ringing shake')
+                    .addClass(state);
             }
         });
 
@@ -84,12 +124,15 @@
                 // trigger the callback function to receive presence data
                 // after the list is fully built
                 sendResponse({});
+
+                // hide element
+                $('embed').hide();
             }
         });
 
     $(function() {
         // call an available contact
-        $('.contacts').on('click', '.status-icon.available:not(.ringing)', function() {
+        $('.contacts').on('click', '.status-icon', function() {
             var extension = $(this).closest('.contact').find('.extension').text();
             if(extension && extension.length) {
                 chrome.runtime.sendMessage({'clicktodial.dial': {'b_number': extension, 'silent': true}});

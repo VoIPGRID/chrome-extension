@@ -101,6 +101,18 @@
         "message": "No colleagues matched.",
         "description": "Text to show in case there are no contacts found."
     },
+    "contactsUnauthorizedWarning": {
+        "message": "Sorry! You are not authorized to monitor your colleagues' presence.",
+        "description": "Text you see instead of the widget in case you're missing permissions."
+    },
+    "contactsConnectingTitle": {
+        "message": "Waiting for presence information.",
+        "description": "Text you the title for the connecting icon for contacts."
+    },
+    "contactsNoConnectionTitle": {
+        "message": "No presence information available right now.",
+        "description": "Text you the title for the disconnected icon for contacts."
+    },
     /* data/panel/html/panel.html:widget.queues */
     "queuesWidgetTitle": {
         "message": "Queues",
