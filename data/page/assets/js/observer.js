@@ -3,6 +3,17 @@
 
     var debug = false;
 
+    /**
+     * Escape HTML chars when assigning text to innerHTML.
+     */
+    escapeHTML.replacements = { "&": "&amp;", '"': "&quot;", "<": "&lt;", ">": "&gt;" };
+    function escapeHTML(str) {
+        return str.replace(/[&"<>]/g, function (m) {
+                return escapeHTML.replacements[m];
+            }
+        );
+    }
+
     // identify our elements with these class names
     var phoneElementClassName = 'voipgrid-phone-number';
     var phoneIconClassName = 'voipgrid-phone-icon';
@@ -133,7 +144,8 @@
                             // matches when reading from node.data, and
                             // - enable inserting the icon html (doesn't work with a text node)
                             var replacementNode = $('<ctd style="font-style: inherit; font-family: inherit;">')[0];
-                            replacementNode.innerHTML = replacementNode.textContent = replacementNode.innerText = node.data;
+                            replacementNode.textContent = node.data;
+                            replacementNode.innerHTML = escapeHTML(node.data);
 
                             matches = parser.parse(replacementNode.innerHTML);
 
