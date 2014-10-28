@@ -135,7 +135,7 @@
         $('.contacts').on('click', '.status-icon', function() {
             var extension = $(this).closest('.contact').find('.extension').text();
             if(extension && extension.length) {
-                chrome.runtime.sendMessage({'clicktodial.dial': {'b_number': extension, 'silent': true}});
+                chrome.runtime.sendMessage({'panel.dial': {'b_number': extension}});
             }
         });
 
