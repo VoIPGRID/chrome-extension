@@ -55,7 +55,7 @@
                     var ignore = false;
 
                     // test if we're starting mid-string and allow some cases
-                    if(charsInFront.length && !(new RegExp(whitespace + '|' + nextline + '|[(,\'"]').test(charsInFront))) {
+                    if(charsInFront.length && !(new RegExp(whitespace + '|' + nextline + '|[(,\'"]|[^\\d+]').test(charsInFront))) {
                         if(charsInFront.slice(-1) == ';') {
                             // disallow `;`
                             ignore = true;
@@ -79,6 +79,8 @@
                                     input.substring((posInFront - 3), (posInFront + 1)).trim().toLowerCase() == 'fax') {
                                 ignore = true;
                                 if(debug) console.log('    > ignore', '"' + input.substring((posInFront - 10), (posInFront + 1)) + '"');
+                            } else if (new RegExp('\\d+').test(charsInFront)) {
+                                ignore = true;
                             }
                         }
                     } else {
@@ -477,6 +479,18 @@
          */
         var parse = function(text) {
             matches = [];
+            // very crude early fails:
+
+            // 1) we need at least 8 digits
+            var digits = text.match(/\d/g);
+            if(digits === null || digits.length < 8) {
+                return matches;
+            } else {
+                // 2) we need at least two consecutive integers!
+                if(!new RegExp(/\d{2,}/g).test(text)) {
+                    return matches;
+                }
+            }
 
             input = text;
             result = buffer = '';
@@ -552,6 +566,9 @@
 
                 // make sure to keep progressing if possible
                 if(pos == startpos) {
+                    if(!ruleMatched) {
+                        actions.reset();
+                    }
                     pos++;
                 }
             }
@@ -581,10 +598,9 @@
             var line_number = matches[1];
             // just the digits behind `((+|00)31|0)`
             var just_digits = line_number.replace(new RegExp('[^\\d]', 'g'), '');
-
-            // numbers with `079` are not callable numbers, but used for data
-            if(just_digits.substring(0, 2) == '79') {
-                if(debug) console.log('invalid: data number (079xxxxxxx)');
+            // numbers with `097` are not callable numbers, but used for machine-to-machine
+            if(new RegExp('^97').test(just_digits.substring(0, 3))) {
+                if(debug) console.log('invalid: data number (097xxxxxx)');
                 return false;
             }
 
