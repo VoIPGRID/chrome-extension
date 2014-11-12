@@ -98,6 +98,10 @@ input[type="search"] {
   border: 1px solid #bce8f1;
 }
 
+.flip-horizontal {
+  transform: scaleX(-1);
+}
+
 /* different cursor for clickable stuff */
 .shortcuts i,
 .logout,
@@ -366,7 +370,14 @@ input[type="search"] {
   line-height: 43px;
 }
 
-.contacts .contact .status-icon {
+.contacts .contact .extension,
+.contacts .contact .name {
+  display: inline-block;
+}
+
+.contacts .contact .status-icon,
+.contacts .contact .extension,
+.contacts .contact .name {
   cursor: pointer;
 }
 

@@ -3,6 +3,11 @@
 
     var searchQuery = '';
 
+    // use this function to do more things when in dev mode
+    function isDevMode() {
+        return !('update_url' in chrome.runtime.getManifest());
+    }
+
     // blink every phone icon with class "ringing"
     var blink = function() {
         var ringingNow = $('.status-icon.ringing');
@@ -11,16 +16,19 @@
             .toggleClass('busy');
 
 
-        // add slight delay before shaking
-        setTimeout(function() {
-            $(ringingNow).filter('.ringing:not(.shake)')
-                .each(function(index, element) {
-                    // don't shake everything at the same time
-                    setTimeout(function() {
-                        $(element).addClass('shake');
-                    }, (index * 200));
-                });
-        }, 400);
+        // do the shake only in dev-mode
+        if(isDevMode()) {
+            // add slight delay before shaking
+            setTimeout(function() {
+                $(ringingNow).filter('.ringing:not(.shake)')
+                    .each(function(index, element) {
+                        // don't shake everything at the same time
+                        setTimeout(function() {
+                            $(element).addClass('shake');
+                        }, (index * 200));
+                    });
+            }, 400);
+        }
     };
     setInterval(blink, 400);
 
@@ -132,7 +140,7 @@
 
     $(function() {
         // call an available contact
-        $('.contacts').on('click', '.status-icon', function() {
+        $('.contacts').on('click', '.status-icon, .name, .extension', function() {
             var extension = $(this).closest('.contact').find('.extension').text();
             if(extension && extension.length) {
                 chrome.runtime.sendMessage({'panel.dial': {'b_number': extension}});

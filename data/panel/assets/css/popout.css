@@ -10,8 +10,7 @@
 body {
   width: auto;
   padding: 1em;
-  min-width: 361px;
-  max-width: 450px;
+  max-width: 620px;
 }
 
 body > div {
@@ -136,4 +135,23 @@ body .widget.contacts .empty-list .contact,
 body .widget.contacts .not-found-contacts .contact {
   height: 48px;
   box-sizing: border-box;
+}
+
+
+@media (max-width: 620px) {
+  html {
+    overflow-x: auto;
+  }
+
+  .account-info {
+    right: auto;
+    left: 473px;  /* 13 + 450 + 10 */
+    min-width: 144px;
+    box-sizing: border-box;
+  }
+
+  body .widget.contacts .list {
+    width: auto;
+    margin-right: -2px;
+  }
 }

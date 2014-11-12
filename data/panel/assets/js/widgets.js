@@ -63,6 +63,9 @@
             var isOpen = isWidgetOpen(widget);
             resetWidget(widget);
             $(widget).addClass('busy');
+            if(isOpen) {
+                openWidget(widget);
+            }
         }
         chrome.runtime.onMessage.addListener(
             function(request, sender, sendResponse) {
