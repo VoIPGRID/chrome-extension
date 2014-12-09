@@ -637,6 +637,7 @@
             var line_number = matches[1];
             // just the digits behind `((+|00)31|0)`
             var just_digits = line_number.replace(new RegExp('[^\\d]', 'g'), '');
+
             // numbers with `097` are not callable numbers, but used for machine-to-machine
             if(new RegExp('^97').test(just_digits.substring(0, 3))) {
                 if(debug) console.log('invalid: data number (097xxxxxx)');
