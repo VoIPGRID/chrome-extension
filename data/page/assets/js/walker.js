@@ -58,27 +58,76 @@
             'DETAILS',
             'SUMMARY',
             'MENUITEM',
-            'MENU'
+            'MENU',
         ];
 
-        var allowed = {};
+        var disallowed = {};
         for(var i = 0; i < tags.length; i++) {
-            allowed[tags[i]] = null;
+            disallowed[tags[i]] = null;
         }
 
-        return allowed;
+        return disallowed;
     })();
+
+    var blockedRoles = (function() {
+        // role list based on:
+        // http://www.w3.org/TR/wai-aria/roles#landmark_roles
+        var roles = [
+            'button',
+            'checkbox',
+            'command',
+            'input',
+            'radio',
+            'range',
+            'slider',
+            'option',
+            'search',
+            'textbox',
+            'timer',
+        ];
+
+        var disallowed = {};
+        for(var i = 0; i < roles.length; i++) {
+            disallowed[roles[i]] = null;
+        }
+
+        return disallowed;
+    })();
+
+    /**
+     * Skip elements which *probably* wouldn't (or shouldn't) contain a phone number.
+     */
+    function isBlockedElement(element) {
+
+        if(element.tagName.toUpperCase() in blockedTagNames) {
+            return true;
+        }
+
+        // check for attributes on *element*
+        if($(element).is('[contenteditable="true"]') ||
+                $(element).is('[aria-labelledby]') ||
+                ($(element).is('[role]') && $(element).attr('role').toLowerCase() in blockedRoles)) {
+            return true;
+        } else {
+            // check for attributes on *parents*
+            var closest_role_element = $(element).closest('[role]');
+            if(!!$(element).closest('[contenteditable="true"]').length ||
+                    !!$(element).closest('[aria-labelledby]').length ||
+                    (!!closest_role_element.length && $(closest_role_element[0]).attr('role').toLowerCase() in blockedRoles)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     /**
      * Test if `node` should even be processed.
      */
     window.skipNode = function(node) {
         // nodetype 1 == HTML element
-        if(node.nodeType == 1) {
-            // skip some elements which normally wouldn't contain a phone number
-            if(node.tagName in blockedTagNames) {
-                return true;
-            }
+        if(node.nodeType == 1 && isBlockedElement(node)) {
+            return true;
         }
 
         // nodetype 3 == Text node
@@ -99,6 +148,10 @@
 
             // skip existing numbers with an icon
             if($(parentElement).hasClass(phoneElementClassName)) {
+                return true;
+            }
+
+            if(isBlockedElement(parentElement)) {
                 return true;
             }
         }
