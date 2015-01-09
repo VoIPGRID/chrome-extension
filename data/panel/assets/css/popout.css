@@ -32,11 +32,6 @@ body .container:not(.hide) {
   flex-direction: column;
 }
 
-/* wrap plugin in border, taking a wider .list into account */
-body .widget.contacts .list {
-  border-top: 1px solid #d5d5d5;
-}
-
 body .widget {
   border-left: 1px solid #d5d5d5;
   border-right: 1px solid #d5d5d5;

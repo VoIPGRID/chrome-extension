@@ -139,7 +139,7 @@
         });
 
     $(function() {
-        // call an available contact
+        // call a contact
         $('.contacts').on('click', '.status-icon, .name, .extension', function() {
             var extension = $(this).closest('.contact').find('.extension').text();
             if(extension && extension.length) {

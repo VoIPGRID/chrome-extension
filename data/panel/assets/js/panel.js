@@ -33,6 +33,8 @@
             function hideLoginForm() {
                 $('.login-section').addClass('hide');
             }
+            // focus the first input field
+            $('.login-form :input:visible:first').focus();
 
             /**
              * Show/hide the panel's content.

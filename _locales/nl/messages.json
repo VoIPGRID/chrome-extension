@@ -110,7 +110,7 @@
         "description": "Tekst van de titel van het verbindingsicoon bij de contactenwidget."
     },
     "contactsNoConnectionTitle": {
-        "message": "Aanwezigheidsinformation niet beschikbaar op dit moment.",
+        "message": "Aanwezigheidsinformatie niet beschikbaar op dit moment.",
         "description": "Tekst van de titel van het niet-verbonden-icoon bij de contactenwidget."
     },
     /* data/panel/html/panel.html:widget.queues */
