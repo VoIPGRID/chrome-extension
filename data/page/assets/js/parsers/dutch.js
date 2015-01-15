@@ -33,6 +33,9 @@
             },
             keep: function(kept) {
                 if(start == -1) {
+                    // starting anew
+                    result_raw = '';
+
                     var posInFront = pos - (1 + kept.length);
                     var charsInFront = input.substring(posInFront, (posInFront + 1));
                     if(!charsInFront.trim().length) {
