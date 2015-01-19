@@ -294,12 +294,12 @@
     chrome.runtime.sendMessage('page.observer.ready', function(response) {
         if(debug) {
             console.info('page.observer.ready', window.location.href);
-        } else {
-            console.info('page.observer.ready');
         }
 
         var doRun = function() {
-            console.info('page.observer.start');
+            if(debug) {
+                console.info('page.observer.start');
+            }
 
             // inject our print stylesheet
             $('head').append(printStyle);
