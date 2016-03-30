@@ -292,35 +292,44 @@
 
     // signal this script has been loaded and ready to look for phone numbers
     chrome.runtime.sendMessage('page.observer.ready', function(response) {
-        if(debug) {
-            console.info('page.observer.ready', window.location.href);
-        }
+        // fill the contact list
+        if(response && response.hasOwnProperty('observe')) {
+            var observe = response.observe;
 
-        var doRun = function() {
-            if(debug) {
-                console.info('page.observer.start');
+            if (!observe) {
+                return;
             }
 
-            // inject our print stylesheet
-            $('head').append(printStyle);
+            if(debug) {
+                console.info('page.observer.ready', window.location.href);
+            }
 
-            // insert icons
-            doInsert();
+            var doRun = function() {
+                if(debug) {
+                    console.info('page.observer.start');
+                }
 
-            // start listening to DOM mutations
-            start_observer();
-        };
+                // inject our print stylesheet
+                $('head').append(printStyle);
 
-        if(window != window.top && !(document.body.offsetWidth > 0 || document.body.offsetHeight > 0)) {
-            // this hidden iframe might become visible, wait for this to happen
-            $(window).on('resize', function() {
+                // insert icons
+                doInsert();
+
+                // start listening to DOM mutations
+                start_observer();
+            };
+
+            if(window != window.top && !(document.body.offsetWidth > 0 || document.body.offsetHeight > 0)) {
+                // this hidden iframe might become visible, wait for this to happen
+                $(window).on('resize', function() {
+                    doRun();
+
+                    // no reason to wait for more resize events
+                    $(window).off('resize');
+                });
+            } else {
                 doRun();
-
-                // no reason to wait for more resize events
-                $(window).off('resize');
-            });
-        } else {
-            doRun();
+            }
         }
     });
 })();
