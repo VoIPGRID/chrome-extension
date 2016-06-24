@@ -24,7 +24,7 @@
         var iconStyle = {
             // 'background-attachment': 'scroll',  // this is set later, conditionally
             'background-color': 'transparent !important',
-            'background-image': 'url(' + chrome.runtime.getURL('data/clicktodial/assets/img/clicktodial.png') + ')',
+            'background-image': 'url("' + chrome.runtime.getURL('data/clicktodial/assets/img/clicktodial.png') + '")',
             'background-repeat': 'no-repeat',
             'bottom': '-3px !important',
             'background-position': 'center center',
@@ -50,27 +50,37 @@
     // this style's intention is to hide the icons when printing
     var printStyle = $('<link rel="stylesheet" href="' + chrome.runtime.getURL('data/page/assets/css/print.css') + '" media="print">');
 
+    var ctdNode = (function() {
+        var ctd = document.createElement('ctd');
+        ctd.setAttribute('style', 'font-style: inherit; font-family: inherit;');
+        ctd.classList.add(phoneElementClassName);
+
+        return ctd;
+    })();
+
+    // element that shows the icon and triggers a call
+    var iconElement = (function() {
+        var a = document.createElement('a');
+        a.setAttribute('style', iconStyle);
+        a.classList.add(phoneIconClassName);
+
+        return a;
+    })();
+
     /**
      * Create an HTML element containing an anchor with a phone icon with
      * the phone number in a data attribute.
      */
-    function createIconElement(number) {
-        function newIcon(number) {
-            // element that shows the icon and triggers a call
-            return $('<a>', {
-                'href': 'javascript:clicktodial(' + number + ')',
-                'data-number': number,
-                'class': phoneIconClassName,
-                'style': iconStyle,
-            });
-        }
+    function createNumberIconElement(number) {
+        var icon = iconElement.cloneNode(false);
+        // add properties unique for "number"
+        icon.setAttribute('data-number', number);
+        icon.href = 'javascript:clicktodial(' + number + ')';
 
-        // create element which is display:inline with an icon in it,
-        // identified by phoneElementClassName
-        return $('<ctd>', {
-            'class': phoneElementClassName,
-            'style': 'font-style: inherit; font-family: inherit',
-        }).html($('<div>').append(newIcon(number)).html())[0];
+        // wrap in element so ".innerHTML" contains the icon HTML
+        var wrapper = document.createElement('p');
+        wrapper.appendChild(icon);
+        return wrapper;
     }
 
     /**
@@ -120,61 +130,48 @@
 
         // walk the DOM looking for elements to parse
         // but block reasonably sized pages to prevent locking the page
-        var childrenLength = $(root).find('*').length;
+        var childrenLength = $(root).find('*').length;  // no lookup costs
         if(childrenLength < 2001) {
             if(debug) console.log('scanning ' + childrenLength + ' elements');
 
             walkTheDOM(root, function(node) {
                 var curNode = node;
 
-                // is it a Text node?
-                if(node.nodeType === 3) {
-                    // does it have non whitespace text content?
-                    var text = node.data.trim();
-                    if(text.length > 0) {
+                // scan using every available parser
+                window.parsers.forEach(function(localeParser) {
+                    var parser = localeParser[1]();
 
-                        // scan using every available parser
-                        window.parsers.forEach(function(localeParser) {
-                            var matches = [];
-                            var parser = localeParser[1]();
+                    // transform Text node to HTML-capable node, to
+                    // - deal with html-entities (&nbsp;, &lt;, etc.) since
+                    // they mess up the start/end from
+                    // matches when reading from node.data, and
+                    // - enable inserting the icon html (doesn't work with a text node)
+                    var replacementNode = ctdNode.cloneNode(false);
+                    replacementNode.textContent = node.data;
+                    replacementNode.innerHTML = escapeHTML(node.data);;
 
-                            // transform Text node to HTML-capable node, to
-                            // - deal with html-entities (&nbsp;, &lt;, etc.) since
-                            // they mess up the start/end from
-                            // matches when reading from node.data, and
-                            // - enable inserting the icon html (doesn't work with a text node)
-                            var replacementNode = $('<ctd style="font-style: inherit; font-family: inherit;">')[0];
-                            replacementNode.textContent = node.data;
-                            replacementNode.innerHTML = escapeHTML(node.data);
+                    var matches = parser.parse(replacementNode.innerHTML);
+                    if(matches.length) {
+                        if(!parser.isBlockingNode(curNode.previousElementSibling) &&
+                                !parser.isBlockingNode(curNode.parentNode.previousElementSibling)) {
 
-                            matches = parser.parse(replacementNode.innerHTML);
+                            matches.reverse().forEach(function(match) {
+                                var numberIconElement = createNumberIconElement(match.number);
 
-                            // insert icons after every phone number
-                            if(matches.length) {
-                                if(!parser.isBlockingNode(curNode.previousElementSibling) &&
-                                        !parser.isBlockingNode(curNode.parentNode.previousElementSibling)) {
+                                // prefix icon with match (==number)
+                                var originalText = replacementNode.innerHTML.slice(match.start, match.end);
+                                numberIconElement.innerHTML = originalText + ' ' + numberIconElement.innerHTML;
 
-                                    // loop backwards to make indexes work
-                                    matches.reverse().forEach(function(match) {
-                                        var iconElement = createIconElement(match.number);
-                                        var originalText = replacementNode.innerHTML.slice(match.start, match.end);
-                                        iconElement.innerHTML = originalText + ' ' + iconElement.innerHTML;
+                                var before = replacementNode.innerHTML.slice(0, match.start);
+                                var after = replacementNode.innerHTML.slice(match.end);
+                                replacementNode.innerHTML = before + numberIconElement.innerHTML + after;
+                            });
 
-                                        var number_and_icon = $('<ctd style="font-style: inherit; font-family: inherit;">').append($(iconElement)).html();
-                                        var before = replacementNode.innerHTML.slice(0, match.start);
-                                        var after = replacementNode.innerHTML.slice(match.end);
-                                        replacementNode.innerHTML = before + number_and_icon + after;
-                                    });
-
-                                    node.parentNode.insertBefore(replacementNode, node);
-                                    node.parentNode.removeChild(node);
-                                    curNode = replacementNode;
-                                }
-                            }
-                        });
+                            node.parentNode.insertBefore(replacementNode, node);
+                            node.parentNode.removeChild(node);
+                        }
                     }
-                }
-                return curNode;
+                });
             });
         } else {
             if(debug) console.log('not scanning ' + childrenLength + ' elements');
@@ -188,11 +185,6 @@
     function undoInsert() {
         // remove icons from page
         $('.'+phoneIconClassName).remove();
-
-        // unwrap previously identified elements from their 'iconElement'
-        $('.'+phoneElementClassName).each(function(index, element) {
-            $(element.parentElement).html($(element).html());
-        });
     }
 
     /**
@@ -215,7 +207,14 @@
         if(_parkedNodes.length < 151) {
             if(debug) console.log('Processing ' + _parkedNodes.length + ' parked nodes.');
             _parkedNodes.forEach(function(node) {
-                doInsert(node);
+                var stillInDocument = document.contains(node); // no lookup costs
+                if(stillInDocument) {
+                    var before = new Date().getTime();
+                    doInsert(node);
+                    if(debug) console.log('doInsert (handleMutations) took', new Date().getTime() - before);
+                } else {
+                    if(debug) console.log('doInsert (handleMutations) took 0 - removed node');
+                }
             });
         } else {
             if(debug) console.log('Too many parked nodes (' + _parkedNodes.length + ').');
@@ -313,7 +312,9 @@
                 $('head').append(printStyle);
 
                 // insert icons
+                var before = new Date().getTime();
                 doInsert();
+                if(debug) console.log('doInsert (doRun) took', new Date().getTime() - before);
 
                 // start listening to DOM mutations
                 start_observer();

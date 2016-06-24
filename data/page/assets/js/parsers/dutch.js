@@ -507,15 +507,47 @@
          */
         var parse = function(text) {
             matches = [];
-            // very crude early fails:
+            // very crude, but fast, early fails:
 
             // 1) we need at least 8 digits
             var digits = text.match(/\d/g);
             if(digits === null || digits.length < 8) {
                 return matches;
-            } else {
-                // 2) we need at least two consecutive integers!
-                if(!new RegExp(/\d{2,}/g).test(text)) {
+            }
+
+            // 2) if it looks like a decimal, ignore it
+            if(new RegExp(/\d+[\.,]\d+/g).test(text)) {
+                return matches;
+            }
+
+            // 3) we need at least two consecutive digits!
+            if(!new RegExp(/\d{2,}/g).test(text)) {
+                return matches;
+            }
+
+            // 4) we need at least 7 digits behind a '0'
+            // OR
+            // 5) we need at least 7 digits behind a '31'
+            if(digits) {
+                var num_behind_0 = -1;
+                for(var i = 0; i < digits.length && num_behind_0 < 8; i++) {
+                    if(digits[i] === '0' && num_behind_0 === -1) {
+                        num_behind_0++;
+                    }
+                    if(num_behind_0 !== -1) {
+                        num_behind_0++;
+                    }
+                }
+                var num_behind_31 = -1;
+                for(var j = 0; j < digits.length - 1 && num_behind_31 < 8; j++) {
+                    if(digits[j] === '3' && digits[j + 1] === '1' && num_behind_31 === -1) {
+                        num_behind_31++;
+                    }
+                    if(num_behind_31 !== -1) {
+                        num_behind_31++;
+                    }
+                }
+                if(num_behind_0 < 8 && num_behind_31 < 8) {
                     return matches;
                 }
             }
