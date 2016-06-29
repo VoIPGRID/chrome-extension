@@ -206,18 +206,24 @@
         // (current limit is totally random)
         if(_parkedNodes.length < 151) {
             if(debug) console.log('Processing ' + _parkedNodes.length + ' parked nodes.');
-            _parkedNodes.forEach(function(node) {
-                var stillInDocument = document.contains(node); // no lookup costs
-                if(stillInDocument) {
-                    var before = new Date().getTime();
-                    doInsert(node);
-                    if(debug) console.log('doInsert (handleMutations) took', new Date().getTime() - before);
-                } else {
-                    if(debug) console.log('doInsert (handleMutations) took 0 - removed node');
-                }
-            });
-        } else {
-            if(debug) console.log('Too many parked nodes (' + _parkedNodes.length + ').');
+            var batchSize = 40;  // random size
+            for(var i = 0; i < Math.ceil(_parkedNodes.length / batchSize); i++) {
+                (function(index) {
+                    setTimeout(function() {
+                        for(var j = index * batchSize; j < (index + 1) * batchSize; j++) {
+                            var node = _parkedNodes[j];
+                            var stillInDocument = document.contains(node); // no lookup costs
+                            if(stillInDocument) {
+                                var before = new Date().getTime();
+                                doInsert(node);
+                                if(debug) console.log('doInsert (handleMutations) took', new Date().getTime() - before);
+                            } else {
+                                if(debug) console.log('doInsert (handleMutations) took 0 - removed node');
+                            }
+                        }
+                    }, 0); // push back execution to the end on the current event stack
+                })(i);
+            }
         }
     }
 
