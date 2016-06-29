@@ -98,8 +98,7 @@
      * Skip elements which *probably* wouldn't (or shouldn't) contain a phone number.
      */
     function isBlockedElement(element) {
-
-        if(element.tagName.toUpperCase() in blockedTagNames) {
+        if(element.tagName in blockedTagNames) {
             return true;
         }
 
@@ -162,20 +161,30 @@
     /**
      * Walk the DOM and apply fn for every node.
      */
-    window.walkTheDOM = function (node, fn) {
-        if(node) do {
-            if(skipNode(node)) {
-                continue;
-            }
+    window.walkTheDOM = function (root, fn) {
+        // skip element nodes, we'll get to those using a text node's parentNode attr
+        var whatToShow = NodeFilter.SHOW_TEXT;
 
-            // in case fn replaces node, skip it
-            var returnNode = fn(node);
-            if(returnNode != node) {
-                node = returnNode;
-                continue;
+        // apply filtering on what nodes to process
+        var filter = {
+            acceptNode: function(node) {
+                if(skipNode(node)) {
+                    return NodeFilter.FILTER_SKIP;
+                } else {
+                    return NodeFilter.FILTER_ACCEPT;
+                }
             }
+        }
 
-            walkTheDOM(node.firstChild, fn);
-        } while((node = node.nextSibling));
+        var nodeIterator = document.createNodeIterator(
+            root,
+            whatToShow,
+            filter
+        );
+
+        var curNode;
+        while(curNode = nodeIterator.nextNode()) {
+            fn(curNode);
+        }
     };
 })();
