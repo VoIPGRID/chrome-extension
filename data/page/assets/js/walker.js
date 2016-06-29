@@ -124,17 +124,18 @@
      * Test if `node` should even be processed.
      */
     window.skipNode = function(node) {
-        // nodetype 1 == HTML element
-        if(node.nodeType == 1 && isBlockedElement(node)) {
+        // only parse element and text nodes
+        if(node.nodeType !== Node.ELEMENT_NODE && node.nodeType !== Node.TEXT_NODE) {
             return true;
         }
 
-        // nodetype 3 == Text node
-        if(node.nodeType == 3) {
-            // skip empty nodes
-            if(node.data.trim().length === 0) {
-                return true;
-            }
+        if(node.nodeType == Node.ELEMENT_NODE && isBlockedElement(node)) {
+            return true;
+        }
+
+        // skip empty nodes
+        if(node.nodeType == Node.TEXT_NODE && node.data.trim().length === 0) {
+            return true;
         }
 
         var parentElement = node.parentElement;
