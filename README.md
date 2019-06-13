@@ -1,3 +1,5 @@
+***Note: This extension has been replaced with [vialer-clicktodial](https://github.com/vialer/vialer-clicktodial)***
+
 VoIPGRID's Click-to-Dial Chrome Extension
 =========================================
 
